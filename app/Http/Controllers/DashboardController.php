@@ -8,12 +8,13 @@ use App\Models\PaymentMethod;
 use App\Models\Transaction;
 use App\Models\Transfer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $userId = 1;
+        $userId = Auth::id(); // usuario dinemico
 
         $totalAccounts = Account::where('user_id', $userId)->count();
         $totalCategories = Category::where('user_id', $userId)->count();

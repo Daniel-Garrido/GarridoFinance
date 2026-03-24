@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -26,7 +27,7 @@ class CategoryController extends Controller
         ]);
 
         Category::create([
-            'user_id' => 1, // temporal
+            'user_id' => Auth::id(), 
             'name' => $validated['name'],
             'type' => $validated['type'],
             'is_active' => $validated['is_active'],

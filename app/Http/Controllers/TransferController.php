@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Transfer;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class TransferController extends Controller
 {
@@ -43,7 +43,7 @@ class TransferController extends Controller
         ]);
 
         Transfer::create([
-            'user_id' => 1, // temporal hasta implementar auth
+            'user_id' => Auth::id(),
             'date' => $validated['date'],
             'amount' => $validated['amount'],
             'from_account_id' => $validated['from_account_id'],

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
@@ -26,8 +27,7 @@ class AccountController extends Controller
             'is_active' => 'required|boolean',
         ]);
 
-        // temporal mientras no tengamos login
-        $validated['user_id'] = 1;
+        $validated['user_id'] = Auth::id();
 
         Account::create($validated);
 

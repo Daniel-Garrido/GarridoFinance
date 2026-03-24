@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentMethodController extends Controller
 {
@@ -27,7 +28,7 @@ class PaymentMethodController extends Controller
         ]);
 
         PaymentMethod::create([
-            'user_id' => 1, // temporal
+            'user_id' => Auth::id(),
             'name' => $validated['name'],
             'is_active' => $validated['is_active'],
         ]);

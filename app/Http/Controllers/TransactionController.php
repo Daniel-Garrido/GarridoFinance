@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\PaymentMethod;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class TransactionController extends Controller
 {
@@ -43,7 +45,7 @@ class TransactionController extends Controller
         ]);
 
         Transaction::create([
-            'user_id' => 1, // temporal hasta implementar auth
+            'user_id' => Auth::id(), 
             'date' => $validated['date'],
             'type' => $validated['type'],
             'amount' => $validated['amount'],

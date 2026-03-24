@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container py-4">
-    <h1 class="mb-4">Dashboard</h1>
+    <h1 class="mb-4">Sistema de finanzas personales</h1>
 
     <div class="row">
         <div class="col-md-3 mb-3">
