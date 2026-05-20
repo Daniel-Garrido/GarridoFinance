@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up(): void
 {
+
     Schema::create('accounts', function (Blueprint $table) {
         $table->id();
 
-        $table->foreignId('user_id')
+        $table->foreignId('user_id')// Llave foránea que referencia al usuario propietario de la cuenta
               ->constrained()
               ->cascadeOnDelete();
 
         $table->string('name'); // Nombre de la cuenta
-        $table->string('type')->default('cash'); // cash, bank, card, saving
-        $table->boolean('is_active')->default(true);
+        $table->string('type')->default('cash'); // Tipo de cuenta (efectivo, tarjeta, etc.)
+        $table->boolean('is_active')->default(true);// Estado de la cuenta (activa/inactiva)
 
-        $table->timestamps();
+        $table->timestamps();// created_at y updated_at
     });
 }
 
