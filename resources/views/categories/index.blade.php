@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
     <div class="container-fluid">
 
         {{-- contenedor header principal seccion de categorias --}}
@@ -38,6 +39,7 @@
 
             {{-- cuerpo de la tabla de categorías --}}
             <div class="card-body p-0">
+                
                 <div class="table-responsive">
 
                     <table class="table table-hover align-middle mb-0">
@@ -324,7 +326,7 @@
 
                         <div class="mb-3">
                             <label for="type" class="form-label">Tipo de categoría</label>
-                
+
                             <select name="type" id="type{{ $category->id }}" class="form-select">
 
                                 <option value="income" {{ old('type', $category->type) == 'income' ? 'selected' : '' }}>
