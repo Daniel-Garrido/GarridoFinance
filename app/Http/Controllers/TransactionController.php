@@ -18,8 +18,12 @@ class TransactionController extends Controller
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
             ->get();
+        
+        $accounts = Account::all();
+        $categories = Category::all();
+        $paymentMethods = PaymentMethod::all();
 
-        return view('transactions.index', compact('transactions'));
+        return view('transactions.index', compact('transactions', 'accounts', 'categories', 'paymentMethods'));
     }
 
     public function create()
