@@ -89,39 +89,7 @@
             </div>
         </div>
     </div>
-
-    {{-- Gráficas --}}
-    {{-- <div class="row g-4 mb-4">
-
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">
-                        <i class="bi bi-bar-chart"></i> Ingresos vs Gastos del mes
-                    </h5>
-                </div>
-
-                <div class="card-body">
-                    <canvas id="incomeExpenseChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">
-                        <i class="bi bi-pie-chart"></i> Gastos por categoría
-                    </h5>
-                </div>
-
-                <div class="card-body">
-                    <canvas id="categoryChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-    </div> --}}
+    
 @endsection
 
 @push('scripts')

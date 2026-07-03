@@ -16,7 +16,11 @@ class TransferController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('transfers.index', compact('transfers'));
+        $accounts = Account::where('is_active', 1)
+            ->orderBy('name')
+            ->get();
+
+        return view('transfers.index', compact('transfers', 'accounts'));
     }
 
     public function create()
