@@ -11,11 +11,23 @@
                 <p class="text-muted mb-0">Administra tus categorías registradas en GarridoFinance</p>
             </div>
 
-            {{-- btn crear categoria --}}
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
-                <i class="bi bi-plus-circle me-1"></i>
-                Crear nueva categoría
-            </button>
+            <div class="d-flex align-items-center gap-2">
+                {{-- Select para filtrar por tipo de categoría --}}
+                <form method="GET" action="{{ route('categories.index') }}" id="filterTypeForm">
+                    <select name="type" id="filterType" class="form-select"
+                        onchange="document.getElementById('filterTypeForm').submit()">
+                        <option value="" {{ request('type') == '' ? 'selected' : '' }}>Todas las categorías</option>
+                        <option value="income" {{ request('type') == 'income' ? 'selected' : '' }}>Ingresos</option>
+                        <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Gastos</option>
+                    </select>
+                </form>
+
+                {{-- btn crear categoria --}}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Crear nueva categoría
+                </button>
+            </div>
         </div>
 
         {{-- Alerta cueando se crea una categoría --}}
@@ -39,7 +51,7 @@
 
             {{-- cuerpo de la tabla de categorías --}}
             <div class="card-body p-0">
-                
+
                 <div class="table-responsive">
 
                     <table class="table table-hover align-middle mb-0">
@@ -324,20 +336,20 @@
                                 value="{{ old('name') }}" placeholder="Ej. Efectivo, BBVA, Santander">
                         </div>
 
+                        {{-- SELECT DE CATEGORÍA --}}
                         <div class="mb-3">
                             <label for="type" class="form-label">Tipo de categoría</label>
 
-                            <select name="type" id="type{{ $category->id }}" class="form-select">
+                            <select name="type" id="type" class="form-select">
 
-                                <option value="income" {{ old('type', $category->type) == 'income' ? 'selected' : '' }}>
+                                <option value="income" {{ old('type') == 'income' ? 'selected' : '' }}>
                                     Ingreso
                                 </option>
 
-                                <option value="expense" {{ old('type', $category->type) == 'expense' ? 'selected' : '' }}>
+                                <option value="expense" {{ old('type') == 'expense' ? 'selected' : '' }}>
                                     Gasto
                                 </option>
                             </select>
-
                         </div>
 
                         <div class="mb-3">
@@ -365,7 +377,7 @@
 
             </div>
         </div>
-    </div> 
+    </div>
 
     @push('scripts')
         <script>

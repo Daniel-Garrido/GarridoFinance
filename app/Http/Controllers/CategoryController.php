@@ -1,15 +1,24 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::orderBy('id', 'desc')->get();
+        $query = Category::orderBy('id', 'desc');
+
+        // Filtrar por tipo si se proporciona en la solicitud
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $categories = $query->get();
+
         return view('categories.index', compact('categories'));
     }
 
@@ -27,7 +36,7 @@ class CategoryController extends Controller
         ]);
 
         Category::create([
-            'user_id' => Auth::id(), 
+            'user_id' => Auth::id(),
             'name' => $validated['name'],
             'type' => $validated['type'],
             'is_active' => $validated['is_active'],
