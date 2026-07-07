@@ -3,14 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
     public function index()
     {
-        $accounts = Account::latest()->get();
+        
+        // Obtener todas las cuentas del usuario autenticado con los cálculos de saldo
+        $accounts = Account::where('user_id', Auth::id())
+            ->latest()
+            ->withSum(['transactions as income_sum' => function ($q) {
+                $q->where('type', 'income');
+            }], 'amount')
+            ->withSum(['transactions as expense_sum' => function ($q) {
+                $q->where('type', 'expense');
+            }], 'amount')
+            ->withSum('incomingTransfers as transfers_in_sum', 'amount')
+            ->withSum('outgoingTransfers as transfers_out_sum', 'amount')
+            ->get();
+
         return view('accounts.index', compact('accounts'));
     }
 

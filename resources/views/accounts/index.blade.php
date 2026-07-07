@@ -46,6 +46,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="ps-4">Nombre de la cuenta</th>
+                                <th>Saldo total</th>
                                 <th>Tipo de cuenta</th>
                                 <th>Estado</th>
                                 <th class="text-end pe-4">Opciones</th>
@@ -75,6 +76,15 @@
                                             </div>
                                         </div>
                                     </td>
+                                    
+                                    {{-- saldo de la cuenta --}}
+                                    <td>
+                                        <span
+                                            class="fw-semibold {{ $account->balance < 0 ? 'text-danger' : 'text-dark' }}">
+                                            ${{ number_format($account->balance, 2) }} MXN
+                                        </span>
+                                    </td>
+
 
                                     {{-- tipo de cuenta --}}
                                     <td>
@@ -82,6 +92,8 @@
                                             {{ ucfirst($account->type) }}
                                         </span>
                                     </td>
+
+                                  
 
                                     {{-- si esta activa la cuenta --}}
                                     <td>
@@ -140,7 +152,8 @@
                                                 <div class="modal-body">
 
                                                     <div class="mb-3">
-                                                        <label for="name{{ $account->id }}" class="form-label">Nombre de la
+                                                        <label for="name{{ $account->id }}" class="form-label">Nombre de
+                                                            la
                                                             cuenta</label>
                                                         <input type="text" name="name" id="name{{ $account->id }}"
                                                             class="form-control" value="{{ old('name', $account->name) }}">
