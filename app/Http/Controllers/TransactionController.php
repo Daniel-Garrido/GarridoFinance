@@ -12,13 +12,60 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::with(['account', 'category', 'paymentMethod'])
-            ->orderBy('date', 'desc')
+        $query = Transaction::with(['account', 'category', 'paymentMethod']);
+
+        // filtro por tipo
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // filtro por categoría
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // filtro por periodo
+        if ($request->filled('period')) {
+            switch ($request->period) {
+
+                case 'day':
+                    if ($request->filled('date')) {
+                        $query->whereDate('date', $request->date);
+                    }
+                    break;
+
+                case 'week':
+                    if ($request->filled('week')) {
+                        // formato recibido del input type="week": "2026-W27"
+                        [$year, $week] = explode('-W', $request->week);
+                        $startOfWeek = \Carbon\Carbon::now()->setISODate((int) $year, (int) $week)->startOfWeek();
+                        $endOfWeek = $startOfWeek->copy()->endOfWeek();
+                        $query->whereBetween('date', [$startOfWeek, $endOfWeek]);
+                    }
+                    break;
+
+                case 'month':
+                    if ($request->filled('month')) {
+                        // formato recibido del input type="month": "2026-07"
+                        [$year, $month] = explode('-', $request->month);
+                        $query->whereYear('date', $year)->whereMonth('date', $month);
+                    }
+                    break;
+
+                case 'year':
+                    if ($request->filled('year')) {
+                        $query->whereYear('date', $request->year);
+                    }
+                    break;
+            }
+        }
+
+        $transactions = $query->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
             ->get();
-        
+
         $accounts = Account::all();
         $categories = Category::all();
         $paymentMethods = PaymentMethod::all();
@@ -49,7 +96,7 @@ class TransactionController extends Controller
         ]);
 
         Transaction::create([
-            'user_id' => Auth::id(), 
+            'user_id' => Auth::id(),
             'date' => $validated['date'],
             'type' => $validated['type'],
             'amount' => $validated['amount'],

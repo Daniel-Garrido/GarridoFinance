@@ -20,11 +20,101 @@
                 <p class="text-muted mb-0">Administra tus transacciones registradas en GarridoFinance</p>
             </div>
 
-            {{-- btn crear transacción --}}
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTransactionModal">
-                <i class="bi bi-plus-circle me-1"></i>
-                Crear una transacción
-            </button>
+
+        </div>
+        {{-- contenedor de filtros --}}
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ route('transactions.index') }}" id="filterForm"
+                    class="row g-3 align-items-end">
+
+                    {{-- filtro por tipo --}}
+                    <div class="col-md-2">
+                        <label for="filter_type">Tipo</label>
+                        <select name="type" id="filter_type" class="form-select">
+                            <option value="">Todas</option>
+                            <option value="income" {{ request('type') == 'income' ? 'selected' : '' }}>Ingreso</option>
+                            <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Gasto</option>
+                        </select>
+                    </div>
+
+                    {{-- filtro por categoría --}}
+                    <div class="col-md-2">
+                        <label for="filter_category_id">Categoría</label>
+                        <select name="category_id" id="filter_category_id" class="form-select">
+                            <option value="">Todas</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}" data-type="{{ $category->type }}"
+                                    {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- filtro por periodo --}}
+                    <div class="col-md-2">
+                        <label for="filter_period">Periodo</label>
+                        <select name="period" id="filter_period" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="day" {{ request('period') == 'day' ? 'selected' : '' }}>Día</option>
+                            <option value="week" {{ request('period') == 'week' ? 'selected' : '' }}>Semana</option>
+                            <option value="month" {{ request('period') == 'month' ? 'selected' : '' }}>Mes</option>
+                            <option value="year" {{ request('period') == 'year' ? 'selected' : '' }}>Año</option>
+                        </select>
+                    </div>
+
+                    {{-- input dinámico: día --}}
+                    <div class="col-md-2" id="period_day_wrapper" style="display:none;">
+                        <label for="filter_date">Fecha</label>
+                        <input type="date" name="date" id="filter_date" class="form-control"
+                            value="{{ request('date') }}">
+                    </div>
+
+                    {{-- input dinámico: semana --}}
+                    <div class="col-md-2" id="period_week_wrapper" style="display:none;">
+                        <label for="filter_week">Semana</label>
+                        <input type="week" name="week" id="filter_week" class="form-control"
+                            value="{{ request('week') }}">
+                    </div>
+
+                    {{-- input dinámico: mes --}}
+                    <div class="col-md-2" id="period_month_wrapper" style="display:none;">
+                        <label for="filter_month">Mes</label>
+                        <input type="month" name="month" id="filter_month" class="form-control"
+                            value="{{ request('month') }}">
+                    </div>
+
+                    {{-- input dinámico: año --}}
+                    <div class="col-md-2" id="period_year_wrapper" style="display:none;">
+                        <label for="filter_year">Año</label>
+                        <input type="number" name="year" id="filter_year" class="form-control" min="2000"
+                            max="2100" placeholder="2026" value="{{ request('year') }}">
+                    </div>
+
+                    {{-- botones --}}
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel me-1"></i> Filtrar
+                        </button>
+                        <a href="{{ route('transactions.index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="col-md-2 d-flex gap-2">
+                        {{-- btn crear transacción --}}
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#createTransactionModal">
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Crear una transacción
+                        </button>
+
+                    </div>
+
+
+                </form>
+            </div>
         </div>
 
         {{-- contenedor de la tabla  transacciones --}}
@@ -104,14 +194,15 @@
                                     <td class="text-end pe-4">
 
                                         {{--  btn para editar la transaccion --}}
-                                        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
+                                        <button type="button" class="btn btn-outline-warning btn-sm"
+                                            data-bs-toggle="modal"
                                             data-bs-target="#editTransactionModal{{ $transaction->id }}">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
 
                                         {{-- opcion para eliminar la transaccion --}}
-                                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#deleteTransactionModal"
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#deleteTransactionModal"
                                             data-action="{{ route('transactions.destroy', $transaction) }}"
                                             data-name="{{ $transaction->type }}">
                                             <i class="bi bi-trash"></i>
@@ -136,11 +227,13 @@
                                                 </h5>
 
                                                 {{-- btn cerrar modal --}}
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                <button type="button" class="btn-close"
+                                                    data-bs-dismiss="modal"></button>
                                             </div>
 
                                             {{-- Formulario para editar transaccion --}}
-                                            <form action="{{ route('transactions.update', $transaction) }}" method="POST">
+                                            <form action="{{ route('transactions.update', $transaction) }}"
+                                                method="POST">
 
                                                 @csrf
                                                 @method('PUT')
@@ -154,10 +247,13 @@
                                                             value="{{ old('date', $transaction->date) }}">
                                                     </div>
 
+
                                                     {{-- contenedor de tipo de transacción --}}
                                                     <div class="mb-3">
-                                                        <label for="type">Tipo de transacción:</label>
-                                                        <select name="type" id="type" class="form-select">
+                                                        <label for="type{{ $transaction->id }}">Tipo de
+                                                            transacción:</label>
+                                                        <select name="type" id="type{{ $transaction->id }}"
+                                                            class="form-select">
 
                                                             <option
                                                                 value="income"{{ old('type', $transaction->type) == 'income' ? 'selected' : '' }}>
@@ -192,13 +288,15 @@
                                                         </select>
                                                     </div>
 
+
                                                     {{-- contenedor de categoría --}}
                                                     <div class="mb-3">
-                                                        <label for="category_id">Categoría:</label>
-                                                        <select name="category_id" id="category_id">
+                                                        <label for="category_id{{ $transaction->id }}">Categoría:</label>
+                                                        <select name="category_id"
+                                                            id="category_id{{ $transaction->id }}">
                                                             @foreach ($categories as $category)
-                                                                <option
-                                                                    value="{{ $category->id }}"{{ old('category_id', $transaction->category_id) == $category->id ? 'selected' : '' }}>
+                                                                <option value="{{ $category->id }}"
+                                                                    data-type="{{ $category->type }}"{{ old('category_id', $transaction->category_id) == $category->id ? 'selected' : '' }}>
                                                                     {{ $category->name }}
                                                                     ({{ $category->type === 'income' ? 'Ingreso' : 'Gasto' }})
                                                                 </option>
@@ -222,7 +320,8 @@
                                                     {{-- contenedor de es histórica --}}
                                                     <div class="mb-3">
                                                         <label for="is_historical">¿Es histórica?</label>
-                                                        <select name="is_historical" id="is_historical" class="form-select">
+                                                        <select name="is_historical" id="is_historical"
+                                                            class="form-select">
                                                             <option value="0"
                                                                 {{ old('is_historical', $transaction->is_historical) == 0 ? 'selected' : '' }}>
                                                                 No</option>
@@ -384,12 +483,13 @@
                             </select>
                         </div>
 
+
                         {{-- categoría --}}
                         <div class="mb-3">
                             <label for="create_category_id">Categoría:</label>
                             <select name="category_id" id="create_category_id" class="form-select">
                                 @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}"
+                                    <option value="{{ $category->id }}" data-type="{{ $category->type }}"
                                         {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
                                         ({{ $category->type === 'income' ? 'Ingreso' : 'Gasto' }})
@@ -452,12 +552,84 @@
                 const action = button.getAttribute('data-action');
                 const name = button.getAttribute('data-name');
 
-                // Asignar la URL correcta al formulario
                 document.getElementById('deleteTransactionForm').action = action;
-
-                // Mostrar el nombre de la transacción
                 document.getElementById('deleteTransactionName').textContent = name;
             });
+
+            // === NUEVO: filtrado de categorías según tipo de transacción ===
+            function filterCategoriesByType(typeSelect, categorySelect) {
+                const selectedType = typeSelect.value;
+                const options = categorySelect.querySelectorAll('option');
+
+                options.forEach(option => {
+                    if (option.dataset.type === selectedType) {
+                        option.hidden = false;
+                    } else {
+                        option.hidden = true;
+                        if (option.selected) option.selected = false;
+                    }
+                });
+
+                const currentSelected = categorySelect.querySelector('option:checked');
+                if (!currentSelected || currentSelected.hidden) {
+                    const firstVisible = categorySelect.querySelector('option:not([hidden])');
+                    if (firstVisible) firstVisible.selected = true;
+                }
+            }
+
+            // Modal de crear
+            const createType = document.getElementById('create_type');
+            const createCategory = document.getElementById('create_category_id');
+            createType.addEventListener('change', () => filterCategoriesByType(createType, createCategory));
+            filterCategoriesByType(createType, createCategory);
+
+            // Modal de editar (uno por cada transacción)
+            document.querySelectorAll('[id^="editTransactionModal"]').forEach(modal => {
+                const transactionId = modal.id.replace('editTransactionModal', '');
+                const typeSelect = document.getElementById('type' + transactionId);
+                const categorySelect = document.getElementById('category_id' + transactionId);
+
+                if (typeSelect && categorySelect) {
+                    typeSelect.addEventListener('change', () => filterCategoriesByType(typeSelect, categorySelect));
+                    modal.addEventListener('show.bs.modal', () => filterCategoriesByType(typeSelect, categorySelect));
+                }
+            });
+
+            // === Mostrar el input correcto según el periodo elegido en el filtro ===
+            const periodSelect = document.getElementById('filter_period');
+            const periodWrappers = {
+                day: document.getElementById('period_day_wrapper'),
+                week: document.getElementById('period_week_wrapper'),
+                month: document.getElementById('period_month_wrapper'),
+                year: document.getElementById('period_year_wrapper'),
+            };
+
+            function togglePeriodInputs() {
+                Object.values(periodWrappers).forEach(w => w.style.display = 'none');
+                const selected = periodSelect.value;
+                if (periodWrappers[selected]) {
+                    periodWrappers[selected].style.display = 'block';
+                }
+            }
+            periodSelect.addEventListener('change', togglePeriodInputs);
+            togglePeriodInputs(); // aplica al cargar, respeta el filtro activo desde la URL
+
+            // === Filtrar categorías del filtro según el tipo elegido ===
+            const filterType = document.getElementById('filter_type');
+            const filterCategory = document.getElementById('filter_category_id');
+
+            function filterCategoriesInFilterBar() {
+                const selectedType = filterType.value;
+                filterCategory.querySelectorAll('option').forEach(opt => {
+                    if (!opt.value || !opt.dataset.type || opt.dataset.type === selectedType) {
+                        opt.hidden = false;
+                    } else {
+                        opt.hidden = true;
+                    }
+                });
+            }
+            filterType.addEventListener('change', filterCategoriesInFilterBar);
+            filterCategoriesInFilterBar(); // aplica al cargar, respeta el filtro activo desde la URL
         </script>
     @endpush
 
