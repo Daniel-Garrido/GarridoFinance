@@ -31,43 +31,68 @@
     {{-- ESTRUCTURA PRINCIPAL --}}
     <div class="d-flex">
 
-        {{-- MENÚ LATERAL --}}
-        <aside class="vh-100 bg-white shadow ">
-            <ul class="nav flex-column">
+        {{-- MENÚ LATERAL FIJO --}}
+        <aside class="sidebar bg-white shadow d-flex flex-column">
+            <ul class="nav flex-column flex-grow-1">
 
                 <li class="nav-item nav-item-main-li mb-2 p-2">
-                    <a href="{{ route('dashboard.index') }}" class="nav-link text-dark">
+                    <a href="{{ route('dashboard.index') }}"
+                        class="nav-link text-dark {{ request()->routeIs('dashboard.*') ? 'active' : '' }}">
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
                 </li>
 
                 <li class="nav-item nav-item-main-li mb-2 p-2">
-                    <a href="{{ route('accounts.index') }}" class="nav-link text-dark">
+                    <a href="{{ route('accounts.index') }}"
+                        class="nav-link text-dark {{ request()->routeIs('accounts.*') ? 'active' : '' }}">
                         <i class="bi bi-wallet"></i> Cuentas
                     </a>
                 </li>
 
                 <li class="nav-item nav-item-main-li mb-2 p-2">
-                    <a href="{{ route('categories.index') }}" class="nav-link text-dark">
+                    <a href="{{ route('categories.index') }}"
+                        class="nav-link text-dark {{ request()->routeIs('categories.*') ? 'active' : '' }}">
                         <i class="bi bi-tag"></i> Categorías
                     </a>
                 </li>
 
                 <li class="nav-item nav-item-main-li mb-2 p-2">
-                    <a href="{{ route('payment-methods.index') }}" class="nav-link text-dark">
+                    <a href="{{ route('payment-methods.index') }}"
+                        class="nav-link text-dark {{ request()->routeIs('payment-methods.*') ? 'active' : '' }}">
                         <i class="bi bi-credit-card"></i> Métodos de pago
                     </a>
                 </li>
 
                 <li class="nav-item nav-item-main-li mb-2 p-2">
-                    <a href="{{ route('transactions.index') }}" class="nav-link text-dark">
+                    <a href="{{ route('transactions.index') }}"
+                        class="nav-link text-dark {{ request()->routeIs('transactions.*') ? 'active' : '' }}">
                         <i class="bi bi-currency-dollar"></i> Transacciones
                     </a>
                 </li>
 
                 <li class="nav-item nav-item-main-li mb-2 p-2">
-                    <a href="{{ route('transfers.index') }}" class="nav-link text-dark">
+                    <a href="{{ route('transfers.index') }}"
+                        class="nav-link text-dark {{ request()->routeIs('transfers.*') ? 'active' : '' }}">
                         <i class="bi bi-arrow-left-right"></i> Transferencias
+                    </a>
+                </li>
+
+            </ul>
+
+            {{-- SEPARADOR + OPCIONES INFERIORES --}}
+            <ul class="nav flex-column border-top pt-2 mb-2">
+
+                <li class="nav-item nav-item-main-li mb-2 p-2">
+                    <a href=""
+                        class="nav-link text-dark {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                        <i class="bi bi-person-circle"></i> Perfil
+                    </a>
+                </li>
+
+                <li class="nav-item nav-item-main-li mb-2 p-2">
+                    <a href=""
+                        class="nav-link text-dark {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                        <i class="bi bi-gear"></i> Ajustes
                     </a>
                 </li>
 
@@ -85,7 +110,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     @stack('scripts')
-    
+
 </body>
 
 </html>

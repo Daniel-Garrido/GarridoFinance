@@ -1,0 +1,64 @@
+:root {
+    --sidebar-width: 240px;
+    --navbar-height: 70px; /* ajusta al alto real de tu navbar */
+}
+
+/* Navbar fijo arriba */
+.content-nav {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--navbar-height);
+    z-index: 1030;
+}
+
+/* Sidebar fijo debajo del navbar */
+.sidebar {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--navbar-height));
+    overflow-y: auto;
+    z-index: 1020;
+}
+
+/* Empuja el contenido para que no quede debajo del sidebar/navbar */
+.content-main {
+    margin-left: var(--sidebar-width);
+    margin-top: var(--navbar-height);
+    padding: 1.5rem;
+    width: 100%;
+}
+
+/* Opcional: resaltar el link activo */
+.sidebar .nav-link.active {
+    background-color: #f1f3f5;
+    border-radius: 0.375rem;
+    font-weight: 600;
+}
+
+/*Estilo al Contenedor para las gráficas */
+.container-grafic{
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+/* Responsive: colapsa en pantallas chicas (opcional, para cuando lo necesites) */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+    }
+    .content-main {
+        margin-left: 0;
+    }
+}
+
+
+
+
