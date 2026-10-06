@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#F5F4FB;}
+  *{box-sizing:border-box;}
+  a{color:#5B3DF5;text-decoration:none;}
+  a:hover{color:#3F23D6;}
+</style>
+</helmet>
+<div style="display:flex;align-items:stretch;min-height:100vh;background:#F5F4FB;font-family:'Open Sans',system-ui,sans-serif;color:#1B1633;">
+
+  <aside style="flex:none;width:252px;background:#fff;border-right:1px solid #ECEAF6;display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;align-self:flex-start;height:100vh;">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 8px 22px;">
+      <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,#6D4AFF,#3F23D6);display:flex;align-items:center;justify-content:center;flex:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V9"></path><path d="M9.5 18V5"></path><path d="M15 18v-7"></path><path d="M20 18V7"></path></svg>
+      </div>
+      <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;letter-spacing:-0.4px;">GarridoFinance</span>
+    </div>
+
+    <nav style="display:flex;flex-direction:column;gap:3px;">
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;background:#EFEBFF;color:#4A2BE0;font-size:13.5px;font-weight:700;cursor:pointer;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h13a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7Z"></path><path d="M3 7V6a2 2 0 0 1 2-2h9"></path><path d="M14.5 13.5h2.5"></path></svg>
+        <span>Dashboard</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;cursor:pointer;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3 10h18"></path></svg>
+        <span>Cuentas</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;cursor:pointer;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5V6a2 2 0 0 1 2-2h5.5L20 12.5 12.5 20 4 11.5Z"></path><circle cx="8.5" cy="8.5" r="1.3"></circle></svg>
+        <span>Categorías</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;cursor:pointer;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><path d="M2.5 10h19"></path><path d="M6 14.5h3"></path></svg>
+        <span>Métodos de pago</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;cursor:pointer;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M8 8h6a2.5 2.5 0 0 1 0 5H8h6a2.5 2.5 0 0 1 0 5H8"></path></svg>
+        <span>Transacciones</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;cursor:pointer;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3"></path><path d="M20 16H7l3 3"></path></svg>
+        <span>Transferencias</span>
+      </div>
+
+      <div style="height:1px;background:#ECEAF6;margin:12px 12px;"></div>
+
+      <a href="Perfil.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1.2-3.5 3.8-5 7-5s5.8 1.5 7 5"></path></svg>
+        <span>Perfil</span>
+      </a>
+      <a href="Ajustes.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"></path></svg>
+        <span>Ajustes</span>
+      </a>
+    </nav>
+
+  </aside>
+
+  <main style="flex:1;min-width:0;padding:26px 30px 40px;display:flex;flex-direction:column;gap:20px;">
+
+    <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+      <div>
+        <h1 style="margin:0 0 5px;font-family:Montserrat,sans-serif;font-weight:700;font-size:26px;letter-spacing:-0.6px;">Bienvenido, Mariana</h1>
+        <p style="margin:0;font-size:13px;color:#6E6A85;">Martes, 15 de septiembre de 2026 · Resumen de tus finanzas</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:8px;background:#5B3DF5;color:#fff;border-radius:10px;padding:10px 15px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(91,61,245,.28);" style-hover="background:#4A2BE0">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+          Nueva transacción
+        </div>
+        <div style="width:38px;height:38px;border-radius:50%;background:#E4E0F5;color:#4A2BE0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none;">MR</div>
+      </div>
+    </header>
+
+    <section style="background:#fff;border:1px solid #ECEAF6;border-radius:16px;padding:16px 18px;box-shadow:0 4px 14px rgba(27,22,51,.05);display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;">
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:150px;flex:1;position:relative;">
+        <label style="font-size:11.5px;font-weight:700;color:#6E6A85;letter-spacing:.2px;">Ver por</label>
+        <div onClick="{{ toggleRange }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #DFDCEF;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;user-select:none;" style-hover="border-color:#B9AEF5">
+          <span>{{ rangeLabel }}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B87A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </div>
+        <sc-if value="{{ rangeOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:100%;left:0;right:0;margin-top:6px;background:#fff;border:1px solid #DFDCEF;border-radius:10px;box-shadow:0 12px 26px rgba(27,22,51,.12);padding:5px;z-index:30;display:flex;flex-direction:column;gap:2px;">
+            <sc-for list="{{ rangeOptions }}" as="opt" hint-placeholder-count="3">
+              <div onClick="{{ opt.pick }}" style="padding:9px 11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:{{ opt.bg }};color:{{ opt.fg }};" style-hover="background:#F7F6FC">{{ opt.label }}</div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:190px;flex:1;position:relative;">
+        <label style="font-size:11.5px;font-weight:700;color:#6E6A85;letter-spacing:.2px;">{{ periodLabel }}</label>
+        <div onClick="{{ togglePeriod }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #DFDCEF;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;user-select:none;" style-hover="border-color:#B9AEF5">
+          <span>{{ periodValue }}</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8B87A0" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="16" rx="3"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>
+        </div>
+        <sc-if value="{{ periodOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:100%;left:0;right:0;margin-top:6px;background:#fff;border:1px solid #DFDCEF;border-radius:10px;box-shadow:0 12px 26px rgba(27,22,51,.12);padding:5px;z-index:30;display:flex;flex-direction:column;gap:2px;max-height:230px;overflow:auto;">
+            <sc-for list="{{ periodOptions }}" as="opt" hint-placeholder-count="4">
+              <div onClick="{{ opt.pick }}" style="padding:9px 11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:{{ opt.bg }};color:{{ opt.fg }};" style-hover="background:#F7F6FC">{{ opt.label }}</div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="background:#5B3DF5;color:#fff;border-radius:10px;padding:11px 26px;font-size:13px;font-weight:700;cursor:pointer;" style-hover="background:#4A2BE0">Filtrar</div>
+        <div style="width:42px;height:42px;border:1px solid #DFDCEF;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#8B87A0;" style-hover="border-color:#F2618A;color:#D13457" title="Limpiar filtros">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M9 9l6 6M15 9l-6 6"></path></svg>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:16px;">
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:16px;padding:18px 20px;box-shadow:0 4px 14px rgba(27,22,51,.05);">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:11.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:#8B87A0;">Ingresos totales</span>
+          <span style="width:28px;height:28px;border-radius:9px;background:#EFEBFF;display:flex;align-items:center;justify-content:center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5B3DF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V9M9.5 18V5M15 18v-7M20 18V7"></path></svg>
+          </span>
+        </div>
+        <p style="margin:12px 0 0;font-family:Montserrat,sans-serif;font-weight:700;font-size:23px;letter-spacing:-0.7px;">$152,850.00 <span style="font-size:13px;font-weight:600;color:#8B87A0;">MXN</span></p>
+      </div>
+
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:16px;padding:18px 20px;box-shadow:0 4px 14px rgba(27,22,51,.05);">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:11.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:#8B87A0;">Ingresos del mes</span>
+          <span style="width:28px;height:28px;border-radius:9px;background:#E3F7EF;display:flex;align-items:center;justify-content:center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0F8F68" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+          </span>
+        </div>
+        <p style="margin:12px 0 0;font-family:Montserrat,sans-serif;font-weight:700;font-size:23px;letter-spacing:-0.7px;color:#0F8F68;">$17,200.00 <span style="font-size:13px;font-weight:600;color:#5FB79C;">MXN</span></p>
+      </div>
+
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:16px;padding:18px 20px;box-shadow:0 4px 14px rgba(27,22,51,.05);">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:11.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:#8B87A0;">Gastos del mes</span>
+          <span style="width:28px;height:28px;border-radius:9px;background:#FDE7EC;display:flex;align-items:center;justify-content:center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D13457" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>
+          </span>
+        </div>
+        <p style="margin:12px 0 0;font-family:Montserrat,sans-serif;font-weight:700;font-size:23px;letter-spacing:-0.7px;color:#D13457;">$16,815.00 <span style="font-size:13px;font-weight:600;color:#C9899B;">MXN</span></p>
+      </div>
+
+      <div style="background:linear-gradient(145deg,#5B3DF5,#3A1FC4);border-radius:16px;padding:18px 20px;box-shadow:0 10px 24px rgba(59,32,180,.22);color:#fff;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:11.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:#D9D1FF;">Balance total</span>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#D9D1FF" stroke-width="2" stroke-linecap="round"><path d="M3 7h13a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7Z"></path><path d="M3 7V6a2 2 0 0 1 2-2h9"></path></svg>
+        </div>
+        <p style="margin:12px 0 0;font-family:Montserrat,sans-serif;font-weight:700;font-size:23px;letter-spacing:-0.7px;">$19,635.00 <span style="font-size:13px;font-weight:600;color:#CFC6FF;">MXN</span></p>
+      </div>
+    </section>
+
+    <section style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;padding:2px 2px 0;">
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:150px;position:relative;">
+        <label style="font-size:11.5px;font-weight:700;color:#6E6A85;">Ver gráficas por</label>
+        <div onClick="{{ toggleChart }}" style="display:flex;align-items:center;justify-content:space-between;gap:26px;border:1px solid #DFDCEF;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;background:#fff;cursor:pointer;user-select:none;" style-hover="border-color:#B9AEF5">
+          <span>{{ chartRangeLabel }}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B87A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </div>
+        <sc-if value="{{ chartOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:100%;left:0;right:0;margin-top:6px;background:#fff;border:1px solid #DFDCEF;border-radius:10px;box-shadow:0 12px 26px rgba(27,22,51,.12);padding:5px;z-index:30;display:flex;flex-direction:column;gap:2px;">
+            <sc-for list="{{ chartOptions }}" as="opt" hint-placeholder-count="2">
+              <div onClick="{{ opt.pick }}" style="padding:9px 11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:{{ opt.bg }};color:{{ opt.fg }};" style-hover="background:#F7F6FC">{{ opt.label }}</div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:150px;position:relative;">
+        <label style="font-size:11.5px;font-weight:700;color:#6E6A85;">{{ chartPeriodLabel }}</label>
+        <div onClick="{{ toggleChartPeriod }}" style="display:flex;align-items:center;justify-content:space-between;gap:26px;border:1px solid #DFDCEF;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;background:#fff;cursor:pointer;user-select:none;" style-hover="border-color:#B9AEF5">
+          <span>{{ chartPeriodValue }}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B87A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </div>
+        <sc-if value="{{ chartPeriodOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:100%;left:0;right:0;margin-top:6px;background:#fff;border:1px solid #DFDCEF;border-radius:10px;box-shadow:0 12px 26px rgba(27,22,51,.12);padding:5px;z-index:30;display:flex;flex-direction:column;gap:2px;max-height:230px;overflow:auto;">
+            <sc-for list="{{ chartPeriodOptions }}" as="opt" hint-placeholder-count="3">
+              <div onClick="{{ opt.pick }}" style="padding:9px 11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:{{ opt.bg }};color:{{ opt.fg }};" style-hover="background:#F7F6FC">{{ opt.label }}</div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="background:#EFEBFF;color:#4A2BE0;border-radius:10px;padding:11px 26px;font-size:13px;font-weight:700;cursor:pointer;" style-hover="background:#E0D8FF">Aplicar</div>
+    </section>
+
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;">
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,22,51,.05);min-width:0;">
+        <h2 style="margin:0 0 3px;font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;">Ingresos por meses</h2>
+        <p style="margin:0 0 6px;font-size:12px;color:#8B87A0;">2026 · MXN</p>
+        <svg viewBox="0 0 600 250" width="100%" style="display:block;height:auto;">
+          <g stroke="#F0EEF8" stroke-width="1">
+            <line x1="72" y1="30" x2="590" y2="30"></line><line x1="72" y1="72.5" x2="590" y2="72.5"></line><line x1="72" y1="115" x2="590" y2="115"></line><line x1="72" y1="157.5" x2="590" y2="157.5"></line><line x1="72" y1="200" x2="590" y2="200"></line>
+          </g>
+          <g font-family="Open Sans,sans-serif" font-size="12" fill="#6E6A85" text-anchor="end">
+            <text x="60" y="34">25,000</text><text x="60" y="119">12,500</text><text x="60" y="204">0</text>
+          </g>
+          <g fill="#5B3DF5">
+            <rect x="78.7" y="89.8" width="26" height="110.2" rx="5"></rect>
+            <rect x="122" y="92.6" width="26" height="107.4" rx="5"></rect>
+            <rect x="165.3" y="81.7" width="26" height="118.3" rx="5"></rect>
+            <rect x="208.7" y="98.7" width="26" height="101.3" rx="5"></rect>
+            <rect x="252" y="47" width="26" height="153" rx="5"></rect>
+            <rect x="295.3" y="93.9" width="26" height="106.1" rx="5"></rect>
+            <rect x="338.7" y="84.7" width="26" height="115.3" rx="5"></rect>
+            <rect x="382" y="89.2" width="26" height="110.8" rx="5"></rect>
+            <rect x="425.3" y="83" width="26" height="117" rx="5"></rect>
+          </g>
+          <g fill="#EFEBFF">
+            <rect x="468.7" y="192" width="26" height="8" rx="4"></rect><rect x="512" y="192" width="26" height="8" rx="4"></rect><rect x="555.3" y="192" width="26" height="8" rx="4"></rect>
+          </g>
+          <g font-family="Open Sans,sans-serif" font-size="12" fill="#8B87A0" text-anchor="middle">
+            <text x="91.7" y="222">Ene</text><text x="135" y="222">Feb</text><text x="178.3" y="222">Mar</text><text x="221.7" y="222">Abr</text><text x="265" y="222">May</text><text x="308.3" y="222">Jun</text><text x="351.7" y="222">Jul</text><text x="395" y="222">Ago</text><text x="438.3" y="222" fill="#4A2BE0" font-weight="700">Sep</text><text x="481.7" y="222">Oct</text><text x="525" y="222">Nov</text><text x="568.3" y="222">Dic</text>
+          </g>
+        </svg>
+      </div>
+
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,22,51,.05);min-width:0;">
+        <h2 style="margin:0 0 3px;font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;">Gastos por meses</h2>
+        <p style="margin:0 0 6px;font-size:12px;color:#8B87A0;">2026 · MXN</p>
+        <svg viewBox="0 0 600 250" width="100%" style="display:block;height:auto;">
+          <g stroke="#F0EEF8" stroke-width="1">
+            <line x1="72" y1="30" x2="590" y2="30"></line><line x1="72" y1="72.5" x2="590" y2="72.5"></line><line x1="72" y1="115" x2="590" y2="115"></line><line x1="72" y1="157.5" x2="590" y2="157.5"></line><line x1="72" y1="200" x2="590" y2="200"></line>
+          </g>
+          <g font-family="Open Sans,sans-serif" font-size="12" fill="#6E6A85" text-anchor="end">
+            <text x="60" y="34">25,000</text><text x="60" y="119">12,500</text><text x="60" y="204">0</text>
+          </g>
+          <g fill="#F2618A">
+            <rect x="78.7" y="110.9" width="26" height="89.1" rx="5"></rect>
+            <rect x="122" y="123.8" width="26" height="76.2" rx="5"></rect>
+            <rect x="165.3" y="99.4" width="26" height="100.6" rx="5"></rect>
+            <rect x="208.7" y="114.3" width="26" height="85.7" rx="5"></rect>
+            <rect x="252" y="68.1" width="26" height="131.9" rx="5"></rect>
+            <rect x="295.3" y="104.1" width="26" height="95.9" rx="5"></rect>
+            <rect x="338.7" y="96" width="26" height="104" rx="5"></rect>
+            <rect x="382" y="91.9" width="26" height="108.1" rx="5"></rect>
+            <rect x="425.3" y="85.7" width="26" height="114.3" rx="5"></rect>
+          </g>
+          <g fill="#FDE7EC">
+            <rect x="468.7" y="192" width="26" height="8" rx="4"></rect><rect x="512" y="192" width="26" height="8" rx="4"></rect><rect x="555.3" y="192" width="26" height="8" rx="4"></rect>
+          </g>
+          <g font-family="Open Sans,sans-serif" font-size="12" fill="#8B87A0" text-anchor="middle">
+            <text x="91.7" y="222">Ene</text><text x="135" y="222">Feb</text><text x="178.3" y="222">Mar</text><text x="221.7" y="222">Abr</text><text x="265" y="222">May</text><text x="308.3" y="222">Jun</text><text x="351.7" y="222">Jul</text><text x="395" y="222">Ago</text><text x="438.3" y="222" fill="#D13457" font-weight="700">Sep</text><text x="481.7" y="222">Oct</text><text x="525" y="222">Nov</text><text x="568.3" y="222">Dic</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;align-items:start;">
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,22,51,.05);min-width:0;">
+        <h2 style="margin:0 0 3px;font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;">Ingresos por categorías</h2>
+        <p style="margin:0 0 12px;font-size:12px;color:#8B87A0;">2026 · total $152,850.00 MXN</p>
+        <div style="display:flex;justify-content:center;">
+          <div style="position:relative;width:186px;height:186px;">
+            <svg viewBox="0 0 200 200" width="186" height="186" style="display:block;transform:rotate(-90deg);">
+              <g fill="none" stroke-width="24" stroke-linecap="butt">
+                <circle cx="100" cy="100" r="70" stroke="#4A2BE0" stroke-dasharray="323 440" stroke-dashoffset="0"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#7C63FF" stroke-dasharray="63 440" stroke-dashoffset="-324.6"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#14A97B" stroke-dasharray="32 440" stroke-dashoffset="-389.3"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#E8B53D" stroke-dasharray="15.7 440" stroke-dashoffset="-422.7"></circle>
+              </g>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;">
+              <span style="font-size:11px;color:#8B87A0;font-weight:600;">Ingresos</span>
+              <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.4px;">$152.8k</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#4A2BE0;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Salario</span>
+            <span style="font-weight:700;color:#0F8F68;white-space:nowrap;">$112,850.00 (73.8%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#7C63FF;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Freelance</span>
+            <span style="font-weight:700;color:#0F8F68;white-space:nowrap;">$22,400.00 (14.7%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#14A97B;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Rentas</span>
+            <span style="font-weight:700;color:#0F8F68;white-space:nowrap;">$11,600.00 (7.6%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#E8B53D;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Otros</span>
+            <span style="font-weight:700;color:#0F8F68;white-space:nowrap;">$6,000.00 (3.9%)</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,22,51,.05);min-width:0;">
+        <h2 style="margin:0 0 3px;font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;">Gastos por categorías</h2>
+        <p style="margin:0 0 12px;font-size:12px;color:#8B87A0;">2026 · total $133,215.00 MXN</p>
+        <div style="display:flex;justify-content:center;">
+          <div style="position:relative;width:186px;height:186px;">
+            <svg viewBox="0 0 200 200" width="186" height="186" style="display:block;transform:rotate(-90deg);">
+              <g fill="none" stroke-width="24" stroke-linecap="butt">
+                <circle cx="100" cy="100" r="70" stroke="#4A2BE0" stroke-dasharray="111.5 440" stroke-dashoffset="0"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#7C63FF" stroke-dasharray="91.3 440" stroke-dashoffset="-113"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#A796FF" stroke-dasharray="84.7 440" stroke-dashoffset="-205.8"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#F2618A" stroke-dasharray="43.4 440" stroke-dashoffset="-292"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#14A97B" stroke-dasharray="38.5 440" stroke-dashoffset="-336.9"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#E8B53D" stroke-dasharray="31.5 440" stroke-dashoffset="-376.9"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#3E9BD6" stroke-dasharray="10.4 440" stroke-dashoffset="-409.9"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#C98BE0" stroke-dasharray="5.1 440" stroke-dashoffset="-421.8"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#5CC9B8" stroke-dasharray="2.9 440" stroke-dashoffset="-428.4"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#E07A4A" stroke-dasharray="2.5 440" stroke-dashoffset="-432.8"></circle>
+                <circle cx="100" cy="100" r="70" stroke="#D9D4EE" stroke-dasharray="2.6 440" stroke-dashoffset="-436.8"></circle>
+              </g>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;">
+              <span style="font-size:11px;color:#8B87A0;font-weight:600;">Gastos</span>
+              <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.4px;">$133.2k</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-top:16px;">
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#4A2BE0;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">TDC BBVA</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$34,250.00 (25.7%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#7C63FF;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Comida y bebida</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$28,113.00 (21.1%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#A796FF;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Otros</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$26,155.00 (19.6%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#F2618A;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">TDC ML</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$13,570.00 (10.2%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#14A97B;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Pago Moto</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$12,100.00 (9.1%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#E8B53D;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Servicios</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$9,977.00 (7.5%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#3E9BD6;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Transporte</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$3,640.00 (2.7%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#C98BE0;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Internet</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$2,000.00 (1.5%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#5CC9B8;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Recargas</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$1,280.00 (1.0%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#E07A4A;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Gasolina</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$1,230.00 (0.9%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#D9D4EE;flex:none;"></span>
+            <span style="flex:1;color:#4A4560;min-width:0;">Corte cabello</span>
+            <span style="font-weight:700;color:#D13457;white-space:nowrap;">$900.00 (0.7%)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,22,51,.05);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0 0 3px;font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;">Ingresos vs gastos por año</h2>
+          <p style="margin:0;font-size:12px;color:#8B87A0;">Comparativa anual · MXN</p>
+        </div>
+        <div style="display:flex;gap:14px;font-size:12px;color:#4A4560;font-weight:600;">
+          <span style="display:flex;align-items:center;gap:6px;"><span style="width:9px;height:9px;border-radius:3px;background:#5B3DF5;"></span>Ingresos</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="width:9px;height:9px;border-radius:3px;background:#F2618A;"></span>Gastos</span>
+        </div>
+      </div>
+      <svg viewBox="0 0 600 240" width="100%" style="display:block;height:auto;">
+        <g stroke="#F0EEF8" stroke-width="1">
+          <line x1="76" y1="30" x2="590" y2="30"></line><line x1="76" y1="72.5" x2="590" y2="72.5"></line><line x1="76" y1="115" x2="590" y2="115"></line><line x1="76" y1="157.5" x2="590" y2="157.5"></line><line x1="76" y1="200" x2="590" y2="200"></line>
+        </g>
+        <g font-family="Open Sans,sans-serif" font-size="12" fill="#6E6A85" text-anchor="end">
+          <text x="64" y="34">160,000</text><text x="64" y="119">80,000</text><text x="64" y="204">0</text>
+        </g>
+        <rect x="160" y="37.6" width="110" height="162.4" rx="7" fill="#5B3DF5"></rect>
+        <rect x="320" y="58.5" width="110" height="141.5" rx="7" fill="#F2618A"></rect>
+        <g font-family="Montserrat,sans-serif" font-size="14" font-weight="700" text-anchor="middle">
+          <text x="215" y="27" fill="#4A2BE0">$152,850</text>
+          <text x="375" y="48" fill="#D13457">$133,215</text>
+        </g>
+        <g font-family="Open Sans,sans-serif" font-size="13" fill="#6E6A85" text-anchor="middle">
+          <text x="215" y="222">Ingresos 2026</text><text x="375" y="222">Gastos 2026</text>
+        </g>
+      </svg>
+    </section>
+
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px;align-items:start;">
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,22,51,.05);min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <h2 style="margin:0;font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;">Últimas transacciones</h2>
+          <a href="#" style="font-size:12.5px;font-weight:700;">Ver todas</a>
+        </div>
+        <div style="display:flex;flex-direction:column;">
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F4F2FA;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#E3F7EF;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F8F68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"></rect><path d="M8 7V5a4 4 0 0 1 8 0v2"></path></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Nómina · Acme S.A.</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">Salario · 15 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#0F8F68;white-space:nowrap;">+$12,450.00</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F4F2FA;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#EFEBFF;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5B3DF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><path d="M2.5 10h19M6 14.5h3"></path></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Pago TDC BBVA</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">TDC BBVA · 14 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#D13457;white-space:nowrap;">−$4,250.00</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F4F2FA;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#FFF2E6;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C97416" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h13l-1.4 8.5a2 2 0 0 1-2 1.7H7.4a2 2 0 0 1-2-1.7L4 6Z"></path><circle cx="9" cy="20" r="1.3"></circle><circle cx="15" cy="20" r="1.3"></circle></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Supermercado La Plaza</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">Comida y bebida · 13 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#D13457;white-space:nowrap;">−$1,482.40</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F4F2FA;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#E8F1FF;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2F6BC9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8"></path><path d="M3 16h18"></path><circle cx="8" cy="18.5" r="1.4"></circle><circle cx="16" cy="18.5" r="1.4"></circle></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Gasolina Shell</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">Gasolina · 12 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#D13457;white-space:nowrap;">−$640.20</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F4F2FA;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#E3F7EF;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F8F68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M8 8h6a2.5 2.5 0 0 1 0 5H8h6a2.5 2.5 0 0 1 0 5H8"></path></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Proyecto freelance</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">Freelance · 11 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#0F8F68;white-space:nowrap;">+$4,750.00</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F4F2FA;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#F1EDFF;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5B3DF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="16" r="3.5"></circle><circle cx="17.5" cy="16" r="3"></circle><path d="M11.5 16h3l1.5-5h-4"></path></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Mensualidad moto</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">Pago Moto · 10 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#D13457;white-space:nowrap;">−$1,512.50</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F4F2FA;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#FFF7E3;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B38311" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V9l7-5 7 5v11"></path><path d="M9.5 20v-5h5v5"></path></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Recibo de luz CFE</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">Servicios · 9 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#D13457;white-space:nowrap;">−$1,108.00</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F4F2FA;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#F5EBFB;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8B4FB0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2.5"></rect><path d="M8 20h8"></path></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Internet Totalplay</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">Internet · 8 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#D13457;white-space:nowrap;">−$629.00</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F4F2FA;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#E3F7EF;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F8F68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"></path><path d="M6 10v9M18 10v9M3 19h18"></path><path d="M10 19v-5h4v5"></path></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Renta local comercial</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">Rentas · 7 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#0F8F68;white-space:nowrap;">+$2,900.00</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;">
+            <span style="width:36px;height:36px;border-radius:11px;background:#EAF6F4;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1F8C81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2.5"></rect><path d="M11 18h2"></path></svg>
+            </span>
+            <div style="flex:1;min-width:0;">
+              <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;">Recarga Telcel</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">Recargas · 6 sep</p>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#D13457;white-space:nowrap;">−$200.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:13px;min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <h2 style="margin:0;font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;">Mis cuentas</h2>
+          <a href="#" style="font-size:12.5px;font-weight:700;">Gestionar</a>
+        </div>
+
+        <div style="background:#fff;border:1px solid #ECEAF6;border-radius:16px;padding:16px 18px;box-shadow:0 4px 14px rgba(27,22,51,.05);display:flex;align-items:center;gap:13px;">
+          <span style="width:40px;height:40px;border-radius:12px;background:#E3F7EF;display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0F8F68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"></rect><circle cx="12" cy="12" r="2.5"></circle></svg>
+          </span>
+          <div style="flex:1;min-width:0;">
+            <p style="margin:0 0 2px;font-size:13.5px;font-weight:700;">Efectivo</p>
+            <p style="margin:0;font-size:11.5px;color:#8B87A0;">Cartera personal</p>
+          </div>
+          <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;white-space:nowrap;">$3,640.00</span>
+        </div>
+
+        <div style="background:#fff;border:1px solid #ECEAF6;border-radius:16px;padding:16px 18px;box-shadow:0 4px 14px rgba(27,22,51,.05);display:flex;align-items:center;gap:13px;">
+          <span style="width:40px;height:40px;border-radius:12px;background:#EFEBFF;display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#5B3DF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 12 4l8 6"></path><path d="M6 10v9M18 10v9M3 19h18"></path><path d="M10 19v-5h4v5"></path></svg>
+          </span>
+          <div style="flex:1;min-width:0;">
+            <p style="margin:0 0 2px;font-size:13.5px;font-weight:700;">Cuenta nómina</p>
+            <p style="margin:0;font-size:11.5px;color:#8B87A0;">BBVA · ****4821</p>
+          </div>
+          <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;white-space:nowrap;">$21,485.00</span>
+        </div>
+
+        <div style="background:#fff;border:1px solid #ECEAF6;border-radius:16px;padding:16px 18px;box-shadow:0 4px 14px rgba(27,22,51,.05);display:flex;align-items:center;gap:13px;">
+          <span style="width:40px;height:40px;border-radius:12px;background:#E8F1FF;display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2F6BC9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><path d="M2.5 10h19M6 14.5h3"></path></svg>
+          </span>
+          <div style="flex:1;min-width:0;">
+            <p style="margin:0 0 2px;font-size:13.5px;font-weight:700;">Débito Banregio</p>
+            <p style="margin:0;font-size:11.5px;color:#8B87A0;">Débito · ****9037</p>
+          </div>
+          <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;white-space:nowrap;">$6,570.00</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    range: "Mes", period: "Septiembre de 2026",
+    chartRange: "Año", chartPeriod: "2026",
+    rangeOpen: false, periodOpen: false, chartOpen: false, chartPeriodOpen: false
+  };
+
+  periodsFor(range) {
+    if (range === "Semana") return ["Semana del 14 al 20 sep","Semana del 7 al 13 sep","Semana del 1 al 6 sep","Semana del 25 al 31 ago"];
+    if (range === "Año") return ["2026","2025","2024"];
+    return ["Septiembre de 2026","Agosto de 2026","Julio de 2026","Junio de 2026","Mayo de 2026","Abril de 2026"];
+  }
+
+  opts(list, current, onPick) {
+    return list.map(label => ({
+      label,
+      bg: label === current ? "#EFEBFF" : "transparent",
+      fg: label === current ? "#4A2BE0" : "#4A4560",
+      pick: () => onPick(label)
+    }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const setRange = label => this.setState({ range: label, period: this.periodsFor(label)[0], rangeOpen: false });
+    const setChartRange = label => this.setState({
+      chartRange: label,
+      chartPeriod: label === "Mes" ? "Septiembre de 2026" : "2026",
+      chartOpen: false
+    });
+    return {
+      rangeLabel: s.range,
+      rangeOpen: s.rangeOpen,
+      rangeOptions: this.opts(["Semana","Mes","Año"], s.range, setRange),
+      toggleRange: () => this.setState({ rangeOpen: !s.rangeOpen, periodOpen: false }),
+
+      periodLabel: s.range,
+      periodValue: s.period,
+      periodOpen: s.periodOpen,
+      periodOptions: this.opts(this.periodsFor(s.range), s.period, l => this.setState({ period: l, periodOpen: false })),
+      togglePeriod: () => this.setState({ periodOpen: !s.periodOpen, rangeOpen: false }),
+
+      chartRangeLabel: s.chartRange,
+      chartOpen: s.chartOpen,
+      chartOptions: this.opts(["Mes","Año"], s.chartRange, setChartRange),
+      toggleChart: () => this.setState({ chartOpen: !s.chartOpen, chartPeriodOpen: false }),
+
+      chartPeriodLabel: s.chartRange,
+      chartPeriodValue: s.chartPeriod,
+      chartPeriodOpen: s.chartPeriodOpen,
+      chartPeriodOptions: this.opts(
+        s.chartRange === "Mes"
+          ? ["Septiembre de 2026","Agosto de 2026","Julio de 2026","Junio de 2026","Mayo de 2026"]
+          : ["2026","2025","2024"],
+        s.chartPeriod,
+        l => this.setState({ chartPeriod: l, chartPeriodOpen: false })
+      ),
+      toggleChartPeriod: () => this.setState({ chartPeriodOpen: !s.chartPeriodOpen, chartOpen: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

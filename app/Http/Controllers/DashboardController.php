@@ -14,18 +14,19 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    // Paleta fija para asignar color a categorías por índice (no depende de la BD)
+    // Paleta fija (la del mockup) para asignar color a categorías por índice
     private array $palette = [
-        '#0d6efd',
-        '#198754',
-        '#dc3545',
-        '#ffc107',
-        '#6f42c1',
-        '#20c997',
-        '#fd7e14',
-        '#0dcaf0',
-        '#d63384',
-        '#6610f2',
+        '#4A2BE0',
+        '#7C63FF',
+        '#A796FF',
+        '#F2618A',
+        '#14A97B',
+        '#E8B53D',
+        '#3E9BD6',
+        '#C98BE0',
+        '#5CC9B8',
+        '#E07A4A',
+        '#D9D4EE',
     ];
 
     public function index(Request $request)
@@ -70,8 +71,30 @@ class DashboardController extends Controller
             ->where('user_id', $userId)
             ->orderByDesc('date')
             ->orderByDesc('id')
-            ->take(5)
+            ->take(10)
             ->get();
+
+        // Cuentas activas con su saldo (mismo cálculo que en AccountController)
+        $dashboardAccounts = Account::where('user_id', $userId)
+            ->where('is_active', true)
+            ->withSum(['transactions as income_sum' => function ($q) {
+                $q->where('type', 'income');
+            }], 'amount')
+            ->withSum(['transactions as expense_sum' => function ($q) {
+                $q->where('type', 'expense');
+            }], 'amount')
+            ->withSum('incomingTransfers as transfers_in_sum', 'amount')
+            ->withSum('outgoingTransfers as transfers_out_sum', 'amount')
+            ->orderBy('name')
+            ->get();
+
+        // Textos del encabezado y de las tarjetas, en español
+        $todayLabel = ucfirst(Carbon::now()->locale('es')->translatedFormat('l, j \d\e F \d\e Y'));
+        $periodSuffix = match ($period) {
+            'week' => 'de la semana',
+            'year' => 'del año',
+            default => 'del mes',
+        };
 
         // ============================================================
         // BLOQUE 2: Selector Año/Mes — independiente, solo para gráficas
@@ -116,8 +139,12 @@ class DashboardController extends Controller
             ->pluck('total', 'month');
 
         $monthLabels = collect(range(1, 12))->map(
-            fn($m) => Carbon::create(null, $m, 1)->translatedFormat('M')
+            fn($m) => ucfirst(rtrim(Carbon::create(null, $m, 1)->locale('es')->translatedFormat('M'), '.'))
         );
+
+        $chartRangeLabel = $chartMode === 'month'
+            ? ucfirst($chartRangeStart->copy()->locale('es')->translatedFormat('F \d\e Y'))
+            : (string) $chartYear;
 
         $incomeByMonth = collect(range(1, 12))
             ->map(fn($m) => (float) ($incomeByMonthRaw[$m] ?? 0))
@@ -173,6 +200,10 @@ class DashboardController extends Controller
             'netSavings',
             'activeAccounts',
             'latestTransactions',
+            'dashboardAccounts',
+            'todayLabel',
+            'periodSuffix',
+            'chartRangeLabel',
             'period',
             'currentWeekValue',
             'currentMonthValue',

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#F5F4FB;}
+  *{box-sizing:border-box;}
+  a{color:#5B3DF5;text-decoration:none;}
+  a:hover{color:#3F23D6;}
+</style>
+</helmet>
+<div style="display:flex;align-items:stretch;min-height:100vh;background:#F5F4FB;font-family:'Open Sans',system-ui,sans-serif;color:#1B1633;">
+
+  <aside style="flex:none;width:252px;background:#fff;border-right:1px solid #ECEAF6;display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;align-self:flex-start;height:100vh;">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 8px 22px;">
+      <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,#6D4AFF,#3F23D6);display:flex;align-items:center;justify-content:center;flex:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V9"></path><path d="M9.5 18V5"></path><path d="M15 18v-7"></path><path d="M20 18V7"></path></svg>
+      </div>
+      <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;letter-spacing:-0.4px;">GarridoFinance</span>
+    </div>
+
+    <nav style="display:flex;flex-direction:column;gap:3px;">
+      <a href="Finanzas Dashboard.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h13a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7Z"></path><path d="M3 7V6a2 2 0 0 1 2-2h9"></path><path d="M14.5 13.5h2.5"></path></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="Cuentas.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3 10h18"></path></svg>
+        <span>Cuentas</span>
+      </a>
+      <a href="Categorias.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5V6a2 2 0 0 1 2-2h5.5L20 12.5 12.5 20 4 11.5Z"></path><circle cx="8.5" cy="8.5" r="1.3"></circle></svg>
+        <span>Categorías</span>
+      </a>
+      <a href="Metodos de pago.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><path d="M2.5 10h19"></path><path d="M6 14.5h3"></path></svg>
+        <span>Métodos de pago</span>
+      </a>
+      <a href="Transacciones.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M8 8h6a2.5 2.5 0 0 1 0 5H8h6a2.5 2.5 0 0 1 0 5H8"></path></svg>
+        <span>Transacciones</span>
+      </a>
+      <a href="Transferencias.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3"></path><path d="M20 16H7l3 3"></path></svg>
+        <span>Transferencias</span>
+      </a>
+
+      <div style="height:1px;background:#ECEAF6;margin:12px 12px;"></div>
+
+      <a href="Perfil.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1.2-3.5 3.8-5 7-5s5.8 1.5 7 5"></path></svg>
+        <span>Perfil</span>
+      </a>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;background:#EFEBFF;color:#4A2BE0;font-size:13.5px;font-weight:700;cursor:pointer;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"></path></svg>
+        <span>Ajustes</span>
+      </div>
+    </nav>
+  </aside>
+
+  <main style="flex:1;min-width:0;padding:26px 30px 40px;display:flex;flex-direction:column;gap:20px;">
+
+    <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+      <div>
+        <h1 style="margin:0 0 5px;font-family:Montserrat,sans-serif;font-weight:700;font-size:26px;letter-spacing:-0.6px;">Ajustes</h1>
+        <p style="margin:0;font-size:13px;color:#6E6A85;">Configura cómo se comporta GarridoFinance</p>
+      </div>
+      <div onClick="{{ save }}" style="display:flex;align-items:center;gap:8px;background:#5B3DF5;color:#fff;border-radius:10px;padding:11px 16px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(91,61,245,.28);user-select:none;" style-hover="background:#4A2BE0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"></path></svg>
+        Guardar ajustes
+      </div>
+    </header>
+
+    <sc-if value="{{ saved }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:10px;background:#E3F7EF;border:1px solid #C3EBDC;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:600;color:#0F6B50;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"></path></svg>
+        Tus ajustes se guardaron correctamente.
+      </div>
+    </sc-if>
+
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;align-items:start;">
+
+      <div style="display:flex;flex-direction:column;gap:18px;min-width:0;">
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;padding:22px;box-shadow:0 4px 14px rgba(27,22,51,.05);display:flex;flex-direction:column;gap:16px;min-width:0;">
+        <div style="display:flex;align-items:center;gap:11px;">
+          <span style="width:36px;height:36px;border-radius:11px;background:#EFEBFF;display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B3DF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M9.5 9.5h4a1.8 1.8 0 0 1 0 3.6h-3.5h3.5a1.8 1.8 0 0 1 0 3.6h-4M12 7v10"></path></svg>
+          </span>
+          <div>
+            <h2 style="margin:0 0 2px;font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;">Preferencias generales</h2>
+            <p style="margin:0;font-size:12px;color:#8B87A0;">Moneda, idioma y formato de fechas.</p>
+          </div>
+        </div>
+
+        <sc-for list="{{ selects }}" as="sel" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;position:relative;">
+            <div style="min-width:0;">
+              <p style="margin:0 0 2px;font-size:13px;font-weight:700;">{{ sel.title }}</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">{{ sel.hint }}</p>
+            </div>
+            <div style="position:relative;min-width:180px;">
+              <div onClick="{{ sel.toggle }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #DFDCEF;border-radius:10px;padding:9px 12px;font-size:12.5px;font-weight:700;color:#4A4560;background:#fff;cursor:pointer;user-select:none;" style-hover="border-color:#B9AEF5">
+                <span>{{ sel.value }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B87A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+              </div>
+              <sc-if value="{{ sel.open }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:100%;left:0;right:0;margin-top:6px;background:#fff;border:1px solid #DFDCEF;border-radius:10px;box-shadow:0 12px 26px rgba(27,22,51,.12);padding:5px;z-index:40;display:flex;flex-direction:column;gap:2px;max-height:220px;overflow:auto;">
+                  <sc-for list="{{ sel.options }}" as="opt" hint-placeholder-count="3">
+                    <div onClick="{{ opt.pick }}" style="padding:9px 11px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;background:{{ opt.bg }};color:{{ opt.fg }};" style-hover="background:#F7F6FC">{{ opt.label }}</div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;padding:22px;box-shadow:0 4px 14px rgba(27,22,51,.05);display:flex;flex-direction:column;gap:14px;min-width:0;">
+        <div>
+          <h2 style="margin:0 0 3px;font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;">Datos y respaldos</h2>
+          <p style="margin:0;font-size:12px;color:#8B87A0;">Exporta tu historial o impórtalo desde otra herramienta.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:8px;border:1px solid #DFDCEF;border-radius:10px;padding:10px 15px;font-size:12.5px;font-weight:700;color:#4A4560;cursor:pointer;" style-hover="border-color:#B9AEF5;color:#4A2BE0">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"></path></svg>
+            Exportar CSV
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;border:1px solid #DFDCEF;border-radius:10px;padding:10px 15px;font-size:12.5px;font-weight:700;color:#4A4560;cursor:pointer;" style-hover="border-color:#B9AEF5;color:#4A2BE0">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V9M7 13l5-5 5 5M5 4h14"></path></svg>
+            Importar datos
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;background:#EFEBFF;color:#4A2BE0;border-radius:10px;padding:10px 15px;font-size:12.5px;font-weight:700;cursor:pointer;" style-hover="background:#E0D8FF">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.4-5.7"></path><path d="M20 4v4h-4"></path></svg>
+            Respaldo automático
+          </div>
+        </div>
+        <p style="margin:0;font-size:11.5px;color:#8B87A0;">Último respaldo: 17 de septiembre de 2026, 23:40.</p>
+      </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:18px;min-width:0;">
+      <div style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;padding:22px;box-shadow:0 4px 14px rgba(27,22,51,.05);display:flex;flex-direction:column;gap:16px;min-width:0;">
+        <div style="display:flex;align-items:center;gap:11px;">
+          <span style="width:36px;height:36px;border-radius:11px;background:#E3F7EF;display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F8F68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 0 1 12 0v4l2 3H4l2-3v-4Z"></path><path d="M10 20h4"></path></svg>
+          </span>
+          <div>
+            <h2 style="margin:0 0 2px;font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;">Notificaciones y automatizaciones</h2>
+            <p style="margin:0;font-size:12px;color:#8B87A0;">Define qué avisos quieres recibir.</p>
+          </div>
+        </div>
+
+        <sc-for list="{{ toggles }}" as="tg" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;background:#FAF9FD;border:1px solid #F2F0FA;border-radius:12px;padding:13px 15px;">
+            <div style="min-width:0;">
+              <p style="margin:0 0 2px;font-size:13px;font-weight:700;">{{ tg.title }}</p>
+              <p style="margin:0;font-size:11.5px;color:#8B87A0;">{{ tg.hint }}</p>
+            </div>
+            <div onClick="{{ tg.toggle }}" style="width:46px;height:26px;border-radius:99px;padding:3px;display:flex;flex:none;cursor:pointer;background:{{ tg.bg }};justify-content:{{ tg.align }};">
+              <span style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(27,22,51,.2);"></span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:#fff;border:1px solid #F6DCE3;border-radius:18px;padding:22px;box-shadow:0 4px 14px rgba(27,22,51,.05);display:flex;flex-direction:column;gap:14px;min-width:0;">
+        <div>
+          <h2 style="margin:0 0 3px;font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;color:#B02A48;">Zona de riesgo</h2>
+          <p style="margin:0;font-size:12px;color:#8B87A0;">Acciones irreversibles sobre tu información.</p>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <p style="margin:0;font-size:12.5px;color:#4A4560;">Borrar todas las transacciones registradas</p>
+          <div style="border:1px solid #F0B9C6;background:#FDE7EC;color:#B02A48;border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:700;cursor:pointer;" style-hover="background:#FBD5DE">Borrar historial</div>
+        </div>
+        <div style="height:1px;background:#F6DCE3;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <p style="margin:0;font-size:12.5px;color:#4A4560;">Cerrar sesión en todos los dispositivos</p>
+          <div style="border:1px solid #DFDCEF;border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:700;color:#4A4560;cursor:pointer;" style-hover="border-color:#B9AEF5;color:#4A2BE0">Cerrar sesiones</div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const SELECTS = [
+  { key: "currency", title: "Moneda principal", hint: "Se aplica a todos los montos y reportes.", options: ["MXN — Peso mexicano", "USD — Dólar", "EUR — Euro"] },
+  { key: "language", title: "Idioma", hint: "Idioma de la interfaz.", options: ["Español (México)", "Español (España)", "English (US)"] },
+  { key: "dateFormat", title: "Formato de fecha", hint: "Cómo se muestran las fechas en las tablas.", options: ["AAAA-MM-DD", "DD/MM/AAAA", "MM/DD/AAAA"] },
+  { key: "weekStart", title: "Inicio de semana", hint: "Afecta los filtros por semana.", options: ["Lunes", "Domingo"] }
+];
+
+const TOGGLES = [
+  { key: "budget", title: "Alertas de presupuesto", hint: "Avísame cuando supere el 80% de una categoría." },
+  { key: "weekly", title: "Resumen semanal por correo", hint: "Cada lunes con ingresos, gastos y balance." },
+  { key: "recurring", title: "Recordatorio de pagos recurrentes", hint: "Tres días antes de la fecha de cargo." },
+  { key: "historic", title: "Marcar transacciones como históricas", hint: "Al registrar movimientos con fecha pasada." },
+  { key: "hideBalances", title: "Ocultar saldos al abrir la app", hint: "Modo privacidad en el Dashboard." }
+];
+
+class Component extends DCLogic {
+  state = {
+    currency: "MXN — Peso mexicano",
+    language: "Español (México)",
+    dateFormat: "AAAA-MM-DD",
+    weekStart: "Lunes",
+    open: null,
+    budget: true,
+    weekly: true,
+    recurring: true,
+    historic: false,
+    hideBalances: false,
+    saved: false
+  };
+
+  renderVals() {
+    const s = this.state;
+    return {
+      saved: s.saved,
+      save: () => this.setState({ saved: true, open: null }),
+
+      selects: SELECTS.map(cfg => ({
+        title: cfg.title,
+        hint: cfg.hint,
+        value: s[cfg.key],
+        open: s.open === cfg.key,
+        toggle: () => this.setState({ open: s.open === cfg.key ? null : cfg.key }),
+        options: cfg.options.map(label => ({
+          label,
+          bg: label === s[cfg.key] ? "#EFEBFF" : "transparent",
+          fg: label === s[cfg.key] ? "#4A2BE0" : "#4A4560",
+          pick: () => this.setState({ [cfg.key]: label, open: null, saved: false })
+        }))
+      })),
+
+      toggles: TOGGLES.map(cfg => ({
+        title: cfg.title,
+        hint: cfg.hint,
+        bg: s[cfg.key] ? "#5B3DF5" : "#DFDCEF",
+        align: s[cfg.key] ? "flex-end" : "flex-start",
+        toggle: () => this.setState({ [cfg.key]: !s[cfg.key], saved: false })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

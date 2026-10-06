@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#F5F4FB;}
+  *{box-sizing:border-box;}
+  a{color:#5B3DF5;text-decoration:none;}
+  a:hover{color:#3F23D6;}
+</style>
+</helmet>
+<div style="display:flex;align-items:stretch;min-height:100vh;background:#F5F4FB;font-family:'Open Sans',system-ui,sans-serif;color:#1B1633;">
+
+  <aside style="flex:none;width:252px;background:#fff;border-right:1px solid #ECEAF6;display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;align-self:flex-start;height:100vh;">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 8px 22px;">
+      <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,#6D4AFF,#3F23D6);display:flex;align-items:center;justify-content:center;flex:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V9"></path><path d="M9.5 18V5"></path><path d="M15 18v-7"></path><path d="M20 18V7"></path></svg>
+      </div>
+      <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;letter-spacing:-0.4px;">GarridoFinance</span>
+    </div>
+
+    <nav style="display:flex;flex-direction:column;gap:3px;">
+      <a href="Finanzas Dashboard.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h13a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7Z"></path><path d="M3 7V6a2 2 0 0 1 2-2h9"></path><path d="M14.5 13.5h2.5"></path></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="Cuentas.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3 10h18"></path></svg>
+        <span>Cuentas</span>
+      </a>
+      <a href="Categorias.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5V6a2 2 0 0 1 2-2h5.5L20 12.5 12.5 20 4 11.5Z"></path><circle cx="8.5" cy="8.5" r="1.3"></circle></svg>
+        <span>Categorías</span>
+      </a>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;background:#EFEBFF;color:#4A2BE0;font-size:13.5px;font-weight:700;cursor:pointer;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><path d="M2.5 10h19"></path><path d="M6 14.5h3"></path></svg>
+        <span>Métodos de pago</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;cursor:pointer;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M8 8h6a2.5 2.5 0 0 1 0 5H8h6a2.5 2.5 0 0 1 0 5H8"></path></svg>
+        <span>Transacciones</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;cursor:pointer;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3"></path><path d="M20 16H7l3 3"></path></svg>
+        <span>Transferencias</span>
+      </div>
+
+      <div style="height:1px;background:#ECEAF6;margin:12px 12px;"></div>
+
+      <a href="Perfil.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1.2-3.5 3.8-5 7-5s5.8 1.5 7 5"></path></svg>
+        <span>Perfil</span>
+      </a>
+      <a href="Ajustes.dc.html" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#6E6A85;font-size:13.5px;font-weight:500;" style-hover="background:#F7F6FC;color:#1B1633">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"></path></svg>
+        <span>Ajustes</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main style="flex:1;min-width:0;padding:26px 30px 40px;display:flex;flex-direction:column;gap:20px;">
+
+    <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+      <div>
+        <h1 style="margin:0 0 5px;font-family:Montserrat,sans-serif;font-weight:700;font-size:26px;letter-spacing:-0.6px;">Lista de métodos de pago</h1>
+        <p style="margin:0;font-size:13px;color:#6E6A85;">Administra tus métodos de pago registrados en GarridoFinance</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;background:#5B3DF5;color:#fff;border-radius:10px;padding:11px 16px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(91,61,245,.28);" style-hover="background:#4A2BE0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>
+        Crear nuevo método de pago
+      </div>
+    </header>
+
+    <section style="background:#fff;border:1px solid #ECEAF6;border-radius:18px;box-shadow:0 4px 14px rgba(27,22,51,.05);">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:18px 22px;border-bottom:1px solid #F2F0FA;">
+        <div style="display:flex;align-items:center;gap:11px;">
+          <span style="width:36px;height:36px;border-radius:11px;background:#EFEBFF;display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B3DF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><path d="M2.5 10h19"></path><path d="M6 14.5h3"></path></svg>
+          </span>
+          <div>
+            <h2 style="margin:0 0 2px;font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;">Métodos de pago registrados</h2>
+            <p style="margin:0;font-size:12px;color:#8B87A0;">{{ countLabel }}</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid #DFDCEF;border-radius:10px;padding:9px 12px;min-width:230px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8B87A0" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg>
+          <input type="text" value="{{ query }}" onChange="{{ onSearch }}" placeholder="Buscar método de pago" style="border:none;outline:none;font-family:'Open Sans',sans-serif;font-size:13px;font-weight:500;color:#1B1633;width:100%;background:transparent;" />
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <div style="min-width:620px;display:grid;grid-template-columns:minmax(0,2.6fr) minmax(0,1fr) 104px;gap:12px;padding:13px 22px;background:#FAF9FD;border-bottom:1px solid #F2F0FA;font-size:11.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:#6E6A85;">
+          <span>Tipo de método de pago</span>
+          <span>Estado</span>
+          <span style="text-align:right;">Opciones</span>
+        </div>
+
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="6">
+          <div style="min-width:620px;display:grid;grid-template-columns:minmax(0,2.6fr) minmax(0,1fr) 104px;gap:12px;padding:14px 22px;border-bottom:1px solid #F4F2FA;align-items:center;" style-hover="background:#FBFAFE">
+            <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+              <span style="width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;background:{{ row.iconBg }};color:{{ row.iconFg }};">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><path d="M2.5 10h19"></path><path d="M6 14.5h3"></path></svg>
+              </span>
+              <div style="min-width:0;">
+                <p style="margin:0 0 2px;font-size:13.5px;font-weight:700;">{{ row.name }}</p>
+                <p style="margin:0;font-size:11.5px;color:#8B87A0;">{{ row.subtitle }}</p>
+              </div>
+            </div>
+            <span style="justify-self:start;display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:11.5px;font-weight:700;background:{{ row.stateBg }};color:{{ row.stateFg }};">
+              <span style="width:7px;height:7px;border-radius:50%;background:{{ row.stateDot }};"></span>{{ row.state }}
+            </span>
+            <div style="display:flex;align-items:center;justify-content:flex-end;gap:7px;">
+              <span style="width:32px;height:32px;border-radius:9px;border:1px solid #DFDCEF;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#5B3DF5;" style-hover="background:#EFEBFF;border-color:#B9AEF5" title="Editar">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.5 2.5 0 0 0-3.5-3.5L4 16v4Z"></path></svg>
+              </span>
+              <span style="width:32px;height:32px;border-radius:9px;border:1px solid #F6DCE3;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#D13457;" style-hover="background:#FDE7EC;border-color:#F0B9C6" title="Eliminar">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13"></path></svg>
+              </span>
+            </div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:42px 22px;text-align:center;">
+            <p style="margin:0 0 4px;font-family:Montserrat,sans-serif;font-weight:700;font-size:14.5px;">Sin resultados</p>
+            <p style="margin:0;font-size:12.5px;color:#8B87A0;">Prueba con otro nombre de método de pago.</p>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:16px 22px;">
+        <p style="margin:0;font-size:12.5px;color:#6E6A85;">{{ rangeLabel }}</p>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span onClick="{{ prev }}" style="min-width:34px;height:34px;padding:0 10px;border-radius:9px;border:1px solid #DFDCEF;display:flex;align-items:center;justify-content:center;cursor:pointer;color:{{ prevColor }};user-select:none;" style-hover="border-color:#B9AEF5">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6l-6 6 6 6"></path></svg>
+          </span>
+          <sc-for list="{{ pages }}" as="p" hint-placeholder-count="2">
+            <span onClick="{{ p.pick }}" style="min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12.5px;font-weight:700;user-select:none;background:{{ p.bg }};color:{{ p.fg }};border:1px solid {{ p.border }};" style-hover="border-color:#B9AEF5">{{ p.label }}</span>
+          </sc-for>
+          <span onClick="{{ next }}" style="min-width:34px;height:34px;padding:0 10px;border-radius:9px;border:1px solid #DFDCEF;display:flex;align-items:center;justify-content:center;cursor:pointer;color:{{ nextColor }};user-select:none;" style-hover="border-color:#B9AEF5">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6l6 6-6 6"></path></svg>
+          </span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const METHODS = [
+  { name: "Tarjeta de débito Mercado Pago", subtitle: "Débito · ****3312", kind: "debito", active: true },
+  { name: "Tarjeta de débito BBVA", subtitle: "Débito · ****4821", kind: "debito", active: true },
+  { name: "Efectivo", subtitle: "Pago en efectivo", kind: "efectivo", active: true },
+  { name: "Tarjeta de crédito BBVA Azul", subtitle: "Crédito · ****8890", kind: "credito", active: true },
+  { name: "Tarjeta de crédito Mercado Libre", subtitle: "Crédito · ****2214", kind: "credito", active: true },
+  { name: "Transferencia SPEI", subtitle: "Transferencia interbancaria", kind: "transferencia", active: true },
+  { name: "Domiciliación bancaria", subtitle: "Cargo automático mensual", kind: "transferencia", active: false },
+  { name: "Vales de despensa", subtitle: "Monedero electrónico", kind: "efectivo", active: false }
+];
+
+const KIND_STYLES = {
+  efectivo: { bg: "#E3F7EF", fg: "#0F8F68" },
+  debito: { bg: "#EFEBFF", fg: "#5B3DF5" },
+  credito: { bg: "#FDE7EC", fg: "#D13457" },
+  transferencia: { bg: "#E8F1FF", fg: "#2F6BC9" }
+};
+
+class Component extends DCLogic {
+  state = { page: 1, query: "" };
+
+  filtered() {
+    const q = this.state.query.trim().toLowerCase();
+    return METHODS.filter(m => !q || m.name.toLowerCase().includes(q) || m.subtitle.toLowerCase().includes(q));
+  }
+
+  renderVals() {
+    const perPage = 6;
+    const list = this.filtered();
+    const totalPages = Math.max(1, Math.ceil(list.length / perPage));
+    const page = Math.min(this.state.page, totalPages);
+    const start = (page - 1) * perPage;
+
+    return {
+      query: this.state.query,
+      onSearch: e => this.setState({ query: e.target.value, page: 1 }),
+      countLabel: list.length + (list.length === 1 ? " método registrado" : " métodos registrados"),
+      isEmpty: list.length === 0,
+
+      rows: list.slice(start, start + perPage).map(m => {
+        const k = KIND_STYLES[m.kind];
+        return {
+          name: m.name,
+          subtitle: m.subtitle,
+          iconBg: k.bg,
+          iconFg: k.fg,
+          state: m.active ? "Activa" : "Inactiva",
+          stateBg: m.active ? "#E3F7EF" : "#F2F0FA",
+          stateFg: m.active ? "#0F6B50" : "#6E6A85",
+          stateDot: m.active ? "#14A97B" : "#A8A4BB"
+        };
+      }),
+
+      rangeLabel: list.length
+        ? "Mostrando " + (start + 1) + "–" + Math.min(start + perPage, list.length) + " de " + list.length + " métodos de pago"
+        : "Sin métodos de pago para mostrar",
+      pages: Array.from({ length: totalPages }, (_, i) => i + 1).map(n => ({
+        label: String(n),
+        bg: n === page ? "#EFEBFF" : "#fff",
+        fg: n === page ? "#4A2BE0" : "#4A4560",
+        border: n === page ? "#B9AEF5" : "#DFDCEF",
+        pick: () => this.setState({ page: n })
+      })),
+      prev: () => this.setState({ page: Math.max(1, page - 1) }),
+      next: () => this.setState({ page: Math.min(totalPages, page + 1) }),
+      prevColor: page === 1 ? "#C9C5DA" : "#4A4560",
+      nextColor: page === totalPages ? "#C9C5DA" : "#4A4560"
+    };
+  }
+}
+</script>
+</body>
+</html>
