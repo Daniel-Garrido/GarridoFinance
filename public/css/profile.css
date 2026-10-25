@@ -1,0 +1,164 @@
+/* ============================================================
+   PERFIL
+   ============================================================ */
+
+/* Dos columnas: tarjeta del usuario | datos personales y seguridad */
+.gf-profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: 1.15rem;
+    align-items: start;
+}
+
+.gf-profile-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    border-radius: 18px;
+    padding: 1.4rem 5%;
+}
+
+.gf-divider {
+    height: 1px;
+    background: #F2F0FA;
+}
+
+/* Encabezado del usuario: avatar + nombre + correo */
+.gf-profile-user {
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+    min-width: 0;
+}
+
+.gf-profile-user div {
+    min-width: 0;
+}
+
+.gf-profile-name {
+    margin: 0 0 0.2rem;
+    font-family: var(--gf-font-title);
+    font-weight: 700;
+    font-size: 1.05rem;
+    overflow-wrap: anywhere;
+}
+
+.gf-profile-email {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--gf-subtle);
+    overflow-wrap: anywhere;
+}
+
+.gf-profile-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.gf-profile-actions form {
+    margin: 0;
+}
+
+/* Botones secundarios del perfil (Cambiar foto, Quitar foto, Eliminar cuenta) */
+.gf-btn-sm {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.78rem;
+}
+
+.gf-btn-outline-danger {
+    background: var(--gf-surface);
+    border-color: #F6DCE3;
+    color: var(--gf-expense);
+}
+
+.gf-btn-outline-danger:hover {
+    background: var(--gf-expense-soft);
+    color: var(--gf-expense);
+}
+
+.gf-btn-soft-danger {
+    background: var(--gf-expense-soft);
+    border-color: #F0B9C6;
+    color: #B02A48;
+}
+
+.gf-btn-soft-danger:hover {
+    background: #FBD5DE;
+    color: #B02A48;
+}
+
+/* Resumen de la cuenta */
+.gf-profile-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.gf-profile-stats div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.78rem;
+}
+
+.gf-profile-stats dt {
+    font-weight: 400;
+    color: var(--gf-muted);
+}
+
+.gf-profile-stats dd {
+    margin: 0;
+    font-weight: 700;
+    text-align: right;
+}
+
+/* Bloques con título (Datos personales, Seguridad, Eliminar cuenta) */
+.gf-section-title {
+    margin: 0 0 0.2rem;
+    font-family: var(--gf-font-title);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.gf-section-hint {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--gf-subtle);
+    line-height: 1.5;
+}
+
+.gf-danger-title {
+    font-size: 0.85rem;
+    color: #B02A48;
+}
+
+.gf-profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.gf-profile-section .gf-form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+}
+
+.gf-profile-section-foot {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Modal de eliminar cuenta: el campo de contraseña va alineado a la izquierda */
+.gf-confirm .gf-form-group {
+    width: 100%;
+    text-align: left;
+}
+
+@media (max-width: 992px) {
+    .gf-profile-grid {
+        grid-template-columns: 1fr;
+    }
+}

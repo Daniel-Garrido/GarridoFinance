@@ -31,6 +31,13 @@
                     <h2 class="text-center fw-medium mb-1">Bienvenido de nuevo</h2>
                     <p class="text-center text-secondary mb-4">La mejor plataforma de gestión financiera</p>
 
+                    {{-- Mensaje de estado, ej. al eliminar la cuenta --}}
+                    @if (session('status'))
+                        <div class="alert alert-success py-2 small rounded-3">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
                     @if ($errors->any())
                         <div class="alert alert-danger py-2 small rounded-3">
                             {{ $errors->first() }}

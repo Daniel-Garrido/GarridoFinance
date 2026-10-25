@@ -22,6 +22,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
+            'last_name' => ['nullable', 'string', 'max:255'],
 
             'email' => [
                 'required',
@@ -30,6 +31,15 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
+
+            // dígitos, espacios, guiones, paréntesis y "+" (ej. +52 81 2345 6789)
+            'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{7,}$/'],
+        ], [
+            'name.required' => 'Escribe tu nombre.',
+            'email.required' => 'Escribe tu correo electrónico.',
+            'email.email' => 'El correo electrónico no es válido.',
+            'email.unique' => 'Ese correo ya está registrado en otra cuenta.',
+            'phone.regex' => 'El teléfono solo puede tener números, espacios, guiones, paréntesis y "+".',
         ])->validateWithBag('updateProfileInformation');
 
         if ($input['email'] !== $user->email &&
@@ -38,7 +48,9 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         } else {
             $user->forceFill([
                 'name' => $input['name'],
+                'last_name' => $input['last_name'] ?? null,
                 'email' => $input['email'],
+                'phone' => $input['phone'] ?? null,
             ])->save();
         }
     }
@@ -52,7 +64,9 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     {
         $user->forceFill([
             'name' => $input['name'],
+            'last_name' => $input['last_name'] ?? null,
             'email' => $input['email'],
+            'phone' => $input['phone'] ?? null,
             'email_verified_at' => null,
         ])->save();
 

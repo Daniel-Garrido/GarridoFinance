@@ -3,11 +3,6 @@
 @section('content')
     @php
         $user = auth()->user();
-        $initials = collect(explode(' ', trim($user->name ?? '')))
-            ->filter()
-            ->take(2)
-            ->map(fn($part) => mb_strtoupper(mb_substr($part, 0, 1)))
-            ->implode('');
 
         // Estilo de cada tipo de cuenta: [etiqueta, tono, icono]
         $accountStyles = [
@@ -30,7 +25,9 @@
                 <a href="{{ route('transactions.index') }}" class="gf-btn gf-btn-primary">
                     <i class="bi bi-plus-lg"></i> Nueva transacción
                 </a>
-                <span class="gf-avatar">{{ $initials ?: 'GF' }}</span>
+                <a href="{{ route('profile.index') }}" title="Ver perfil" aria-label="Ver perfil">
+                    <x-avatar :user="$user" />
+                </a>
             </div>
         </header>
 

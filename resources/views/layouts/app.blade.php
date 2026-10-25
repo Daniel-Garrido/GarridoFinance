@@ -50,10 +50,9 @@
             <h2 class="content-nav-title navbar-brand mb-0">GarridoFinance</h2>
         </div>
 
-        {{-- Acceso a perfil (la ruta profile.index aún no existe; mientras tanto apunta a #) --}}
-        <a href="{{ Route::has('profile.index') ? route('profile.index') : '#' }}" class="content-nav-profile"
-            title="Ver perfil" aria-label="Ver perfil">
-            <i class="bi bi-person-circle"></i>
+        {{-- Acceso a perfil: foto o iniciales del usuario --}}
+        <a href="{{ route('profile.index') }}" class="content-nav-profile" title="Ver perfil" aria-label="Ver perfil">
+            <x-avatar :user="auth()->user()" size="sm" />
         </a>
     </nav>
 
@@ -112,7 +111,7 @@
             <ul class="nav flex-column border-top pt-2 mb-2">
 
                 <li class="nav-item nav-item-main-li mb-2 p-2">
-                    <a href=""
+                    <a href="{{ route('profile.index') }}"
                         class="nav-link text-dark {{ request()->routeIs('profile.*') ? 'active' : '' }}">
                         <i class="bi bi-person-circle"></i> Perfil
                     </a>

@@ -19,7 +19,9 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
+        'phone',
         'password',
     ];
 
@@ -44,6 +46,34 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Nombre y apellidos juntos
+    public function getFullNameAttribute(): string
+    {
+        return trim($this->name . ' ' . $this->last_name);
+    }
+
+    // Iniciales para el avatar: primera letra del nombre y del primer apellido
+    public function getInitialsAttribute(): string
+    {
+        $initials = collect(explode(' ', $this->full_name))
+            ->filter()
+            ->take(2)
+            ->map(fn($part) => mb_strtoupper(mb_substr($part, 0, 1)))
+            ->implode('');
+
+        return $initials ?: 'GF';
+    }
+
+    // URL pública de la foto de perfil, o null si no tiene.
+    // asset() usa el host y puerto con los que se abrió la app (no APP_URL),
+    // así la foto se ve igual con artisan serve, 127.0.0.1 o Apache
+    public function getProfilePhotoUrlAttribute(): ?string
+    {
+        return $this->profile_photo_path
+            ? asset('storage/' . $this->profile_photo_path)
+            : null;
     }
 
     public function accounts(){

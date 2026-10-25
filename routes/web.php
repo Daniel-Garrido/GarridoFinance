@@ -7,6 +7,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
 
 
 Route::get('/', function () {
@@ -23,4 +24,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('payment-methods', PaymentMethodController::class);
     Route::resource('transactions', TransactionController::class);
     Route::resource('transfers', TransferController::class);
+
+    // Perfil: datos personales y contraseña usan las rutas de Fortify
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+    Route::delete('/profile/photo', [ProfileController::class, 'destroyPhoto'])->name('profile.photo.destroy');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
