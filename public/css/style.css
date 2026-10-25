@@ -2,7 +2,7 @@
 :root {
     --gf-primary: #5B3DF5;        /* violeta principal: botones, acentos */
     --gf-primary-hover: #4A2BE0;  /* hover y texto activo */
-    --gf-primary-dark: #3A1FC4;   /* header superior */
+    --gf-primary-dark: #24156d;   /* header superior */
     --gf-primary-soft: #EFEBFF;   /* fondos suaves de acento */
     --gf-primary-border: #B9AEF5; /* borde en hover de campos */
 
@@ -48,7 +48,7 @@ body {
 /* ESTILO AL MENÚ SUPERIOR */
 .content-nav{
     background-color: var(--gf-primary-dark);
-    padding: 0 1.5% !important;
+    padding:10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
