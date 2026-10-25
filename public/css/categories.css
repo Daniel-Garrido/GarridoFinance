@@ -1,0 +1,13 @@
+/* ============================================================
+   CATEGORÍAS
+   ============================================================ */
+
+/* Columnas: nombre | tipo | estado | opciones */
+.gf-categories-table {
+    --gf-cols: minmax(0, 2.4fr) minmax(0, 1.2fr) minmax(0, 1fr) 6.5rem;
+}
+
+.gf-categories-table .gf-table-head,
+.gf-categories-table .gf-table-row {
+    min-width: 41.25rem;
+}

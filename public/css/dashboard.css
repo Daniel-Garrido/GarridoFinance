@@ -99,7 +99,9 @@ body.sidebar-collapsed .content-main {
 /* ============================================================
    DASHBOARD (paleta del mockup, superficies planas)
    ============================================================ */
-.gf-dashboard {
+/* .gf-page: mismo contenedor para el resto de vistas */
+.gf-dashboard,
+.gf-page {
     width: 100%;
     display: flex;
     flex-direction: column;

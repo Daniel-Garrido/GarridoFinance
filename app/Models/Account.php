@@ -12,6 +12,24 @@ class Account extends Model
 
     protected $fillable = ['user_id', 'name', 'type', 'is_active'];
 
+    // Tipos de cuenta: etiqueta, descripción corta y tono de color (paleta del mockup)
+    public const TYPES = [
+        'cash' => ['label' => 'Efectivo', 'subtitle' => 'Dinero en efectivo', 'tone' => 'income'],
+        'bank' => ['label' => 'Banco', 'subtitle' => 'Cuenta bancaria', 'tone' => 'primary'],
+        'card' => ['label' => 'Tarjeta', 'subtitle' => 'Tarjeta de pago', 'tone' => 'expense'],
+        'saving' => ['label' => 'Ahorro', 'subtitle' => 'Cuenta de ahorro', 'tone' => 'info'],
+    ];
+
+    // Datos del tipo de la cuenta; si el tipo no está en la lista se muestra tal cual
+    public function getTypeInfoAttribute(): array
+    {
+        return self::TYPES[$this->type] ?? [
+            'label' => ucfirst($this->type),
+            'subtitle' => 'Cuenta financiera',
+            'tone' => 'primary',
+        ];
+    }
+
     // Accessor para calcular el saldo de la cuenta
     public function getBalanceAttribute()
     {

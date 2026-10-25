@@ -18,6 +18,11 @@
     {{-- CSS GENERAL (después de Bootstrap para que la paleta tenga prioridad) --}}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ filemtime(public_path('css/style.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}?v={{ filemtime(public_path('css/dashboard.css')) }}">
+    {{-- Piezas compartidas por las vistas de listado: tablas, pastillas, paginación, modales --}}
+    <link rel="stylesheet" href="{{ asset('css/components.css') }}?v={{ filemtime(public_path('css/components.css')) }}">
+
+    {{-- CSS propio de cada vista --}}
+    @stack('styles')
 
     {{-- Librería de Chart JS --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

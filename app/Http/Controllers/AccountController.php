@@ -3,16 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class AccountController extends Controller
 {
-    public function index()
+    // Cuentas por página en el listado
+    private const PER_PAGE = 10;
+
+    public function index(Request $request)
     {
-        
-        // Obtener todas las cuentas del usuario autenticado con los cálculos de saldo
+        $search = trim((string) $request->get('q', ''));
+
+        // Cuentas del usuario autenticado con los cálculos de saldo, filtradas y paginadas
         $accounts = Account::where('user_id', Auth::id())
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            })
             ->latest()
             ->withSum(['transactions as income_sum' => function ($q) {
                 $q->where('type', 'income');
@@ -22,9 +30,15 @@ class AccountController extends Controller
             }], 'amount')
             ->withSum('incomingTransfers as transfers_in_sum', 'amount')
             ->withSum('outgoingTransfers as transfers_out_sum', 'amount')
-            ->get();
+            ->paginate(self::PER_PAGE)
+            ->withQueryString();
 
-        return view('accounts.index', compact('accounts'));
+        // Si la página pedida ya no existe (por ejemplo, tras eliminar), ir a la última
+        if ($accounts->isEmpty() && $accounts->currentPage() > 1) {
+            return redirect($accounts->url($accounts->lastPage()));
+        }
+
+        return view('accounts.index', compact('accounts', 'search'));
     }
 
     public function create()
@@ -34,11 +48,7 @@ class AccountController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
-            'is_active' => 'required|boolean',
-        ]);
+        $validated = $request->validate($this->rules());
 
         $validated['user_id'] = Auth::id();
 
@@ -60,15 +70,12 @@ class AccountController extends Controller
 
     public function update(Request $request, Account $account)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
-            'is_active' => 'required|boolean',
-        ]);
+        $validated = $request->validate($this->rules());
 
         $account->update($validated);
 
-        return redirect()->route('accounts.index')
+        // back() conserva la página y la búsqueda en las que estaba el usuario
+        return redirect()->back()
             ->with('success', 'Cuenta actualizada correctamente');
     }
 
@@ -76,7 +83,17 @@ class AccountController extends Controller
     {
         $account->delete();
 
-        return redirect()->route('accounts.index')
+        return redirect()->back()
             ->with('success', 'Cuenta eliminada correctamente');
+    }
+
+    // Reglas compartidas por crear y editar
+    private function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'type' => ['required', Rule::in(array_keys(Account::TYPES))],
+            'is_active' => 'required|boolean',
+        ];
     }
 }

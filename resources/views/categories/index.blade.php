@@ -1,401 +1,337 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/categories.css') }}?v={{ filemtime(public_path('css/categories.css')) }}">
+@endpush
+
 @section('content')
+    @php
+        $types = \App\Models\Category::TYPES;
+        $filterLabel = $type ? $types[$type]['filter'] : 'Todas las categorías';
 
-    <div class="container-fluid">
+        // Si falló una validación, se vuelve a abrir el modal que la envió
+        $reopen = $errors->any() ? old('_form') : null;
+        $editId = old('_category_id');
+    @endphp
 
-        {{-- contenedor header principal seccion de categorias --}}
-        <div class="d-flex justify-content-between align-items-center mb-4 p-4 ">
+    <div class="gf-page">
+
+        {{-- Encabezado --}}
+        <header class="gf-header">
             <div>
-                <h2 class="fw-bold mb-1">Lista de categorías</h2>
-                <p class="text-muted mb-0">Administra tus categorías registradas en GarridoFinance</p>
+                <h1>Lista de categorías</h1>
+                <p>Administra tus categorías registradas en GarridoFinance</p>
             </div>
 
-            <div class="d-flex align-items-center gap-2">
-                {{-- Select para filtrar por tipo de categoría --}}
-                <form method="GET" action="{{ route('categories.index') }}" id="filterTypeForm">
-                    <select name="type" id="filterType" class="form-select"
-                        onchange="document.getElementById('filterTypeForm').submit()">
-                        <option value="" {{ request('type') == '' ? 'selected' : '' }}>Todas las categorías</option>
-                        <option value="income" {{ request('type') == 'income' ? 'selected' : '' }}>Ingresos</option>
-                        <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Gastos</option>
-                    </select>
-                </form>
+            <div class="gf-header-tools">
+                {{-- Filtro por tipo: cada opción es un enlace, la paginación vuelve a la página 1 --}}
+                <div class="dropdown">
+                    <button type="button" class="gf-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span>{{ $filterLabel }}</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu gf-dropdown-menu">
+                        <li>
+                            <a class="dropdown-item {{ $type ? '' : 'active' }}" href="{{ route('categories.index') }}">
+                                Todas las categorías
+                            </a>
+                        </li>
+                        @foreach ($types as $value => $info)
+                            <li>
+                                <a class="dropdown-item {{ $type === $value ? 'active' : '' }}"
+                                    href="{{ route('categories.index', ['type' => $value]) }}">
+                                    {{ $info['filter'] }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
 
-                {{-- btn crear categoria --}}
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
-                    <i class="bi bi-plus-circle me-1"></i>
-                    Crear nueva categoría
+                <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#createCategoryModal">
+                    <i class="bi bi-plus-circle"></i> Crear nueva categoría
                 </button>
             </div>
-        </div>
+        </header>
 
-        {{-- Alerta cueando se crea una categoría --}}
+        {{-- Alerta de éxito --}}
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-1"></i>
+            <div class="gf-alert alert alert-dismissible fade show mb-0" role="alert">
+                <i class="bi bi-check-circle"></i>
                 {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
         @endif
 
-        {{-- contenedor de la tabla de categorías --}}
-        <div class="card border-0 shadow-sm rounded-4">
-
-            <div class="card-header bg-white border-0 py-3">
-                <h3 class="mb-0 fw-semibold">
-                    <i class="bi bi-wallet2 me-1"></i>
-                    Categorías registradas
-                </h3>
-            </div>
-
-            {{-- cuerpo de la tabla de categorías --}}
-            <div class="card-body p-0">
-
-                <div class="table-responsive">
-
-                    <table class="table table-hover align-middle mb-0">
-                        {{-- cabecera de las tablas --}}
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4">Nombre de la categoría</th>
-                                <th>Tipo de categoría</th>
-                                <th>Estado</th>
-                                <th class="text-end pe-4">Opciones</th>
-                            </tr>
-                        </thead>
-
-                        {{-- cuerpo de la tabla de categorías --}}
-                        <tbody>
-
-                            @forelse($categories as $category)
-                                <tr>
-                                    {{-- nombre de la categoría --}}
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="account-icon me-3">
-                                                <i class="bi bi-wallet2"></i>
-                                            </div>
-
-                                            <div>
-                                                <h6 class="mb-0 fw-semibold">
-                                                    {{ $category->name }}
-                                                </h6>
-                                                <small class="text-muted">
-                                                    {{ $category->type === 'income' ? 'Ingreso' : 'Gasto' }}
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    {{-- tipo de categoría --}}
-                                    <td>
-                                        {{ $category->type === 'income' ? 'Ingreso' : 'Gasto' }}
-                                    </td>
-
-                                    {{-- si esta activa la cuenta --}}
-                                    <td>
-                                        @if ($category->is_active)
-                                            <span class="badge rounded-pill text-bg-success">
-                                                <i class="bi bi-check-circle me-1"></i>
-                                                Activa
-                                            </span>
-                                        @else
-                                            <span class="badge rounded-pill text-bg-secondary">
-                                                <i class="bi bi-x-circle me-1"></i>
-                                                Inactiva
-                                            </span>
-                                        @endif
-                                    </td>
-
-                                    {{-- opciones  --}}
-                                    <td class="text-end pe-4">
-
-                                        {{--  btn para editar la categoria --}}
-                                        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#editCategoryModal{{ $category->id }}">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-
-                                        {{-- opcion para eliminar la categoria --}}
-                                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#deleteCategoryModal"
-                                            data-action="{{ route('categories.destroy', $category) }}"
-                                            data-name="{{ $category->name }}">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </td>
-
-                                </tr>
-
-                                {{-- Modal para  editar categorias --}}
-                                <div class="modal fade" id="editCategoryModal{{ $category->id }}" tabindex="-1"
-                                    aria-hidden="true">
-
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content rounded-4 border-0 shadow">
-
-                                            <div class="modal-header">
-                                                {{-- titulo modal --}}
-                                                <h5 class="modal-title fw-bold">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    Editar categoria
-                                                </h5>
-                                                {{-- btn cerrar modal --}}
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-
-                                            {{-- Formulario para editar categoria --}}
-                                            <form action="{{ route('categories.update', $category) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-
-                                                <div class="modal-body">
-
-                                                    {{-- contenedor de nombre de la categoria --}}
-                                                    <div class="mb-3">
-                                                        <label for="name{{ $category->id }}" class="form-label">
-                                                            Nombre de la categoria
-                                                        </label>
-
-                                                        <input type="text" name="name" id="name{{ $category->id }}"
-                                                            class="form-control"
-                                                            value="{{ old('name', $category->name) }}">
-                                                    </div>
-
-                                                    {{-- contenedor de tipo de categoria --}}
-                                                    <div class="mb-3">
-
-                                                        <label for="type{{ $category->id }}" class="form-label">
-                                                            Tipo de categoria
-                                                        </label>
-
-                                                        <select name="type" id="type{{ $category->id }}"
-                                                            class="form-select">
-
-                                                            <option value="income"
-                                                                {{ old('type', $category->type) == 'income' ? 'selected' : '' }}>
-                                                                Ingreso
-                                                            </option>
-
-                                                            <option value="expense"
-                                                                {{ old('type', $category->type) == 'expense' ? 'selected' : '' }}>
-                                                                Gasto
-                                                            </option>
-
-                                                        </select>
-                                                    </div>
-
-                                                    {{-- contenedor de estado de la categoria --}}
-                                                    <div class="mb-3">
-
-                                                        <label for="is_active{{ $category->id }} "class="form-label">
-                                                            Estado de la categoria
-                                                        </label>
-
-                                                        <select name="is_active" id="is_active{{ $category->id }}"
-                                                            class="form-select">
-
-                                                            <option
-                                                                value="1"{{ old('is_active', $category->is_active) == 1 ? 'selected' : '' }}>
-                                                                Activa
-                                                            </option>
-
-                                                            <option
-                                                                value="0"{{ old('is_active', $category->is_active) == 0 ? 'selected' : '' }}>
-                                                                Inactiva
-                                                            </option>
-
-                                                        </select>
-                                                    </div>
-
-                                                </div>
-
-                                                {{-- contenedor de opciones  --}}
-                                                <div class="modal-footer">
-                                                    {{-- btn cancelar --}}
-                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                                                        Cancelar
-                                                    </button>
-                                                    {{-- btn actualizar --}}
-                                                    <button type="submit" class="btn btn-warning text-white">
-                                                        <i class="bi bi-save me-1"></i>
-                                                        Actualizar categoria
-                                                    </button>
-                                                </div>
-
-                                            </form>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Modal para eliminar categorias --}}
-                                <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content rounded-4 border-0 shadow">
-
-                                            <div class="modal-header border-0 pb-0">
-
-                                                {{-- btn cerrar modal --}}
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal">
-                                                </button>
-                                            </div>
-
-                                            {{-- contenido del modal - eliminar categoria --}}
-                                            <div class="modal-body text-center py-4">
-                                                <i class="bi bi-trash fs-1 text-danger mb-3 d-block"></i>
-                                                <p class="mb-1">¿Estás seguro que deseas eliminar la categoria:</p>
-                                                <h6 class="fw-bold" id="deleteCategoryName"></h6>
-                                                <p class="text-muted small mt-2 mb-0">Esta acción no se puede deshacer.</p>
-                                            </div>
-
-                                            {{-- contenedor botones del modal --}}
-                                            <div class="modal-footer border-0 pt-0">
-                                                {{-- btn cancelar --}}
-                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                                                    Cancelar
-                                                </button>
-
-                                                {{-- btn eliminar --}}
-                                                <form id="deleteCategoryForm" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-
-                                                    <button type="submit" class="btn btn-danger">
-                                                        <i class="bi bi-trash me-1"></i>
-                                                        Sí, eliminar
-                                                    </button>
-                                                </form>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-
-                                {{-- cuando no hay categorias registradas --}}
-                                <tr>
-                                    <td colspan="5" class="text-center py-5">
-                                        <i class="bi bi-folder-x fs-1 text-muted"></i>
-                                        <h5 class="mt-3 mb-1">No hay categorias registradas</h5>
-                                        <p class="text-muted mb-3">
-                                            Agrega tu primera categoria para comenzar.
-                                        </p>
-
-                                        {{-- btn crear categorias --}}
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#createCategoryModal">
-                                            <i class="bi bi-plus-circle me-1"></i>
-                                            Crear nueva categoria
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+        {{-- Tabla de categorías --}}
+        <section class="gf-panel">
+            <div class="gf-panel-head">
+                <div class="gf-panel-title">
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-tag"></i></span>
+                    <div>
+                        <h2>Categorías registradas</h2>
+                        <p>{{ $categories->total() }} {{ $categories->total() === 1 ? 'categoría encontrada' : 'categorías encontradas' }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div class="gf-table gf-categories-table">
+                <div class="gf-table-head">
+                    <span>Nombre de la categoría</span>
+                    <span>Tipo de categoría</span>
+                    <span>Estado</span>
+                    <span class="gf-cell-end">Opciones</span>
+                </div>
+
+                @forelse ($categories as $category)
+                    @php $info = $category->type_info; @endphp
+                    <div class="gf-table-row">
+                        {{-- Nombre --}}
+                        <div class="gf-cell-main">
+                            <span class="gf-icon {{ $category->type === 'income' ? 'gf-tone-income' : 'gf-tone-primary' }}">
+                                <i class="bi bi-tag"></i>
+                            </span>
+                            <div>
+                                <p class="gf-cell-title">{{ $category->name }}</p>
+                                <p class="gf-cell-meta">{{ $info['subtitle'] }}</p>
+                            </div>
+                        </div>
+
+                        {{-- Tipo --}}
+                        <span class="gf-pill gf-pill-{{ $info['tone'] }}"><span class="gf-pill-dot"></span>{{ $info['label'] }}</span>
+
+                        {{-- Estado --}}
+                        @if ($category->is_active)
+                            <span class="gf-pill gf-pill-income"><span class="gf-pill-dot"></span>Activa</span>
+                        @else
+                            <span class="gf-pill gf-pill-muted"><span class="gf-pill-dot"></span>Inactiva</span>
+                        @endif
+
+                        {{-- Opciones --}}
+                        <div class="gf-row-actions">
+                            <button type="button" class="gf-action" title="Editar" aria-label="Editar {{ $category->name }}"
+                                data-bs-toggle="modal" data-bs-target="#editCategoryModal"
+                                data-id="{{ $category->id }}"
+                                data-action="{{ route('categories.update', $category) }}"
+                                data-name="{{ $category->name }}"
+                                data-type="{{ $category->type }}"
+                                data-active="{{ $category->is_active ? 1 : 0 }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button type="button" class="gf-action gf-action-danger" title="Eliminar"
+                                aria-label="Eliminar {{ $category->name }}"
+                                data-bs-toggle="modal" data-bs-target="#deleteCategoryModal"
+                                data-action="{{ route('categories.destroy', $category) }}"
+                                data-name="{{ $category->name }}">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="gf-table-empty">
+                        @if ($type)
+                            <h3>Sin resultados</h3>
+                            <p>No hay categorías de {{ mb_strtolower($types[$type]['filter']) }}. Ajusta el filtro de tipo de categoría.</p>
+                        @else
+                            <h3>No hay categorías registradas</h3>
+                            <p>Agrega tu primera categoría para comenzar.</p>
+                            <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#createCategoryModal">
+                                <i class="bi bi-plus-circle"></i> Crear nueva categoría
+                            </button>
+                        @endif
+                    </div>
+                @endforelse
+            </div>
+
+            <x-pagination :paginator="$categories" label="categorías" />
+        </section>
 
     </div>
 
-    {{-- Modal para crear categorias --}}
-    <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel"
+    {{-- Modal: crear categoría --}}
+    <div class="modal fade gf-modal" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
-
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="createCategoryModalLabel">
-                        <i class="bi bi-wallet2 me-1"></i>
-                        Crear nueva categoría
-                    </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-tag"></i></span>
+                    <h5 class="modal-title" id="createCategoryModalLabel">Crear nueva categoría</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
 
                 <form action="{{ route('categories.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="_form" value="create">
 
+                    @php $showErrors = $reopen === 'create'; @endphp
                     <div class="modal-body">
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nombre de la categoría</label>
-                            <input type="text" name="name" id="name" class="form-control"
-                                value="{{ old('name') }}" placeholder="Ej. Efectivo, BBVA, Santander">
+                        <div class="gf-form-group">
+                            <label for="create_name">Nombre de la categoría</label>
+                            <input type="text" name="name" id="create_name"
+                                class="form-control {{ $showErrors && $errors->has('name') ? 'is-invalid' : '' }}"
+                                value="{{ $showErrors ? old('name') : '' }}" placeholder="Ej. Salario, Comida, Transporte">
+                            @if ($showErrors)
+                                @error('name') <span class="gf-form-error">{{ $message }}</span> @enderror
+                            @endif
                         </div>
 
-                        {{-- SELECT DE CATEGORÍA --}}
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Tipo de categoría</label>
+                        <div class="gf-form-group">
+                            <label for="create_type">Tipo de categoría</label>
+                            <select name="type" id="create_type"
+                                class="form-select {{ $showErrors && $errors->has('type') ? 'is-invalid' : '' }}">
+                                @foreach ($types as $value => $info)
+                                    {{-- Sin error, se preselecciona el tipo del filtro activo --}}
+                                    <option value="{{ $value }}" @selected($showErrors ? old('type') === $value : $type === $value)>{{ $info['label'] }}</option>
+                                @endforeach
+                            </select>
+                            @if ($showErrors)
+                                @error('type') <span class="gf-form-error">{{ $message }}</span> @enderror
+                            @endif
+                        </div>
 
-                            <select name="type" id="type" class="form-select">
-
-                                <option value="income" {{ old('type') == 'income' ? 'selected' : '' }}>
-                                    Ingreso
-                                </option>
-
-                                <option value="expense" {{ old('type') == 'expense' ? 'selected' : '' }}>
-                                    Gasto
-                                </option>
+                        <div class="gf-form-group">
+                            <label for="create_is_active">Estado</label>
+                            <select name="is_active" id="create_is_active" class="form-select">
+                                <option value="1" @selected(! $showErrors || old('is_active') === '1')>Activa</option>
+                                <option value="0" @selected($showErrors && old('is_active') === '0')>Inactiva</option>
                             </select>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="is_active" class="form-label">Estado</label>
-                            <select name="is_active" id="is_active" class="form-select">
-                                <option value="1" {{ old('is_active', '1') == '1' ? 'selected' : '' }}>Activa
-                                </option>
-                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Inactiva</option>
-                            </select>
-                        </div>
-
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
-
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save me-1"></i>
-                            Guardar cuenta
+                        <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="gf-btn gf-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar categoría
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
 
-    @push('scripts')
-        <script>
-            const deleteModal = document.getElementById('deleteCategoryModal') // Obtener referencia al modal de eliminación
+    {{-- Modal: editar categoría (uno solo, se llena con los datos del botón) --}}
+    <div class="modal fade gf-modal" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-pencil"></i></span>
+                    <h5 class="modal-title" id="editCategoryModalLabel">Editar categoría</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
 
-            deleteModal.addEventListener('show.bs.modal', function(event) {
-                // botón que disparó el modal
-                const button = event.relatedTarget
+                @php $showErrors = $reopen === 'edit'; @endphp
+                <form id="editCategoryForm" method="POST"
+                    action="{{ $showErrors && $editId ? route('categories.update', $editId) : '' }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="_form" value="edit">
+                    <input type="hidden" name="_category_id" id="edit_category_id" value="{{ $showErrors ? $editId : '' }}">
 
-                // leer los datos del botón
-                const action = button.getAttribute('data-action')
-                const name = button.getAttribute('data-name')
+                    <div class="modal-body">
+                        <div class="gf-form-group">
+                            <label for="edit_name">Nombre de la categoría</label>
+                            <input type="text" name="name" id="edit_name"
+                                class="form-control {{ $showErrors && $errors->has('name') ? 'is-invalid' : '' }}"
+                                value="{{ $showErrors ? old('name') : '' }}">
+                            @if ($showErrors)
+                                @error('name') <span class="gf-form-error">{{ $message }}</span> @enderror
+                            @endif
+                        </div>
 
-                // inyectarlos en el modal
-                document.getElementById('deleteCategoryName').textContent = name
-                document.getElementById('deleteCategoryForm').setAttribute('action', action)
-            })
-        </script>
-    @endpush
+                        <div class="gf-form-group">
+                            <label for="edit_type">Tipo de categoría</label>
+                            <select name="type" id="edit_type"
+                                class="form-select {{ $showErrors && $errors->has('type') ? 'is-invalid' : '' }}">
+                                @foreach ($types as $value => $info)
+                                    <option value="{{ $value }}" @selected($showErrors && old('type') === $value)>{{ $info['label'] }}</option>
+                                @endforeach
+                            </select>
+                            @if ($showErrors)
+                                @error('type') <span class="gf-form-error">{{ $message }}</span> @enderror
+                            @endif
+                        </div>
 
+                        <div class="gf-form-group">
+                            <label for="edit_is_active">Estado</label>
+                            <select name="is_active" id="edit_is_active" class="form-select">
+                                <option value="1" @selected($showErrors && old('is_active') === '1')>Activa</option>
+                                <option value="0" @selected($showErrors && old('is_active') === '0')>Inactiva</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="gf-btn gf-btn-primary">
+                            <i class="bi bi-check-lg"></i> Actualizar categoría
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal: confirmar eliminación --}}
+    <div class="modal fade gf-modal" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body gf-confirm">
+                    <span class="gf-icon gf-tone-expense"><i class="bi bi-trash3"></i></span>
+                    <h3 id="deleteCategoryModalLabel">¿Eliminar esta categoría?</h3>
+                    <p>Vas a eliminar <strong id="deleteCategoryName"></strong>.</p>
+                    <p>También se eliminarán todas sus transacciones. Esta acción no se puede deshacer.</p>
+                </div>
+
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="deleteCategoryForm" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="gf-btn gf-btn-danger">
+                            <i class="bi bi-trash3"></i> Sí, eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script>
+        (function () {
+            // Editar: llena el modal con los datos del botón que lo abrió
+            document.getElementById('editCategoryModal').addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                if (!button) return; // reabierto tras un error: ya trae los datos enviados
+
+                document.getElementById('editCategoryForm').setAttribute('action', button.dataset.action);
+                document.getElementById('edit_category_id').value = button.dataset.id;
+                document.getElementById('edit_name').value = button.dataset.name;
+                document.getElementById('edit_type').value = button.dataset.type;
+                document.getElementById('edit_is_active').value = button.dataset.active;
+
+                // Limpia errores de un intento anterior
+                this.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                this.querySelectorAll('.gf-form-error').forEach(el => el.remove());
+            });
+
+            // Eliminar: pasa la ruta y el nombre de la categoría al modal
+            document.getElementById('deleteCategoryModal').addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('deleteCategoryName').textContent = button.dataset.name;
+                document.getElementById('deleteCategoryForm').setAttribute('action', button.dataset.action);
+            });
+
+            // Si el servidor devolvió errores, reabre el modal correspondiente
+            @if ($reopen === 'create')
+                new bootstrap.Modal(document.getElementById('createCategoryModal')).show();
+            @elseif ($reopen === 'edit')
+                new bootstrap.Modal(document.getElementById('editCategoryModal')).show();
+            @endif
+        })();
+    </script>
+@endpush
