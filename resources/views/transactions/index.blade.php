@@ -1,636 +1,375 @@
 @extends('layouts.app')
 
-@section('content')
-    <div class="container-fluid">
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/transactions.css') }}?v={{ filemtime(public_path('css/transactions.css')) }}">
+@endpush
 
-        {{-- Alerta cueando se crea una transacción --}}
+@section('content')
+    @php
+        // Opciones de los desplegables de filtro
+        $typeOptions = [
+            ['value' => '', 'label' => 'Todas'],
+            ['value' => 'income', 'label' => 'Ingreso'],
+            ['value' => 'expense', 'label' => 'Gasto'],
+        ];
+
+        $categoryOptions = collect([['value' => '', 'label' => 'Todas']])
+            ->merge($categories->map(fn($c) => ['value' => (string) $c->id, 'label' => $c->name, 'type' => $c->type]))
+            ->all();
+
+        $hasFilters = request()->filled('type') || request()->filled('category_id') || request()->filled('period') || $search !== '';
+
+        // Si falló una validación, se vuelve a abrir el modal que la envió
+        $reopen = $errors->any() ? old('_form') : null;
+        $editId = old('_transaction_id');
+    @endphp
+
+    <div class="gf-page">
+
+        {{-- Encabezado --}}
+        <header class="gf-header">
+            <div>
+                <h1>Lista de transacciones</h1>
+                <p>Administra tus transacciones registradas en GarridoFinance</p>
+            </div>
+            <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+                data-bs-target="#createTransactionModal">
+                <i class="bi bi-plus-circle"></i> Crear una transacción
+            </button>
+        </header>
+
+        {{-- Alerta de éxito --}}
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-1"></i>
+            <div class="gf-alert alert alert-dismissible fade show mb-0" role="alert">
+                <i class="bi bi-check-circle"></i>
                 {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
         @endif
 
+        {{-- Filtros --}}
+        <form method="GET" action="{{ route('transactions.index') }}" id="filterForm" class="gf-filter gf-card">
+            <x-filter-dropdown name="type" label="Tipo" :options="$typeOptions" :value="request('type', '')" />
+            <x-filter-dropdown name="category_id" label="Categoría" :options="$categoryOptions"
+                :value="request('category_id', '')" />
+            <x-period-filter />
 
-        {{-- contenedor header principal seccion de transacciones --}}
-        <div class="d-flex justify-content-between align-items-center mb-4 p-4 ">
-            <div>
-                <h2 class="fw-bold mb-1">Lista de transacciones</h2>
-                <p class="text-muted mb-0">Administra tus transacciones registradas en GarridoFinance</p>
+            <div class="gf-filter-actions">
+                <button type="submit" class="gf-btn gf-btn-primary">
+                    <i class="bi bi-funnel"></i> Filtrar
+                </button>
+                <a href="{{ route('transactions.index') }}" class="gf-btn gf-btn-icon" title="Limpiar filtros"
+                    aria-label="Limpiar filtros">
+                    <i class="bi bi-x-circle"></i>
+                </a>
             </div>
+        </form>
 
-
-        </div>
-        {{-- contenedor de filtros --}}
-        <div class="card border-0 shadow-sm rounded-4 mb-4">
-            <div class="card-body">
-                <form method="GET" action="{{ route('transactions.index') }}" id="filterForm"
-                    class="row g-3 align-items-end">
-
-                    {{-- filtro por tipo --}}
-                    <div class="col-md-2">
-                        <label for="filter_type">Tipo</label>
-                        <select name="type" id="filter_type" class="form-select">
-                            <option value="">Todas</option>
-                            <option value="income" {{ request('type') == 'income' ? 'selected' : '' }}>Ingreso</option>
-                            <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Gasto</option>
-                        </select>
+        {{-- Tabla de transacciones --}}
+        <section class="gf-panel">
+            <div class="gf-panel-head">
+                <div class="gf-panel-title">
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-currency-dollar"></i></span>
+                    <div>
+                        <h2>Transacciones registradas</h2>
+                        <p>{{ $transactions->total() }} {{ $transactions->total() === 1 ? 'transacción encontrada' : 'transacciones encontradas' }}</p>
                     </div>
-
-                    {{-- filtro por categoría --}}
-                    <div class="col-md-2">
-                        <label for="filter_category_id">Categoría</label>
-                        <select name="category_id" id="filter_category_id" class="form-select">
-                            <option value="">Todas</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" data-type="{{ $category->type }}"
-                                    {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- filtro por periodo --}}
-                    <div class="col-md-2">
-                        <label for="filter_period">Periodo</label>
-                        <select name="period" id="filter_period" class="form-select">
-                            <option value="">Todos</option>
-                            <option value="day" {{ request('period') == 'day' ? 'selected' : '' }}>Día</option>
-                            <option value="week" {{ request('period') == 'week' ? 'selected' : '' }}>Semana</option>
-                            <option value="month" {{ request('period') == 'month' ? 'selected' : '' }}>Mes</option>
-                            <option value="year" {{ request('period') == 'year' ? 'selected' : '' }}>Año</option>
-                        </select>
-                    </div>
-
-                    {{-- input dinámico: día --}}
-                    <div class="col-md-2" id="period_day_wrapper" style="display:none;">
-                        <label for="filter_date">Fecha</label>
-                        <input type="date" name="date" id="filter_date" class="form-control"
-                            value="{{ request('date') }}">
-                    </div>
-
-                    {{-- input dinámico: semana --}}
-                    <div class="col-md-2" id="period_week_wrapper" style="display:none;">
-                        <label for="filter_week">Semana</label>
-                        <input type="week" name="week" id="filter_week" class="form-control"
-                            value="{{ request('week') }}">
-                    </div>
-
-                    {{-- input dinámico: mes --}}
-                    <div class="col-md-2" id="period_month_wrapper" style="display:none;">
-                        <label for="filter_month">Mes</label>
-                        <input type="month" name="month" id="filter_month" class="form-control"
-                            value="{{ request('month') }}">
-                    </div>
-
-                    {{-- input dinámico: año --}}
-                    <div class="col-md-2" id="period_year_wrapper" style="display:none;">
-                        <label for="filter_year">Año</label>
-                        <input type="number" name="year" id="filter_year" class="form-control" min="2000"
-                            max="2100" placeholder="2026" value="{{ request('year') }}">
-                    </div>
-
-                    {{-- botones --}}
-                    <div class="col-md-2 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-funnel me-1"></i> Filtrar
-                        </button>
-                        <a href="{{ route('transactions.index') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-x-circle"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="col-md-2 d-flex gap-2">
-                        {{-- btn crear transacción --}}
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#createTransactionModal">
-                            <i class="bi bi-plus-circle me-1"></i>
-                            Crear una transacción
-                        </button>
-
-                    </div>
-
-
-                </form>
-            </div>
-        </div>
-
-        {{-- contenedor de la tabla  transacciones --}}
-        <div class="card border-0 shadow-sm rounded-4">
-
-            {{-- cabecera de la tabla transacciones --}}
-            <div class="card-header bg-white border-0 py-3">
-                <h3 class="mb-0 fw-semibold">
-                    <i class="bi bi-wallet2 me-1"></i>
-                    Transacciones registradas
-                </h3>
-            </div>
-
-            {{-- cuerpo de la tabla de categorías --}}
-            <div class="card-body p-0">
-
-                <div class="table-responsive">
-
-                    <table class="table table-hover align-middle mb-0">
-                        {{-- cabecera de las tablas --}}
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4">Fecha</th>
-                                <th>Tipo</th>
-                                <th>Monto</th>
-                                <th>Cuenta</th>
-                                <th>Categoría</th>
-                                <th>Método de pago</th>
-                                <th>¿Es histórica?</th>
-                                <th>Descripción</th>
-                                <th class="text-end pe-4">Opciones</th>
-                            </tr>
-                        </thead>
-
-                        {{-- cuerpo de la tabla de transacciones --}}
-                        <tbody>
-
-                            @forelse($transactions as $transaction)
-                                <tr>
-                                    {{-- fecha de la transacción --}}
-                                    <td>
-                                        {{ $transaction->date }}
-                                    </td>
-
-                                    {{-- tipo de la transaccion --}}
-                                    <td>
-                                        {{ $transaction->type === 'income' ? 'Ingreso' : 'Gasto' }}
-                                    </td>
-
-                                    {{-- monto de la transacción --}}
-                                    <td>
-                                        ${{ number_format($transaction->amount, 2) }} MXN
-                                    </td>
-
-                                    {{-- cuenta de la transacción --}}
-                                    <td>
-                                        {{ $transaction->account?->name }}
-                                    </td>
-                                    {{-- categoría de la transacción --}}
-                                    <td>
-                                        {{ $transaction->category?->name }}
-                                    </td>
-                                    {{-- método de pago --}}
-                                    <td>
-                                        {{ $transaction->paymentMethod?->name }}
-                                    </td>
-                                    {{-- es histórica --}}
-                                    <td>
-                                        {{ $transaction->is_historical ? 'Sí' : 'No' }}
-                                    </td>
-                                    {{-- descripción de la transacción --}}
-                                    <td>
-                                        {{ $transaction->description }}
-                                    </td>
-
-                                    {{-- opciones  --}}
-                                    <td class="text-end pe-4">
-
-                                        {{--  btn para editar la transaccion --}}
-                                        <button type="button" class="btn btn-outline-warning btn-sm"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#editTransactionModal{{ $transaction->id }}">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-
-                                        {{-- opcion para eliminar la transaccion --}}
-                                        <button type="button" class="btn btn-outline-danger btn-sm"
-                                            data-bs-toggle="modal" data-bs-target="#deleteTransactionModal"
-                                            data-action="{{ route('transactions.destroy', $transaction) }}"
-                                            data-name="{{ $transaction->type }}">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </td>
-
-                                </tr>
-
-                                {{-- Modal para  editar transacciones --}}
-                                <div class="modal fade" id="editTransactionModal{{ $transaction->id }}" tabindex="-1"
-                                    aria-hidden="true">
-
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content rounded-4 border-0 shadow">
-
-                                            <div class="modal-header">
-
-                                                {{-- titulo modal --}}
-                                                <h5 class="modal-title fw-bold">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    Editar transacción
-                                                </h5>
-
-                                                {{-- btn cerrar modal --}}
-                                                <button type="button" class="btn-close"
-                                                    data-bs-dismiss="modal"></button>
-                                            </div>
-
-                                            {{-- Formulario para editar transaccion --}}
-                                            <form action="{{ route('transactions.update', $transaction) }}"
-                                                method="POST">
-
-                                                @csrf
-                                                @method('PUT')
-
-                                                <div class="modal-body">
-
-                                                    {{-- contenedor de fecha --}}
-                                                    <div class="mb-3">
-                                                        <label for="date">Fecha:</label><br>
-                                                        <input type="date" name="date" id="date"
-                                                            value="{{ old('date', $transaction->date) }}">
-                                                    </div>
-
-
-                                                    {{-- contenedor de tipo de transacción --}}
-                                                    <div class="mb-3">
-                                                        <label for="type{{ $transaction->id }}">Tipo de
-                                                            transacción:</label>
-                                                        <select name="type" id="type{{ $transaction->id }}"
-                                                            class="form-select">
-
-                                                            <option
-                                                                value="income"{{ old('type', $transaction->type) == 'income' ? 'selected' : '' }}>
-                                                                Ingreso
-                                                            </option>
-
-                                                            <option
-                                                                value="expense"{{ old('type', $transaction->type) == 'expense' ? 'selected' : '' }}>
-                                                                Gasto
-                                                            </option>
-
-                                                        </select>
-                                                    </div>
-
-                                                    {{-- contenedor de monto --}}
-                                                    <div class="mb-3">
-                                                        <label for="amount">Monto:</label><br>
-                                                        <input type="number" step="0.01" name="amount"
-                                                            id="amount"value="{{ old('amount', $transaction->amount) }}">
-                                                    </div>
-
-                                                    {{-- contenedor de cuenta --}}
-                                                    <div class="mb-3">
-                                                        <label for="account_id">Cuenta:</label><br>
-                                                        <select name="account_id" id="account_id">
-                                                            @foreach ($accounts as $account)
-                                                                <option
-                                                                    value="{{ $account->id }}"{{ old('account_id', $transaction->account_id) == $account->id ? 'selected' : '' }}>
-                                                                    {{ $account->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-
-
-                                                    {{-- contenedor de categoría --}}
-                                                    <div class="mb-3">
-                                                        <label for="category_id{{ $transaction->id }}">Categoría:</label>
-                                                        <select name="category_id"
-                                                            id="category_id{{ $transaction->id }}">
-                                                            @foreach ($categories as $category)
-                                                                <option value="{{ $category->id }}"
-                                                                    data-type="{{ $category->type }}"{{ old('category_id', $transaction->category_id) == $category->id ? 'selected' : '' }}>
-                                                                    {{ $category->name }}
-                                                                    ({{ $category->type === 'income' ? 'Ingreso' : 'Gasto' }})
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-
-                                                    {{-- contenedor de método de pago --}}
-                                                    <div class="mb-3">
-                                                        <label for="payment_method_id">Método de pago:</label>
-                                                        <select name="payment_method_id" id="payment_method_id">
-                                                            @foreach ($paymentMethods as $paymentMethod)
-                                                                <option
-                                                                    value="{{ $paymentMethod->id }}"{{ old('payment_method_id', $transaction->payment_method_id) == $paymentMethod->id ? 'selected' : '' }}>
-                                                                    {{ $paymentMethod->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-
-                                                    {{-- contenedor de es histórica --}}
-                                                    <div class="mb-3">
-                                                        <label for="is_historical">¿Es histórica?</label>
-                                                        <select name="is_historical" id="is_historical"
-                                                            class="form-select">
-                                                            <option value="0"
-                                                                {{ old('is_historical', $transaction->is_historical) == 0 ? 'selected' : '' }}>
-                                                                No</option>
-                                                            <option value="1"
-                                                                {{ old('is_historical', $transaction->is_historical) == 1 ? 'selected' : '' }}>
-                                                                Sí</option>
-                                                        </select>
-                                                    </div>
-
-                                                    {{-- contenedor de descripción --}}
-                                                    <div class="mb-3">
-                                                        <label for="description">Descripción:</label><br>
-                                                        <textarea name="description" id="description" rows="3">{{ old('description', $transaction->description) }}</textarea>
-                                                    </div>
-
-                                                </div>
-
-                                                {{-- contenedor de opciones  --}}
-                                                <div class="modal-footer">
-                                                    {{-- btn cancelar --}}
-                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                                                        Cancelar
-                                                    </button>
-                                                    {{-- btn actualizar --}}
-                                                    <button type="submit" class="btn btn-warning text-white">
-                                                        <i class="bi bi-save me-1"></i>
-                                                        Actualizar categoria
-                                                    </button>
-                                                </div>
-
-                                            </form>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                            @empty
-
-                                {{-- cuando no hay categorias registradas --}}
-                                <tr>
-                                    <td colspan="5" class="text-center py-5">
-                                        <i class="bi bi-folder-x fs-1 text-muted"></i>
-                                        <h5 class="mt-3 mb-1">No hay transacciones registradas</h5>
-                                        <p class="text-muted mb-3">
-                                            Agrega tu primera transacción para comenzar.
-                                        </p>
-
-                                        {{-- btn crear transacciones --}}
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#createTransactionModal">
-                                            <i class="bi bi-plus-circle me-1"></i>
-                                            Crear nueva transacción
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
                 </div>
+
+                {{-- El buscador pertenece al formulario de filtros: se envía junto con ellos --}}
+                <label class="gf-search gf-search-wide">
+                    <i class="bi bi-search"></i>
+                    <input type="search" name="q" form="filterForm" value="{{ $search }}"
+                        placeholder="Buscar por descripción o cuenta" aria-label="Buscar por descripción o cuenta">
+                </label>
             </div>
-        </div>
+
+            <div class="gf-table gf-table-compact gf-transactions-table">
+                <div class="gf-table-head">
+                    <span>Fecha</span>
+                    <span>Tipo</span>
+                    <span>Monto</span>
+                    <span>Cuenta</span>
+                    <span>Categoría</span>
+                    <span>Método de pago</span>
+                    <span>Histórica</span>
+                    <span>Descripción</span>
+                    <span class="gf-cell-end">Opciones</span>
+                </div>
+
+                @forelse ($transactions as $transaction)
+                    @php
+                        $isIncome = $transaction->type === 'income';
+                        $amountLabel = ($isIncome ? '+' : '−') . '$' . number_format($transaction->amount, 2) . ' MXN';
+                    @endphp
+                    <div class="gf-table-row">
+                        {{-- Fecha --}}
+                        <div class="gf-date-cell" title="{{ $transaction->date->format('Y-m-d') }}">
+                            <strong>{{ $transaction->date_label }}</strong>
+                            <span>{{ $transaction->date_hint }}</span>
+                        </div>
+
+                        {{-- Tipo --}}
+                        <span class="gf-pill gf-pill-sm {{ $isIncome ? 'gf-pill-income' : 'gf-pill-expense' }}">
+                            <span class="gf-pill-dot"></span>{{ $isIncome ? 'Ingreso' : 'Gasto' }}
+                        </span>
+
+                        {{-- Monto --}}
+                        <span class="gf-cell-amount {{ $isIncome ? 'gf-amount-income' : 'gf-amount-expense' }}">{{ $amountLabel }}</span>
+
+                        {{-- Cuenta, categoría y método --}}
+                        <span class="gf-cell-text gf-cell-strong" title="{{ $transaction->account?->name }}">{{ $transaction->account?->name }}</span>
+                        <span class="gf-cell-text" title="{{ $transaction->category?->name }}">{{ $transaction->category?->name }}</span>
+                        <span class="gf-cell-text" title="{{ $transaction->paymentMethod?->name }}">{{ $transaction->paymentMethod?->name }}</span>
+
+                        {{-- Histórica --}}
+                        <span class="gf-pill gf-pill-sm {{ $transaction->is_historical ? 'gf-pill-primary' : 'gf-pill-muted' }}">
+                            {{ $transaction->is_historical ? 'Sí' : 'No' }}
+                        </span>
+
+                        {{-- Descripción --}}
+                        <span class="gf-cell-text gf-cell-muted" title="{{ $transaction->description }}">{{ $transaction->description ?: '—' }}</span>
+
+                        {{-- Opciones --}}
+                        <div class="gf-row-actions">
+                            <button type="button" class="gf-action" title="Editar" aria-label="Editar transacción"
+                                data-bs-toggle="modal" data-bs-target="#editTransactionModal"
+                                data-id="{{ $transaction->id }}"
+                                data-action="{{ route('transactions.update', $transaction) }}"
+                                data-date="{{ $transaction->date->format('Y-m-d') }}"
+                                data-type="{{ $transaction->type }}"
+                                data-amount="{{ $transaction->amount }}"
+                                data-account="{{ $transaction->account_id }}"
+                                data-category="{{ $transaction->category_id }}"
+                                data-payment-method="{{ $transaction->payment_method_id }}"
+                                data-historical="{{ $transaction->is_historical ? 1 : 0 }}"
+                                data-description="{{ $transaction->description }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button type="button" class="gf-action gf-action-danger" title="Eliminar"
+                                aria-label="Eliminar transacción"
+                                data-bs-toggle="modal" data-bs-target="#deleteTransactionModal"
+                                data-action="{{ route('transactions.destroy', $transaction) }}"
+                                data-summary="{{ ($isIncome ? 'el ingreso de ' : 'el gasto de ') . $amountLabel . ' del ' . $transaction->date_label . ($transaction->category ? ' (' . $transaction->category->name . ')' : '') }}">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="gf-table-empty">
+                        @if ($hasFilters)
+                            <h3>Sin transacciones</h3>
+                            <p>Ajusta los filtros de tipo, categoría o periodo.</p>
+                        @else
+                            <h3>No hay transacciones registradas</h3>
+                            <p>Agrega tu primera transacción para comenzar.</p>
+                            <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#createTransactionModal">
+                                <i class="bi bi-plus-circle"></i> Crear una transacción
+                            </button>
+                        @endif
+                    </div>
+                @endforelse
+            </div>
+
+            <x-pagination :paginator="$transactions" label="transacciones" />
+        </section>
 
     </div>
 
-    {{-- Modal para eliminar las transaccioness --}}
-    <div class="modal fade" id="deleteTransactionModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
-
-                <div class="modal-header border-0 pb-0">
-
-                    {{-- btn cerrar modal --}}
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    </button>
-                </div>
-
-                {{-- contenido del modal - eliminar transacción --}}
-                <div class="modal-body text-center py-4">
-                    <i class="bi bi-trash fs-1 text-danger mb-3 d-block"></i>
-                    <p class="mb-1">¿Estás seguro que deseas eliminar la transacción:</p>
-                    <h6 class="fw-bold" id="deleteTransactionName"></h6>
-                    <p class="text-muted small mt-2 mb-0">Esta acción no se puede deshacer.</p>
-                </div>
-
-                {{-- contenedor botones del modal --}}
-                <div class="modal-footer border-0 pt-0">
-                    {{-- btn cancelar --}}
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-
-                    {{-- btn eliminar --}}
-                    <form id="deleteTransactionForm" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash me-1"></i>
-                            Sí, eliminar
-                        </button>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    {{-- Modal para crear transacción --}}
-    <div class="modal fade" id="createTransactionModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
-
+    {{-- Modal: crear transacción --}}
+    <div class="modal fade gf-modal" id="createTransactionModal" tabindex="-1"
+        aria-labelledby="createTransactionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold">
-                        <i class="bi bi-plus-circle me-1"></i>
-                        Nueva transacción
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-currency-dollar"></i></span>
+                    <h5 class="modal-title" id="createTransactionModalLabel">Crear una transacción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
 
                 <form action="{{ route('transactions.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="_form" value="create">
 
                     <div class="modal-body">
-
-                        {{-- fecha --}}
-                        <div class="mb-3">
-                            <label for="create_date">Fecha:</label>
-                            <input type="date" name="date" id="create_date" class="form-control"
-                                value="{{ old('date', date('Y-m-d')) }}">
-                        </div>
-
-                        {{-- tipo --}}
-                        <div class="mb-3">
-                            <label for="create_type">Tipo de transacción:</label>
-                            <select name="type" id="create_type" class="form-select">
-                                <option value="income" {{ old('type') == 'income' ? 'selected' : '' }}>Ingreso</option>
-                                <option value="expense" {{ old('type') == 'expense' ? 'selected' : '' }}>Gasto</option>
-                            </select>
-                        </div>
-
-                        {{-- monto --}}
-                        <div class="mb-3">
-                            <label for="create_amount">Monto:</label>
-                            <input type="number" step="0.01" name="amount" id="create_amount" class="form-control"
-                                value="{{ old('amount') }}">
-                        </div>
-
-                        {{-- cuenta --}}
-                        <div class="mb-3">
-                            <label for="create_account_id">Cuenta:</label>
-                            <select name="account_id" id="create_account_id" class="form-select">
-                                @foreach ($accounts as $account)
-                                    <option value="{{ $account->id }}"
-                                        {{ old('account_id') == $account->id ? 'selected' : '' }}>
-                                        {{ $account->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-
-                        {{-- categoría --}}
-                        <div class="mb-3">
-                            <label for="create_category_id">Categoría:</label>
-                            <select name="category_id" id="create_category_id" class="form-select">
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}" data-type="{{ $category->type }}"
-                                        {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                        ({{ $category->type === 'income' ? 'Ingreso' : 'Gasto' }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- método de pago --}}
-                        <div class="mb-3">
-                            <label for="create_payment_method_id">Método de pago:</label>
-                            <select name="payment_method_id" id="create_payment_method_id" class="form-select">
-                                @foreach ($paymentMethods as $paymentMethod)
-                                    <option value="{{ $paymentMethod->id }}"
-                                        {{ old('payment_method_id') == $paymentMethod->id ? 'selected' : '' }}>
-                                        {{ $paymentMethod->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        {{-- is_historical --}}
-                        <div class="mb-3">
-                            <label for="create_is_historical">¿Es histórica?</label>
-                            <select name="is_historical" id="create_is_historical" class="form-select">
-                                <option value="0">No</option>
-                                <option value="1">Sí</option>
-                            </select>
-                        </div>
-
-                        {{-- descripción --}}
-                        <div class="mb-3">
-                            <label for="create_description">Descripción:</label>
-                            <textarea name="description" id="create_description" rows="3" class="form-control">{{ old('description') }}</textarea>
-                        </div>
-
+                        @include('transactions.partials._form-fields', [
+                            'prefix' => 'create',
+                            'showErrors' => $reopen === 'create',
+                            'onlyActive' => true,
+                            'values' => [
+                                'date' => now()->toDateString(),
+                                'type' => request('type') === 'expense' ? 'expense' : 'income',
+                                'is_historical' => '0',
+                            ],
+                        ])
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save me-1"></i>
-                            Guardar transacción
+                        <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="gf-btn gf-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar transacción
                         </button>
                     </div>
-
                 </form>
-
             </div>
         </div>
     </div>
 
-    {{-- Scripts --}}
-    @push('scripts')
-        <script>
-            const deleteModal = document.getElementById('deleteTransactionModal');
+    {{-- Modal: editar transacción (uno solo, se llena con los datos del botón) --}}
+    <div class="modal fade gf-modal" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-pencil"></i></span>
+                    <h5 class="modal-title" id="editTransactionModalLabel">Editar transacción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
 
-            deleteModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget; // botón que disparó el modal
+                <form id="editTransactionForm" method="POST"
+                    action="{{ $reopen === 'edit' && $editId ? route('transactions.update', $editId) : '' }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="_form" value="edit">
+                    <input type="hidden" name="_transaction_id" id="edit_transaction_id"
+                        value="{{ $reopen === 'edit' ? $editId : '' }}">
 
-                const action = button.getAttribute('data-action');
-                const name = button.getAttribute('data-name');
+                    <div class="modal-body">
+                        @include('transactions.partials._form-fields', [
+                            'prefix' => 'edit',
+                            'showErrors' => $reopen === 'edit',
+                            'onlyActive' => false,
+                            'values' => [],
+                        ])
+                    </div>
 
-                document.getElementById('deleteTransactionForm').action = action;
-                document.getElementById('deleteTransactionName').textContent = name;
-            });
+                    <div class="modal-footer">
+                        <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="gf-btn gf-btn-primary">
+                            <i class="bi bi-check-lg"></i> Actualizar transacción
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-            // === NUEVO: filtrado de categorías según tipo de transacción ===
-            function filterCategoriesByType(typeSelect, categorySelect) {
-                const selectedType = typeSelect.value;
-                const options = categorySelect.querySelectorAll('option');
+    {{-- Modal: confirmar eliminación --}}
+    <div class="modal fade gf-modal" id="deleteTransactionModal" tabindex="-1"
+        aria-labelledby="deleteTransactionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body gf-confirm">
+                    <span class="gf-icon gf-tone-expense"><i class="bi bi-trash3"></i></span>
+                    <h3 id="deleteTransactionModalLabel">¿Eliminar esta transacción?</h3>
+                    <p>Vas a eliminar <strong id="deleteTransactionSummary"></strong>.</p>
+                    <p>El saldo de la cuenta se recalculará. Esta acción no se puede deshacer.</p>
+                </div>
 
-                options.forEach(option => {
-                    if (option.dataset.type === selectedType) {
-                        option.hidden = false;
-                    } else {
-                        option.hidden = true;
-                        if (option.selected) option.selected = false;
-                    }
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="deleteTransactionForm" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="gf-btn gf-btn-danger">
+                            <i class="bi bi-trash3"></i> Sí, eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script src="{{ asset('js/filters.js') }}?v={{ filemtime(public_path('js/filters.js')) }}"></script>
+    <script>
+        (function () {
+            // ===== Filtro de categoría: solo las del tipo elegido (todas si el tipo es "Todas") =====
+            const filterType = document.getElementById('filter_type');
+            const filterCategory = document.getElementById('filter_category_id');
+            const categoryDropdown = filterCategory.closest('.gf-filter-dropdown');
+
+            function syncFilterCategories() {
+                const type = filterType.value;
+                let selectedHidden = false;
+
+                categoryDropdown.querySelectorAll('.dropdown-item[data-type]').forEach(function (item) {
+                    const hide = type !== '' && item.dataset.type !== type;
+                    item.parentElement.hidden = hide;
+                    if (hide && item.dataset.value === filterCategory.value) selectedHidden = true;
                 });
 
-                const currentSelected = categorySelect.querySelector('option:checked');
-                if (!currentSelected || currentSelected.hidden) {
+                // Si la categoría elegida ya no corresponde al tipo, vuelve a "Todas"
+                if (selectedHidden) {
+                    categoryDropdown.querySelector('.dropdown-item[data-value=""]').click();
+                }
+            }
+            filterType.addEventListener('change', syncFilterCategories);
+            syncFilterCategories();
+
+            // ===== Modales: la categoría solo muestra las del tipo de transacción =====
+            function filterCategoriesByType(typeSelect, categorySelect) {
+                const selectedType = typeSelect.value;
+
+                categorySelect.querySelectorAll('option').forEach(option => {
+                    option.hidden = option.dataset.type !== selectedType;
+                    if (option.hidden && option.selected) option.selected = false;
+                });
+
+                const current = categorySelect.querySelector('option:checked');
+                if (!current || current.hidden) {
                     const firstVisible = categorySelect.querySelector('option:not([hidden])');
                     if (firstVisible) firstVisible.selected = true;
                 }
             }
 
-            // Modal de crear
-            const createType = document.getElementById('create_type');
-            const createCategory = document.getElementById('create_category_id');
-            createType.addEventListener('change', () => filterCategoriesByType(createType, createCategory));
-            filterCategoriesByType(createType, createCategory);
-
-            // Modal de editar (uno por cada transacción)
-            document.querySelectorAll('[id^="editTransactionModal"]').forEach(modal => {
-                const transactionId = modal.id.replace('editTransactionModal', '');
-                const typeSelect = document.getElementById('type' + transactionId);
-                const categorySelect = document.getElementById('category_id' + transactionId);
-
-                if (typeSelect && categorySelect) {
-                    typeSelect.addEventListener('change', () => filterCategoriesByType(typeSelect, categorySelect));
-                    modal.addEventListener('show.bs.modal', () => filterCategoriesByType(typeSelect, categorySelect));
-                }
+            ['create', 'edit'].forEach(function (prefix) {
+                const typeSelect = document.getElementById(prefix + '_type');
+                const categorySelect = document.getElementById(prefix + '_category_id');
+                typeSelect.addEventListener('change', () => filterCategoriesByType(typeSelect, categorySelect));
+                filterCategoriesByType(typeSelect, categorySelect);
             });
 
-            // === Mostrar el input correcto según el periodo elegido en el filtro ===
-            const periodSelect = document.getElementById('filter_period');
-            const periodWrappers = {
-                day: document.getElementById('period_day_wrapper'),
-                week: document.getElementById('period_week_wrapper'),
-                month: document.getElementById('period_month_wrapper'),
-                year: document.getElementById('period_year_wrapper'),
-            };
+            // ===== Editar: llena el modal con los datos del botón que lo abrió =====
+            document.getElementById('editTransactionModal').addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                if (!button) return; // reabierto tras un error: ya trae los datos enviados
 
-            function togglePeriodInputs() {
-                Object.values(periodWrappers).forEach(w => w.style.display = 'none');
-                const selected = periodSelect.value;
-                if (periodWrappers[selected]) {
-                    periodWrappers[selected].style.display = 'block';
-                }
-            }
-            periodSelect.addEventListener('change', togglePeriodInputs);
-            togglePeriodInputs(); // aplica al cargar, respeta el filtro activo desde la URL
+                const d = button.dataset;
+                document.getElementById('editTransactionForm').setAttribute('action', d.action);
+                document.getElementById('edit_transaction_id').value = d.id;
+                document.getElementById('edit_date').value = d.date;
+                document.getElementById('edit_type').value = d.type;
+                document.getElementById('edit_amount').value = d.amount;
+                document.getElementById('edit_account_id').value = d.account;
+                document.getElementById('edit_payment_method_id').value = d.paymentMethod;
+                document.getElementById('edit_is_historical').value = d.historical;
+                document.getElementById('edit_description').value = d.description;
 
-            // === Filtrar categorías del filtro según el tipo elegido ===
-            const filterType = document.getElementById('filter_type');
-            const filterCategory = document.getElementById('filter_category_id');
+                // Primero se filtran las categorías por tipo y luego se elige la de la transacción
+                filterCategoriesByType(document.getElementById('edit_type'), document.getElementById('edit_category_id'));
+                document.getElementById('edit_category_id').value = d.category;
 
-            function filterCategoriesInFilterBar() {
-                const selectedType = filterType.value;
-                filterCategory.querySelectorAll('option').forEach(opt => {
-                    if (!opt.value || !opt.dataset.type || opt.dataset.type === selectedType) {
-                        opt.hidden = false;
-                    } else {
-                        opt.hidden = true;
-                    }
-                });
-            }
-            filterType.addEventListener('change', filterCategoriesInFilterBar);
-            filterCategoriesInFilterBar(); // aplica al cargar, respeta el filtro activo desde la URL
-        </script>
-    @endpush
+                // Limpia errores de un intento anterior
+                this.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                this.querySelectorAll('.gf-form-error').forEach(el => el.remove());
+            });
 
-@endsection
+            // ===== Eliminar: pasa la ruta y el resumen de la transacción al modal =====
+            document.getElementById('deleteTransactionModal').addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('deleteTransactionSummary').textContent = button.dataset.summary;
+                document.getElementById('deleteTransactionForm').setAttribute('action', button.dataset.action);
+            });
+
+            // ===== Si el servidor devolvió errores, reabre el modal correspondiente =====
+            @if ($reopen === 'create')
+                new bootstrap.Modal(document.getElementById('createTransactionModal')).show();
+            @elseif ($reopen === 'edit')
+                new bootstrap.Modal(document.getElementById('editTransactionModal')).show();
+            @endif
+        })();
+    </script>
+@endpush

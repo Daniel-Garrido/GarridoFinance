@@ -1,342 +1,269 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/payment-methods.css') }}?v={{ filemtime(public_path('css/payment-methods.css')) }}">
+@endpush
+
 @section('content')
+    @php
+        // Si falló una validación, se vuelve a abrir el modal que la envió
+        $reopen = $errors->any() ? old('_form') : null;
+        $editId = old('_payment_method_id');
+    @endphp
 
-    {{-- contenedor principal del metodo de pago --}}
-    <div class="container-fluid">
+    <div class="gf-page">
 
-        {{-- contenedor header principal seccion de metodos de pago --}}
-        <div class="d-flex justify-content-between align-items-center mb-4 p-4 ">
+        {{-- Encabezado --}}
+        <header class="gf-header">
             <div>
-                <h2 class="fw-bold mb-1">Lista de métodos de pago</h2>
-                <p class="text-muted mb-0">Administra tus métodos de pago registrados en GarridoFinance</p>
+                <h1>Lista de métodos de pago</h1>
+                <p>Administra tus métodos de pago registrados en GarridoFinance</p>
             </div>
-
-            {{-- btn crear metodo de pago --}}
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPaymentMethodModal">
-                <i class="bi bi-plus-circle me-1"></i>
-                Crear nuevo método de pago
+            <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+                data-bs-target="#createPaymentMethodModal">
+                <i class="bi bi-plus-circle"></i> Crear nuevo método de pago
             </button>
-        </div>
+        </header>
 
-        {{-- Alerta cueando se crea un metodo de pago --}}
+        {{-- Alerta de éxito --}}
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-1"></i>
+            <div class="gf-alert alert alert-dismissible fade show mb-0" role="alert">
+                <i class="bi bi-check-circle"></i>
                 {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
         @endif
 
-        {{-- contenedor de la tabla de métodos de pago --}}
-        <div class="card border-0 shadow-sm rounded-4">
-
-            <div class="card-header bg-white border-0 py-3">
-                <h3 class="mb-0 fw-semibold">
-                    <i class="bi bi-wallet2 me-1"></i>
-                    Métodos de pago registrados
-                </h3>
-            </div>
-
-            {{-- cuerpo de la tabla de métodos de pago --}}
-            <div class="card-body p-0">
-                <div class="table-responsive">
-
-                    <table class="table table-hover align-middle mb-0">
-                        {{-- cabecera de las tablas --}}
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4">Tipo de método de pago</th>
-                                <th>Estado</th>
-                                <th class="text-end pe-4">Opciones</th>
-                            </tr>
-                        </thead>
-
-                        {{-- cuerpo de la tabla de métodos de pago --}}
-                        <tbody>
-
-                            @forelse($paymentMethods as $method)
-                                <tr>
-                                    {{-- nombre del método de pago --}}
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="account-icon me-3">
-                                                <i class="bi bi-wallet2"></i>
-                                            </div>
-
-                                            <div>
-                                                <h6 class="mb-0 fw-semibold">
-                                                    {{ $method->name }}
-                                                </h6>
-                                                {{-- <small class="text-muted">
-                                                    {{ $method->type === 'income' ? 'Ingreso' : 'Gasto' }}
-                                                </small> --}}
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    {{-- si esta activa la cuenta --}}
-                                    <td>
-                                        @if ($method->is_active)
-                                            <span class="badge rounded-pill text-bg-success">
-                                                <i class="bi bi-check-circle me-1"></i>
-                                                Activa
-                                            </span>
-                                        @else
-                                            <span class="badge rounded-pill text-bg-secondary">
-                                                <i class="bi bi-x-circle me-1"></i>
-                                                Inactiva
-                                            </span>
-                                        @endif
-                                    </td>
-
-                                    {{-- opciones del metodo de pago --}}
-                                    <td class="text-end pe-4">
-
-                                        {{--  btn para editar el método de pago --}}
-                                        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#editPaymentMethodModal{{ $method->id }}">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-
-                                        {{-- opcion para eliminar el método de pago --}}
-                                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#deletePaymentMethodModal"
-                                            data-action="{{ route('payment-methods.destroy', $method) }}"
-                                            data-name="{{ $method->name }}">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </td>
-
-                                </tr>
-
-                                {{-- modal para editar metodo de pago --}}
-                                <div class="modal fade" id="editPaymentMethodModal{{ $method->id }}" tabindex="-1"
-                                    aria-hidden="true">
-
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content rounded-4 border-0 shadow">
-
-                                            <div class="modal-header">
-                                                {{-- titulo modal --}}
-                                                <h5 class="modal-title fw-bold">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    Editar metodo de pago
-                                                </h5>
-                                                {{-- btn cerrar modal --}}
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-
-                                            {{-- Formulario para editar metodo de pago --}}
-                                            <form action="{{ route('payment-methods.update', $method) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-
-                                                <div class="modal-body">
-
-                                                    {{-- contenedor de nombre del metodo de pago --}}
-                                                    <div class="mb-3">
-                                                        <label for="name{{ $method->id }}" class="form-label">
-                                                            Nombre del metodo de pago
-                                                        </label>
-
-                                                        <input type="text" name="name" id="name{{ $method->id }}"
-                                                            class="form-control" value="{{ old('name', $method->name) }}">
-                                                    </div>
-
-                                                    {{-- contenedor del estado del metodo de pago --}}
-                                                    <div class="mb-3">
-                                                        <label for="is_active{{ $method->id }}" class="form-label">
-                                                            Estado
-                                                        </label>
-
-                                                        <select name="is_active" id="is_active{{ $method->id }}"
-                                                            class="form-select">
-                                                            <option value="1"
-                                                                {{ old('is_active', $method->is_active) == 1 ? 'selected' : '' }}>
-                                                                Activa
-                                                            </option>
-                                                            <option value="0"
-                                                                {{ old('is_active', $method->is_active) == 0 ? 'selected' : '' }}>
-                                                                Inactiva
-                                                            </option>
-                                                        </select>
-                                                    </div>
-
-                                                    {{-- contenedor de opciones  --}}
-                                                    <div class="modal-footer">
-                                                        {{-- btn cancelar --}}
-                                                        <button type="button" class="btn btn-light"
-                                                            data-bs-dismiss="modal">
-                                                            Cancelar
-                                                        </button>
-                                                        {{-- btn actualizar --}}
-                                                        <button type="submit" class="btn btn-warning text-white">
-                                                            <i class="bi bi-save me-1"></i>
-                                                            Actualizar método de pago
-                                                        </button>
-                                                    </div>
-
-                                            </form>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                {{-- cuando no hay metodos de pago registrados --}}
-                                <tr>
-                                    <td colspan="5" class="text-center py-5">
-                                        <i class="bi bi-folder-x fs-1 text-muted"></i>
-                                        <h5 class="mt-3 mb-1">No hay metodos de pago registrados</h5>
-                                        <p class="text-muted mb-3">
-                                            Agrega tu primer método de pago para comenzar.
-                                        </p>
-
-                                        {{-- btn crear categorias --}}
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#createPaymentMethodModal">
-                                            <i class="bi bi-plus-circle me-1"></i>
-                                            Crear nuevo método de pago
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+        {{-- Tabla de métodos de pago --}}
+        <section class="gf-panel">
+            <div class="gf-panel-head">
+                <div class="gf-panel-title">
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-credit-card"></i></span>
+                    <div>
+                        <h2>Métodos de pago registrados</h2>
+                        <p>{{ $paymentMethods->total() }} {{ $paymentMethods->total() === 1 ? 'método registrado' : 'métodos registrados' }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div class="gf-table gf-payment-methods-table">
+                <div class="gf-table-head">
+                    <span>Tipo de método de pago</span>
+                    <span>Estado</span>
+                    <span class="gf-cell-end">Opciones</span>
+                </div>
+
+                @forelse ($paymentMethods as $method)
+                    @php $kind = $method->kind_info; @endphp
+                    <div class="gf-table-row">
+                        {{-- Nombre --}}
+                        <div class="gf-cell-main">
+                            <span class="gf-icon gf-tone-{{ $kind['tone'] }}"><i class="bi bi-credit-card"></i></span>
+                            <div>
+                                <p class="gf-cell-title">{{ $method->name }}</p>
+                                <p class="gf-cell-meta">{{ $kind['subtitle'] }}</p>
+                            </div>
+                        </div>
+
+                        {{-- Estado --}}
+                        @if ($method->is_active)
+                            <span class="gf-pill gf-pill-income"><span class="gf-pill-dot"></span>Activa</span>
+                        @else
+                            <span class="gf-pill gf-pill-muted"><span class="gf-pill-dot"></span>Inactiva</span>
+                        @endif
+
+                        {{-- Opciones --}}
+                        <div class="gf-row-actions">
+                            <button type="button" class="gf-action" title="Editar" aria-label="Editar {{ $method->name }}"
+                                data-bs-toggle="modal" data-bs-target="#editPaymentMethodModal"
+                                data-id="{{ $method->id }}"
+                                data-action="{{ route('payment-methods.update', $method) }}"
+                                data-name="{{ $method->name }}"
+                                data-active="{{ $method->is_active ? 1 : 0 }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button type="button" class="gf-action gf-action-danger" title="Eliminar"
+                                aria-label="Eliminar {{ $method->name }}"
+                                data-bs-toggle="modal" data-bs-target="#deletePaymentMethodModal"
+                                data-action="{{ route('payment-methods.destroy', $method) }}"
+                                data-name="{{ $method->name }}">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="gf-table-empty">
+                        <h3>No hay métodos de pago registrados</h3>
+                        <p>Agrega tu primer método de pago para comenzar.</p>
+                        <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#createPaymentMethodModal">
+                            <i class="bi bi-plus-circle"></i> Crear nuevo método de pago
+                        </button>
+                    </div>
+                @endforelse
+            </div>
+
+            <x-pagination :paginator="$paymentMethods" label="métodos de pago" />
+        </section>
 
     </div>
 
-    {{-- modal para crear metodo de pago --}}
-    <div class="modal fade" id="createPaymentMethodModal" tabindex="-1" aria-labelledby="createPaymentMethodModalLabel"
-        aria-hidden="true">
-
+    {{-- Modal: crear método de pago --}}
+    <div class="modal fade gf-modal" id="createPaymentMethodModal" tabindex="-1"
+        aria-labelledby="createPaymentMethodModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-
-            <div class="modal-content rounded-4 border-0 shadow">
-
-                {{-- encabezado del modal de metodo de pago --}}
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="createPaymentMethodModalLabel">
-                        <i class="bi bi-wallet2 me-1"></i>
-                        Crear nuevo método de pago
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-credit-card"></i></span>
+                    <h5 class="modal-title" id="createPaymentMethodModalLabel">Crear nuevo método de pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
 
-                {{-- formulario para crear método de pago --}}
                 <form action="{{ route('payment-methods.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="_form" value="create">
 
+                    @php $showErrors = $reopen === 'create'; @endphp
                     <div class="modal-body">
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        {{-- tipo de método de pago --}}
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Tipo de método de pago</label>
-                            <input type="text" name="name" id="name" class="form-control"
-                                value="{{ old('name') }}" placeholder="Ej: Efectivo, Tarjeta">
+                        <div class="gf-form-group">
+                            <label for="create_name">Nombre del método de pago</label>
+                            <input type="text" name="name" id="create_name"
+                                class="form-control {{ $showErrors && $errors->has('name') ? 'is-invalid' : '' }}"
+                                value="{{ $showErrors ? old('name') : '' }}" placeholder="Ej. Efectivo, Tarjeta de débito BBVA">
+                            @if ($showErrors)
+                                @error('name') <span class="gf-form-error">{{ $message }}</span> @enderror
+                            @endif
                         </div>
 
-                        {{-- estado del método de pago --}}
-                        <div class="mb-3">
-                            <label for="is_active" class="form-label">Estado</label>
-                            <select name="is_active" id="is_active" class="form-select">
-                                <option value="1" {{ old('is_active', '1') == '1' ? 'selected' : '' }}>Activa
-                                </option>
-                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Inactiva</option>
+                        <div class="gf-form-group">
+                            <label for="create_is_active">Estado</label>
+                            <select name="is_active" id="create_is_active" class="form-select">
+                                <option value="1" @selected(! $showErrors || old('is_active') === '1')>Activa</option>
+                                <option value="0" @selected($showErrors && old('is_active') === '0')>Inactiva</option>
                             </select>
                         </div>
-
                     </div>
 
-                    {{-- Opciones --}}
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
-
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save me-1"></i>
-                            Guardar método de pago
+                        <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="gf-btn gf-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar método de pago
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
 
-    {{-- modal para eliminar metodo de pago --}}
-    <div class="modal fade" id="deletePaymentMethodModal" tabindex="-1" aria-hidden="true">
+    {{-- Modal: editar método de pago (uno solo, se llena con los datos del botón) --}}
+    <div class="modal fade gf-modal" id="editPaymentMethodModal" tabindex="-1"
+        aria-labelledby="editPaymentMethodModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
-
-                <div class="modal-header border-0 pb-0">
-                    {{-- btn cerrar modal --}}
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-pencil"></i></span>
+                    <h5 class="modal-title" id="editPaymentMethodModalLabel">Editar método de pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
 
-                {{-- contenido del modal - eliminar metodo de pago --}}
-                <div class="modal-body text-center py-4">
-                    <i class="bi bi-trash fs-1 text-danger mb-3 d-block"></i>
-                    <p class="mb-1">¿Estás seguro que deseas eliminar el Método de pago:</p>
-                    <h6 class="fw-bold" id="deletePaymentMethodName"></h6>
-                    <p class="text-muted small mt-2 mb-0">Esta acción no se puede deshacer.</p>
+                @php $showErrors = $reopen === 'edit'; @endphp
+                <form id="editPaymentMethodForm" method="POST"
+                    action="{{ $showErrors && $editId ? route('payment-methods.update', $editId) : '' }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="_form" value="edit">
+                    <input type="hidden" name="_payment_method_id" id="edit_payment_method_id"
+                        value="{{ $showErrors ? $editId : '' }}">
+
+                    <div class="modal-body">
+                        <div class="gf-form-group">
+                            <label for="edit_name">Nombre del método de pago</label>
+                            <input type="text" name="name" id="edit_name"
+                                class="form-control {{ $showErrors && $errors->has('name') ? 'is-invalid' : '' }}"
+                                value="{{ $showErrors ? old('name') : '' }}">
+                            @if ($showErrors)
+                                @error('name') <span class="gf-form-error">{{ $message }}</span> @enderror
+                            @endif
+                        </div>
+
+                        <div class="gf-form-group">
+                            <label for="edit_is_active">Estado</label>
+                            <select name="is_active" id="edit_is_active" class="form-select">
+                                <option value="1" @selected($showErrors && old('is_active') === '1')>Activa</option>
+                                <option value="0" @selected($showErrors && old('is_active') === '0')>Inactiva</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="gf-btn gf-btn-primary">
+                            <i class="bi bi-check-lg"></i> Actualizar método de pago
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal: confirmar eliminación --}}
+    <div class="modal fade gf-modal" id="deletePaymentMethodModal" tabindex="-1"
+        aria-labelledby="deletePaymentMethodModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body gf-confirm">
+                    <span class="gf-icon gf-tone-expense"><i class="bi bi-trash3"></i></span>
+                    <h3 id="deletePaymentMethodModalLabel">¿Eliminar este método de pago?</h3>
+                    <p>Vas a eliminar <strong id="deletePaymentMethodName"></strong>.</p>
+                    <p>También se eliminarán todas las transacciones pagadas con él. Esta acción no se puede deshacer.</p>
                 </div>
 
-                {{-- contenedor botones del modal --}}
-                <div class="modal-footer border-0 pt-0">
-                    {{-- btn cancelar --}}
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-
-                    {{-- btn eliminar --}}
-                    <form id="deletePaymentMethodForm" method="POST" class="d-inline">
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="deletePaymentMethodForm" method="POST">
                         @csrf
                         @method('DELETE')
-
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash me-1"></i>
-                            Sí, eliminar
+                        <button type="submit" class="gf-btn gf-btn-danger">
+                            <i class="bi bi-trash3"></i> Sí, eliminar
                         </button>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
-
-
-    @push('scripts')
-        <script>
-            const deleteModal = document.getElementById('deletePaymentMethodModal') // Obtener referencia al modal de eliminación
-
-            deleteModal.addEventListener('show.bs.modal', function(event) {
-                // botón que disparó el modal
-                const button = event.relatedTarget;
-
-                // leer los datos del botón
-                const action = button.getAttribute('data-action');
-                const name = button.getAttribute('data-name');
-
-                // inyectarlos en el modal
-                document.getElementById('deletePaymentMethodName').textContent = name;
-                document.getElementById('deletePaymentMethodForm').setAttribute('action', action);
-            })
-        </script>
-    @endpush
-
 @endsection
+
+@push('scripts')
+    <script>
+        (function () {
+            // Editar: llena el modal con los datos del botón que lo abrió
+            document.getElementById('editPaymentMethodModal').addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                if (!button) return; // reabierto tras un error: ya trae los datos enviados
+
+                document.getElementById('editPaymentMethodForm').setAttribute('action', button.dataset.action);
+                document.getElementById('edit_payment_method_id').value = button.dataset.id;
+                document.getElementById('edit_name').value = button.dataset.name;
+                document.getElementById('edit_is_active').value = button.dataset.active;
+
+                // Limpia errores de un intento anterior
+                this.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                this.querySelectorAll('.gf-form-error').forEach(el => el.remove());
+            });
+
+            // Eliminar: pasa la ruta y el nombre del método de pago al modal
+            document.getElementById('deletePaymentMethodModal').addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('deletePaymentMethodName').textContent = button.dataset.name;
+                document.getElementById('deletePaymentMethodForm').setAttribute('action', button.dataset.action);
+            });
+
+            // Si el servidor devolvió errores, reabre el modal correspondiente
+            @if ($reopen === 'create')
+                new bootstrap.Modal(document.getElementById('createPaymentMethodModal')).show();
+            @elseif ($reopen === 'edit')
+                new bootstrap.Modal(document.getElementById('editPaymentMethodModal')).show();
+            @endif
+        })();
+    </script>
+@endpush

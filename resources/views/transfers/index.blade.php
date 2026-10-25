@@ -1,370 +1,293 @@
 @extends('layouts.app')
-@section('content')
-    <div class="container-fluid">
 
-        {{-- Alerta cueando se crea una transferencia --}}
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/transfers.css') }}?v={{ filemtime(public_path('css/transfers.css')) }}">
+@endpush
+
+@section('content')
+    @php
+        $hasFilters = request()->filled('period') || $search !== '';
+
+        // Si falló una validación, se vuelve a abrir el modal que la envió
+        $reopen = $errors->any() ? old('_form') : null;
+        $editId = old('_transfer_id');
+    @endphp
+
+    <div class="gf-page">
+
+        {{-- Encabezado --}}
+        <header class="gf-header">
+            <div>
+                <h1>Lista de transferencias</h1>
+                <p>Administra tus transferencias registradas en GarridoFinance</p>
+            </div>
+            <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+                data-bs-target="#createTransferModal">
+                <i class="bi bi-plus-circle"></i> Crear una transferencia
+            </button>
+        </header>
+
+        {{-- Alerta de éxito --}}
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-1"></i>
+            <div class="gf-alert alert alert-dismissible fade show mb-0" role="alert">
+                <i class="bi bi-check-circle"></i>
                 {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
         @endif
 
-        {{-- contenedor header principal seccion de transferencias --}}
-        <div class="d-flex justify-content-between align-items-center mb-4 p-4 ">
-            <div>
-                <h2 class="fw-bold mb-1">Lista de transferencias</h2>
-                <p class="text-muted mb-0">Administra tus transferencias registradas en GarridoFinance</p>
+        {{-- Filtros --}}
+        <form method="GET" action="{{ route('transfers.index') }}" id="filterForm" class="gf-filter gf-card">
+            <x-period-filter />
+
+            <div class="gf-filter-actions">
+                <button type="submit" class="gf-btn gf-btn-primary">
+                    <i class="bi bi-funnel"></i> Filtrar
+                </button>
+                <a href="{{ route('transfers.index') }}" class="gf-btn gf-btn-icon" title="Limpiar filtros"
+                    aria-label="Limpiar filtros">
+                    <i class="bi bi-x-circle"></i>
+                </a>
             </div>
+        </form>
 
-            {{-- btn crear transferencia --}}
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTransferModal">
-                <i class="bi bi-plus-circle me-1"></i>
-                Crear una transferencia
-            </button>
-        </div>
-
-        <div class="card border-0 shadow-sm rounded-4">
-
-            {{-- cabecera de la tabla transacciones --}}
-            <div class="card-header bg-white border-0 py-3">
-                <h3 class="mb-0 fw-semibold">
-                    <i class="bi bi-wallet2 me-1"></i>
-                    Transferencias registradas
-                </h3>
-            </div>
-
-            {{-- cuerpo de la tabla de categorías --}}
-            <div class="card-body p-0">
-
-                <div class="table-responsive">
-
-                    <table class="table table-hover align-middle mb-0">
-                        {{-- cabecera de las tablas --}}
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4">Fecha</th>
-                                <th>Monto</th>
-                                <th>Cuenta origen</th>
-                                <th>Cuenta destino</th>
-                                <th>Descripción</th>
-                                <th class="text-end pe-4">Opciones</th>
-                            </tr>
-                        </thead>
-
-                        {{-- cuerpo de la tabla de transacciones --}}
-                        <tbody>
-
-                            @forelse($transfers as $transfer)
-                                <tr>
-                                    {{-- fecha de la transacción --}}
-                                    <td>
-                                        {{ $transfer->date }}
-                                    </td>
-
-                                    {{-- monto de la transacción --}}
-                                    <td>
-                                        ${{ number_format($transfer->amount, 2) }} MXN
-                                    </td>
-                                    {{-- cuenta origen --}}
-                                    <td>
-                                        {{ $transfer->fromAccount?->name }}
-                                    </td>
-                                    {{-- cuenta destino --}}
-                                    <td>
-                                        {{ $transfer->toAccount?->name }}
-                                    </td>
-                                    {{-- descripción --}}
-                                    <td>
-                                        {{ $transfer->description }}
-                                    </td>
-
-
-                                    {{-- opciones  --}}
-                                    <td class="text-end pe-4">
-
-                                        {{--  btn para editar la transaccion --}}
-                                        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#editTransferModal{{ $transfer->id }}">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-
-                                        {{-- opcion para eliminar la transaccion --}}
-                                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#deleteTransferModal"
-                                            data-action="{{ route('transfers.destroy', $transfer) }}"
-                                            data-name="{{ $transfer->description }}">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </td>
-
-                                </tr>
-
-                                {{-- Modal para editar transferencia --}}
-                                <div class="modal fade" id="editTransferModal{{ $transfer->id }}" tabindex="-1"
-                                    aria-hidden="true">
-
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content rounded-4 border-0 shadow">
-
-                                            <div class="modal-header">
-
-                                                {{-- titulo modal --}}
-                                                <h5 class="modal-title fw-bold">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    Editar transferencia
-                                                </h5>
-
-                                                {{-- btn cerrar modal --}}
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-
-                                            {{-- Formulario para editar transferencia --}}
-                                            <form action="{{ route('transfers.update', $transfer) }}" method="POST">
-
-                                                @csrf
-                                                @method('PUT')
-
-                                                <div class="modal-body">
-
-                                                    {{-- contenedor de fecha --}}
-                                                    <div class="mb-3">
-                                                        <label for="date{{ $transfer->id }}">Fecha:</label><br>
-                                                        <input type="date" name="date" id="date{{ $transfer->id }}"
-                                                            class="form-control"
-                                                            value="{{ old('date', $transfer->date) }}">
-                                                    </div>
-
-                                                    {{-- contenedor de monto --}}
-                                                    <div class="mb-3">
-                                                        <label for="amount{{ $transfer->id }}">Monto:</label><br>
-                                                        <input type="number" step="0.01" name="amount"
-                                                            id="amount{{ $transfer->id }}" class="form-control"
-                                                            value="{{ old('amount', $transfer->amount) }}">
-                                                    </div>
-
-                                                    {{-- contenedor de cuenta origen --}}
-                                                    <div class="mb-3">
-                                                        <label for="from_account_id{{ $transfer->id }}">Cuenta origen:</label><br>
-                                                        <select name="from_account_id"
-                                                            id="from_account_id{{ $transfer->id }}"
-                                                            class="form-select">
-                                                            @foreach($accounts as $account)
-                                                                <option value="{{ $account->id }}"
-                                                                    {{ old('from_account_id', $transfer->from_account_id) == $account->id ? 'selected' : '' }}>
-                                                                    {{ $account->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-
-                                                    {{-- contenedor de cuenta destino --}}
-                                                    <div class="mb-3">
-                                                        <label for="to_account_id{{ $transfer->id }}">Cuenta destino:</label><br>
-                                                        <select name="to_account_id"
-                                                            id="to_account_id{{ $transfer->id }}"
-                                                            class="form-select">
-                                                            @foreach($accounts as $account)
-                                                                <option value="{{ $account->id }}"
-                                                                    {{ old('to_account_id', $transfer->to_account_id) == $account->id ? 'selected' : '' }}>
-                                                                    {{ $account->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-
-                                                    {{-- contenedor de descripción --}}
-                                                    <div class="mb-3">
-                                                        <label for="description{{ $transfer->id }}">Descripción:</label><br>
-                                                        <textarea name="description"
-                                                            id="description{{ $transfer->id }}" class="form-control"
-                                                            rows="3">{{ old('description', $transfer->description) }}</textarea>
-                                                    </div>
-
-                                                </div>
-
-                                                {{-- contenedor de opciones  --}}
-                                                <div class="modal-footer">
-                                                    {{-- btn cancelar --}}
-                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                                                        Cancelar
-                                                    </button>
-                                                    {{-- btn actualizar --}}
-                                                    <button type="submit" class="btn btn-warning text-white">
-                                                        <i class="bi bi-save me-1"></i>
-                                                        Actualizar transferencia
-                                                    </button>
-                                                </div>
-
-                                            </form>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                            @empty
-
-                                {{-- cuando no hay transferencias registradas --}}
-                                <tr>
-                                    <td colspan="6" class="text-center py-5">
-                                        <i class="bi bi-folder-x fs-1 text-muted"></i>
-                                        <h5 class="mt-3 mb-1">No hay transferencias registradas</h5>
-                                        <p class="text-muted mb-3">
-                                            Agrega tu primera transferencia para comenzar.
-                                        </p>
-
-                                        {{-- btn crear transferencia --}}
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#createTransferModal">
-                                            <i class="bi bi-plus-circle me-1"></i>
-                                            Crear nueva transferencia
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+        {{-- Tabla de transferencias --}}
+        <section class="gf-panel">
+            <div class="gf-panel-head">
+                <div class="gf-panel-title">
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-arrow-left-right"></i></span>
+                    <div>
+                        <h2>Transferencias registradas</h2>
+                        <p>{{ $transfers->total() }} {{ $transfers->total() === 1 ? 'transferencia encontrada' : 'transferencias encontradas' }}</p>
+                    </div>
                 </div>
+
+                {{-- El buscador pertenece al formulario de filtros: se envía junto con el periodo --}}
+                <label class="gf-search gf-search-wide">
+                    <i class="bi bi-search"></i>
+                    <input type="search" name="q" form="filterForm" value="{{ $search }}"
+                        placeholder="Buscar por cuenta o descripción" aria-label="Buscar por cuenta o descripción">
+                </label>
             </div>
-        </div>
+
+            <div class="gf-table gf-table-compact gf-transfers-table">
+                <div class="gf-table-head">
+                    <span>Fecha</span>
+                    <span>Monto</span>
+                    <span>Cuenta origen</span>
+                    <span>Cuenta destino</span>
+                    <span>Descripción</span>
+                    <span class="gf-cell-end">Opciones</span>
+                </div>
+
+                @forelse ($transfers as $transfer)
+                    @php $amountLabel = '$' . number_format($transfer->amount, 2) . ' MXN'; @endphp
+                    <div class="gf-table-row">
+                        {{-- Fecha --}}
+                        <div class="gf-date-cell" title="{{ $transfer->date->format('Y-m-d') }}">
+                            <strong>{{ $transfer->date_label }}</strong>
+                            <span>{{ $transfer->date_hint }}</span>
+                        </div>
+
+                        {{-- Monto --}}
+                        <span class="gf-cell-amount">{{ $amountLabel }}</span>
+
+                        {{-- Cuenta origen (sale el dinero) --}}
+                        <div class="gf-cell-account">
+                            <span class="gf-icon gf-tone-expense"><i class="bi bi-arrow-down"></i></span>
+                            <span class="gf-cell-text gf-cell-strong" title="{{ $transfer->fromAccount?->name }}">{{ $transfer->fromAccount?->name }}</span>
+                        </div>
+
+                        {{-- Cuenta destino (entra el dinero) --}}
+                        <div class="gf-cell-account">
+                            <span class="gf-icon gf-tone-income"><i class="bi bi-arrow-up"></i></span>
+                            <span class="gf-cell-text gf-cell-strong" title="{{ $transfer->toAccount?->name }}">{{ $transfer->toAccount?->name }}</span>
+                        </div>
+
+                        {{-- Descripción --}}
+                        <span class="gf-cell-text gf-cell-muted" title="{{ $transfer->description }}">{{ $transfer->description ?: '—' }}</span>
+
+                        {{-- Opciones --}}
+                        <div class="gf-row-actions">
+                            <button type="button" class="gf-action" title="Editar" aria-label="Editar transferencia"
+                                data-bs-toggle="modal" data-bs-target="#editTransferModal"
+                                data-id="{{ $transfer->id }}"
+                                data-action="{{ route('transfers.update', $transfer) }}"
+                                data-date="{{ $transfer->date->format('Y-m-d') }}"
+                                data-amount="{{ $transfer->amount }}"
+                                data-from="{{ $transfer->from_account_id }}"
+                                data-to="{{ $transfer->to_account_id }}"
+                                data-description="{{ $transfer->description }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button type="button" class="gf-action gf-action-danger" title="Eliminar"
+                                aria-label="Eliminar transferencia"
+                                data-bs-toggle="modal" data-bs-target="#deleteTransferModal"
+                                data-action="{{ route('transfers.destroy', $transfer) }}"
+                                data-summary="{{ 'la transferencia de ' . $amountLabel . ' de ' . ($transfer->fromAccount?->name ?? '—') . ' a ' . ($transfer->toAccount?->name ?? '—') . ' del ' . $transfer->date_label }}">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="gf-table-empty">
+                        @if ($hasFilters)
+                            <h3>Sin transferencias</h3>
+                            <p>Ajusta el periodo o la búsqueda.</p>
+                        @else
+                            <h3>No hay transferencias registradas</h3>
+                            <p>Agrega tu primera transferencia para comenzar.</p>
+                            <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#createTransferModal">
+                                <i class="bi bi-plus-circle"></i> Crear una transferencia
+                            </button>
+                        @endif
+                    </div>
+                @endforelse
+            </div>
+
+            <x-pagination :paginator="$transfers" label="transferencias" />
+        </section>
+
     </div>
 
-    {{-- Modal para crear transferencia --}}
-    <div class="modal fade" id="createTransferModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
-
+    {{-- Modal: crear transferencia --}}
+    <div class="modal fade gf-modal" id="createTransferModal" tabindex="-1" aria-labelledby="createTransferModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold">
-                        <i class="bi bi-plus-circle me-1"></i>
-                        Nueva transferencia
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-arrow-left-right"></i></span>
+                    <h5 class="modal-title" id="createTransferModalLabel">Crear una transferencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
 
                 <form action="{{ route('transfers.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="_form" value="create">
 
                     <div class="modal-body">
-
-                        {{-- contenedor de fecha --}}
-                        <div class="mb-3">
-                            <label for="date">Fecha:</label><br>
-                            <input type="date" name="date" id="date" class="form-control"
-                                value="{{ old('date') }}" required>
-                        </div>
-
-                        {{-- contenedor de monto --}}
-                        <div class="mb-3">
-                            <label for="amount">Monto:</label><br>
-                            <input type="number" step="0.01" name="amount" id="amount" class="form-control"
-                                value="{{ old('amount') }}" required>
-                        </div>
-
-                        {{-- contenedor de cuenta origen --}}
-                        <div class="mb-3">
-                            <label for="from_account_id">Cuenta origen:</label><br>
-                            <select name="from_account_id" id="from_account_id" class="form-select" required>
-                                <option value="" disabled selected>Selecciona una cuenta</option>
-                                @foreach($accounts as $account)
-                                    <option value="{{ $account->id }}" {{ old('from_account_id') == $account->id ? 'selected' : '' }}>
-                                        {{ $account->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- contenedor de cuenta destino --}}
-                        <div class="mb-3">
-                            <label for="to_account_id">Cuenta destino:</label><br>
-                            <select name="to_account_id" id="to_account_id" class="form-select" required>
-                                <option value="" disabled selected>Selecciona una cuenta</option>
-                                @foreach($accounts as $account)
-                                    <option value="{{ $account->id }}" {{ old('to_account_id') == $account->id ? 'selected' : '' }}>
-                                        {{ $account->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- contenedor de descripción --}}
-                        <div class="mb-3">
-                            <label for="description">Descripción:</label><br>
-                            <textarea name="description" id="description" class="form-control" rows="3">{{ old('description') }}</textarea>
-                        </div>
-
+                        @include('transfers.partials._form-fields', [
+                            'prefix' => 'create',
+                            'showErrors' => $reopen === 'create',
+                            'onlyActive' => true,
+                            'values' => ['date' => now()->toDateString()],
+                        ])
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save me-1"></i>
-                            Guardar transferencia
+                        <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="gf-btn gf-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar transferencia
                         </button>
                     </div>
-
                 </form>
-
             </div>
         </div>
     </div>
 
-    {{-- Modal para eliminar transferencia --}}
-    <div class="modal fade" id="deleteTransferModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
-
+    {{-- Modal: editar transferencia (uno solo, se llena con los datos del botón) --}}
+    <div class="modal fade gf-modal" id="editTransferModal" tabindex="-1" aria-labelledby="editTransferModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold text-danger">
-                        <i class="bi bi-exclamation-triangle me-1"></i>
-                        Eliminar transferencia
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <span class="gf-icon gf-tone-primary"><i class="bi bi-pencil"></i></span>
+                    <h5 class="modal-title" id="editTransferModalLabel">Editar transferencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
 
-                <div class="modal-body">
-                    ¿Estás seguro de que deseas eliminar la transferencia
-                    "<span id="deleteTransferName"></span>"? Esta acción no se puede deshacer.
+                <form id="editTransferForm" method="POST"
+                    action="{{ $reopen === 'edit' && $editId ? route('transfers.update', $editId) : '' }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="_form" value="edit">
+                    <input type="hidden" name="_transfer_id" id="edit_transfer_id"
+                        value="{{ $reopen === 'edit' ? $editId : '' }}">
+
+                    <div class="modal-body">
+                        @include('transfers.partials._form-fields', [
+                            'prefix' => 'edit',
+                            'showErrors' => $reopen === 'edit',
+                            'onlyActive' => false,
+                            'values' => [],
+                        ])
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="gf-btn gf-btn-primary">
+                            <i class="bi bi-check-lg"></i> Actualizar transferencia
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal: confirmar eliminación --}}
+    <div class="modal fade gf-modal" id="deleteTransferModal" tabindex="-1" aria-labelledby="deleteTransferModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body gf-confirm">
+                    <span class="gf-icon gf-tone-expense"><i class="bi bi-trash3"></i></span>
+                    <h3 id="deleteTransferModalLabel">¿Eliminar esta transferencia?</h3>
+                    <p>Vas a eliminar <strong id="deleteTransferSummary"></strong>.</p>
+                    <p>El saldo de ambas cuentas se recalculará. Esta acción no se puede deshacer.</p>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
                     <form id="deleteTransferForm" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash me-1"></i>
-                            Eliminar
+                        <button type="submit" class="gf-btn gf-btn-danger">
+                            <i class="bi bi-trash3"></i> Sí, eliminar
                         </button>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
-<script>
-    // Llena el modal de eliminar con la acción y el nombre correctos según el botón que lo abrió
-    document.addEventListener('DOMContentLoaded', function () {
-        const deleteModal = document.getElementById('deleteTransferModal');
-        if (deleteModal) {
-            deleteModal.addEventListener('show.bs.modal', function (event) {
+    <script src="{{ asset('js/filters.js') }}?v={{ filemtime(public_path('js/filters.js')) }}"></script>
+    <script>
+        (function () {
+            // Editar: llena el modal con los datos del botón que lo abrió
+            document.getElementById('editTransferModal').addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
-                const action = button.getAttribute('data-action');
-                const name = button.getAttribute('data-name');
+                if (!button) return; // reabierto tras un error: ya trae los datos enviados
 
-                document.getElementById('deleteTransferForm').setAttribute('action', action);
-                document.getElementById('deleteTransferName').textContent = name;
+                const d = button.dataset;
+                document.getElementById('editTransferForm').setAttribute('action', d.action);
+                document.getElementById('edit_transfer_id').value = d.id;
+                document.getElementById('edit_date').value = d.date;
+                document.getElementById('edit_amount').value = d.amount;
+                document.getElementById('edit_from_account_id').value = d.from;
+                document.getElementById('edit_to_account_id').value = d.to;
+                document.getElementById('edit_description').value = d.description;
+
+                // Limpia errores de un intento anterior
+                this.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                this.querySelectorAll('.gf-form-error').forEach(el => el.remove());
             });
-        }
-    });
-</script>
+
+            // Eliminar: pasa la ruta y el resumen de la transferencia al modal
+            document.getElementById('deleteTransferModal').addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('deleteTransferSummary').textContent = button.dataset.summary;
+                document.getElementById('deleteTransferForm').setAttribute('action', button.dataset.action);
+            });
+
+            // Si el servidor devolvió errores, reabre el modal correspondiente
+            @if ($reopen === 'create')
+                new bootstrap.Modal(document.getElementById('createTransferModal')).show();
+            @elseif ($reopen === 'edit')
+                new bootstrap.Modal(document.getElementById('editTransferModal')).show();
+            @endif
+        })();
+    </script>
 @endpush

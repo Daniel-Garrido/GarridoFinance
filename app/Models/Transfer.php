@@ -2,18 +2,28 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasMovementDate;
 use Illuminate\Database\Eloquent\Model;
 
 class Transfer extends Model
 {
+    use HasMovementDate;
+
     protected $fillable = [
     'user_id',
-    'date', 
-    'amount', 
-    'from_account_id', 
-    'to_account_id', 
+    'date',
+    'amount',
+    'from_account_id',
+    'to_account_id',
     'description'
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'date' => 'date',
+        ];
+    }
 
     //
     public function user()

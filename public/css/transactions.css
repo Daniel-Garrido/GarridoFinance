@@ -1,0 +1,13 @@
+/* ============================================================
+   TRANSACCIONES
+   ============================================================ */
+
+/* Columnas: fecha | tipo | monto | cuenta | categoría | método | histórica | descripción | opciones */
+.gf-transactions-table {
+    --gf-cols: 6.5rem 6rem 7.4rem minmax(0, 1.2fr) minmax(0, 1.3fr) minmax(0, 1.6fr) 6rem minmax(0, 1.3fr) 6.5rem;
+}
+
+.gf-transactions-table .gf-table-head,
+.gf-transactions-table .gf-table-row {
+    min-width: 66.25rem;
+}

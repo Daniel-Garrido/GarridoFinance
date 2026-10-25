@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasMovementDate;
 use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
+    use HasMovementDate;
+
     protected $fillable = [
         'user_id',
         'date',
@@ -17,6 +20,14 @@ class Transaction extends Model
         'description',
         'is_historical'
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'date' => 'date',
+            'is_historical' => 'boolean',
+        ];
+    }
 
     //s
     public function user()

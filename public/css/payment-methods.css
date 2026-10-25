@@ -1,0 +1,13 @@
+/* ============================================================
+   MÉTODOS DE PAGO
+   ============================================================ */
+
+/* Columnas: nombre | estado | opciones */
+.gf-payment-methods-table {
+    --gf-cols: minmax(0, 2.6fr) minmax(0, 1fr) 6.5rem;
+}
+
+.gf-payment-methods-table .gf-table-head,
+.gf-payment-methods-table .gf-table-row {
+    min-width: 38.75rem;
+}

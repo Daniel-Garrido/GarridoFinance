@@ -8,9 +8,20 @@ use Illuminate\Support\Facades\Auth;
 
 class PaymentMethodController extends Controller
 {
+    // Métodos de pago por página en el listado
+    private const PER_PAGE = 10;
+
     public function index()
     {
-        $paymentMethods = PaymentMethod::orderBy('id', 'desc')->get();
+        // Métodos de pago del usuario autenticado, paginados
+        $paymentMethods = PaymentMethod::where('user_id', Auth::id())
+            ->orderBy('id', 'desc')
+            ->paginate(self::PER_PAGE);
+
+        // Si la página pedida ya no existe (por ejemplo, tras eliminar), ir a la última
+        if ($paymentMethods->isEmpty() && $paymentMethods->currentPage() > 1) {
+            return redirect($paymentMethods->url($paymentMethods->lastPage()));
+        }
 
         return view('payment-methods.index', compact('paymentMethods'));
     }
@@ -51,7 +62,8 @@ class PaymentMethodController extends Controller
 
         $paymentMethod->update($validated);
 
-        return redirect()->route('payment-methods.index')
+        // back() conserva la página en la que estaba el usuario
+        return redirect()->back()
             ->with('success', 'Método de pago actualizado correctamente');
     }
 
@@ -59,7 +71,7 @@ class PaymentMethodController extends Controller
     {
         $paymentMethod->delete();
 
-        return redirect()->route('payment-methods.index')
+        return redirect()->back()
             ->with('success', 'Método de pago eliminado correctamente');
     }
 }

@@ -8,16 +8,23 @@ use App\Models\PaymentMethod;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 
 class TransactionController extends Controller
 {
+    // Transacciones por página en el listado
+    private const PER_PAGE = 20;
+
     public function index(Request $request)
     {
-        $query = Transaction::with(['account', 'category', 'paymentMethod']);
+        $userId = Auth::id();
+
+        $query = Transaction::with(['account', 'category', 'paymentMethod'])
+            ->where('user_id', $userId);
 
         // filtro por tipo
-        if ($request->filled('type')) {
+        if (in_array($request->type, ['income', 'expense'], true)) {
             $query->where('type', $request->type);
         }
 
@@ -26,51 +33,36 @@ class TransactionController extends Controller
             $query->where('category_id', $request->category_id);
         }
 
-        // filtro por periodo
-        if ($request->filled('period')) {
-            switch ($request->period) {
+        // filtro por periodo (scope compartido con transferencias)
+        $query->inPeriod($request);
 
-                case 'day':
-                    if ($request->filled('date')) {
-                        $query->whereDate('date', $request->date);
-                    }
-                    break;
-
-                case 'week':
-                    if ($request->filled('week')) {
-                        // formato recibido del input type="week": "2026-W27"
-                        [$year, $week] = explode('-W', $request->week);
-                        $startOfWeek = \Carbon\Carbon::now()->setISODate((int) $year, (int) $week)->startOfWeek();
-                        $endOfWeek = $startOfWeek->copy()->endOfWeek();
-                        $query->whereBetween('date', [$startOfWeek, $endOfWeek]);
-                    }
-                    break;
-
-                case 'month':
-                    if ($request->filled('month')) {
-                        // formato recibido del input type="month": "2026-07"
-                        [$year, $month] = explode('-', $request->month);
-                        $query->whereYear('date', $year)->whereMonth('date', $month);
-                    }
-                    break;
-
-                case 'year':
-                    if ($request->filled('year')) {
-                        $query->whereYear('date', $request->year);
-                    }
-                    break;
-            }
+        // búsqueda por descripción o nombre de la cuenta
+        $search = trim((string) $request->get('q', ''));
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', '%' . $search . '%')
+                    ->orWhereHas('account', function ($a) use ($search) {
+                        $a->where('name', 'like', '%' . $search . '%');
+                    });
+            });
         }
 
         $transactions = $query->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(self::PER_PAGE)
+            ->withQueryString();
 
-        $accounts = Account::all();
-        $categories = Category::all();
-        $paymentMethods = PaymentMethod::all();
+        // Si la página pedida ya no existe (por ejemplo, tras eliminar), ir a la última
+        if ($transactions->isEmpty() && $transactions->currentPage() > 1) {
+            return redirect($transactions->url($transactions->lastPage()));
+        }
 
-        return view('transactions.index', compact('transactions', 'accounts', 'categories', 'paymentMethods'));
+        // Catálogos del usuario para los filtros y los modales (incluye inactivos para poder editar)
+        $accounts = Account::where('user_id', $userId)->orderBy('name')->get();
+        $categories = Category::where('user_id', $userId)->orderBy('name')->get();
+        $paymentMethods = PaymentMethod::where('user_id', $userId)->orderBy('name')->get();
+
+        return view('transactions.index', compact('transactions', 'accounts', 'categories', 'paymentMethods', 'search'));
     }
 
     public function create()
@@ -84,16 +76,7 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'date' => 'required|date',
-            'type' => 'required|in:income,expense',
-            'amount' => 'required|numeric|min:0.01',
-            'account_id' => 'required|exists:accounts,id',
-            'category_id' => 'required|exists:categories,id',
-            'payment_method_id' => 'required|exists:payment_methods,id',
-            'description' => 'nullable|string|max:255',
-            'is_historical' => 'required|boolean',
-        ]);
+        $validated = $request->validate($this->rules($request), $this->messages());
 
         Transaction::create([
             'user_id' => Auth::id(),
@@ -123,16 +106,7 @@ class TransactionController extends Controller
 
     public function update(Request $request, Transaction $transaction)
     {
-        $validated = $request->validate([
-            'date' => 'required|date',
-            'type' => 'required|in:income,expense',
-            'amount' => 'required|numeric|min:0.01',
-            'account_id' => 'required|exists:accounts,id',
-            'category_id' => 'required|exists:categories,id',
-            'payment_method_id' => 'required|exists:payment_methods,id',
-            'description' => 'nullable|string|max:255',
-            'is_historical' => 'required|boolean',
-        ]);
+        $validated = $request->validate($this->rules($request), $this->messages());
 
         $transaction->update([
             'date' => $validated['date'],
@@ -145,8 +119,9 @@ class TransactionController extends Controller
             'is_historical' => $validated['is_historical'],
         ]);
 
+        // back() conserva la página, los filtros y la búsqueda en los que estaba el usuario
         return redirect()
-            ->route('transactions.index')
+            ->back()
             ->with('success', 'Transacción actualizada correctamente.');
     }
 
@@ -155,7 +130,35 @@ class TransactionController extends Controller
         $transaction->delete();
 
         return redirect()
-            ->route('transactions.index')
+            ->back()
             ->with('success', 'Transacción eliminada correctamente.');
+    }
+
+    // Reglas compartidas por crear y editar: los catálogos deben ser del usuario
+    // y la categoría debe ser del mismo tipo que la transacción
+    private function rules(Request $request): array
+    {
+        $userId = Auth::id();
+
+        return [
+            'date' => 'required|date',
+            'type' => 'required|in:income,expense',
+            'amount' => 'required|numeric|min:0.01',
+            'account_id' => ['required', Rule::exists('accounts', 'id')->where('user_id', $userId)],
+            'category_id' => [
+                'required',
+                Rule::exists('categories', 'id')->where('user_id', $userId)->where('type', $request->type),
+            ],
+            'payment_method_id' => ['required', Rule::exists('payment_methods', 'id')->where('user_id', $userId)],
+            'description' => 'nullable|string|max:255',
+            'is_historical' => 'required|boolean',
+        ];
+    }
+
+    private function messages(): array
+    {
+        return [
+            'category_id.exists' => 'La categoría no corresponde al tipo de transacción.',
+        ];
     }
 }
