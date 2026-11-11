@@ -4,6 +4,9 @@
     @php
         $user = auth()->user();
 
+        // Si falló la validación, se vuelve a abrir el modal de crear transacción
+        $reopen = $errors->any() ? old('_form') : null;
+
         // Estilo de cada tipo de cuenta: [etiqueta, tono, icono]
         $accountStyles = [
             'cash' => ['Efectivo', 'income', 'bi-cash-stack'],
@@ -16,29 +19,41 @@
     <div class="gf-dashboard">
 
         {{-- Encabezado --}}
-        <header class="gf-header">
-            <div>
+        {{-- En móvil todo el encabezado se oculta y el filtro queda primero --}}
+        <header class="gf-header gf-header-dashboard">
+            <div class="gf-header-intro">
                 <h1>Bienvenido{{ $user ? ', ' . explode(' ', $user->name)[0] : '' }}</h1>
                 <p>{{ $todayLabel }} · Resumen de tus finanzas</p>
             </div>
             <div class="gf-header-actions">
-                <a href="{{ route('transactions.index') }}" class="gf-btn gf-btn-primary">
+                <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#createTransactionModal">
                     <i class="bi bi-plus-lg"></i> Nueva transacción
-                </a>
+                </button>
                 <a href="{{ route('profile.index') }}" title="Ver perfil" aria-label="Ver perfil">
                     <x-avatar :user="$user" />
                 </a>
             </div>
         </header>
 
+        {{-- Alerta de éxito --}}
+        @if (session('success'))
+            <div class="gf-alert alert alert-dismissible fade show mb-0" role="alert">
+                <i class="bi bi-check-circle"></i>
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        @endif
+
         @include('dashboard.partials._period-filter-form')
 
         {{-- Tarjetas principales --}}
-        <section class="gf-stats">
-            <x-stat-card label="Ingresos totales" :value="$totalIncome" tone="primary" icon="bi-bar-chart" />
-            <x-stat-card label="Ingresos {{ $periodSuffix }}" :value="$periodIncome" tone="income" icon="bi-arrow-up" />
-            <x-stat-card label="Gastos {{ $periodSuffix }}" :value="$periodExpense" tone="expense" icon="bi-arrow-down" />
-            <x-stat-card label="Balance total" :value="$balanceTotal" tone="balance" icon="bi-wallet2" />
+        {{-- Primero el total del año, luego el periodo filtrado --}}
+        <section class="gf-summary">
+            <x-summary-card title="Total de {{ $summaryYear }}" icon="bi-wallet2"
+                :income="$yearIncome" :expense="$yearExpense" :balance="$yearBalance" />
+            <x-summary-card title="Resumen {{ $periodSuffix }}" icon="bi-calendar-check"
+                :income="$periodIncome" :expense="$periodExpense" :balance="$netSavings" />
         </section>
 
         @include('dashboard.partials._chart-filter-form')
@@ -126,11 +141,21 @@
         </section>
 
     </div>
+
+    {{-- Modal: crear transacción --}}
+    @include('transactions.partials._create-modal')
 @endsection
 
 @push('scripts')
     <script src="{{ asset('js/dashboard-charts.js') }}?v={{ filemtime(public_path('js/dashboard-charts.js')) }}"></script>
+    <script src="{{ asset('js/transaction-form.js') }}?v={{ filemtime(public_path('js/transaction-form.js')) }}"></script>
     <script>
+        initTransactionForm('create');
+
+        @if ($reopen === 'create')
+            new bootstrap.Modal(document.getElementById('createTransactionModal')).show();
+        @endif
+
         initDashboardCharts({
             monthLabels: @json($monthLabels),
             incomeByMonth: @json($incomeByMonth),

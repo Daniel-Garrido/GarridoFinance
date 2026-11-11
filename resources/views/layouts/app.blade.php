@@ -127,9 +127,17 @@
             </ul>
         </aside>
 
+        {{-- Fondo para cerrar el menú en móvil --}}
+        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
         {{-- CONTENIDO DE CADA VISTA --}}
         <main class="content-main">
             @yield('content')
+
+            <footer class="gf-footer">
+                <span>© {{ now()->year }} GarridoFinance. Todos los derechos reservados.</span>
+                <span>Versión {{ config('app.version') }}</span>
+            </footer>
         </main>
 
     </div>
@@ -141,22 +149,56 @@
     <script>
         (function () {
             const toggle = document.getElementById('sidebarToggle');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            const body = document.body;
+            // Mismo corte que el @media de dashboard.css
+            const mobile = window.matchMedia('(max-width: 768px)');
+
+            function isClosed() {
+                return mobile.matches
+                    ? !body.classList.contains('sidebar-open')
+                    : body.classList.contains('sidebar-collapsed');
+            }
 
             function sync() {
-                const collapsed = document.body.classList.contains('sidebar-collapsed');
-                const label = collapsed ? 'Abrir menú' : 'Cerrar menú';
-                toggle.setAttribute('aria-expanded', String(!collapsed));
+                const closed = isClosed();
+                const label = closed ? 'Abrir menú' : 'Cerrar menú';
+                toggle.setAttribute('aria-expanded', String(!closed));
                 toggle.setAttribute('title', label);
                 toggle.setAttribute('aria-label', label);
             }
 
+            function closeMobile() {
+                body.classList.remove('sidebar-open');
+                sync();
+            }
+
             toggle.addEventListener('click', function () {
-                const collapsed = document.body.classList.toggle('sidebar-collapsed');
-                try {
-                    localStorage.setItem('gf-sidebar', collapsed ? 'collapsed' : 'open');
-                } catch (e) {}
+                if (mobile.matches) {
+                    // En móvil se abre encima del contenido y no se guarda el estado
+                    body.classList.toggle('sidebar-open');
+                } else {
+                    const collapsed = body.classList.toggle('sidebar-collapsed');
+                    try {
+                        localStorage.setItem('gf-sidebar', collapsed ? 'collapsed' : 'open');
+                    } catch (e) {}
+                }
                 sync();
             });
+
+            // En móvil se cierra al tocar el fondo, al elegir una opción o con Escape
+            backdrop.addEventListener('click', closeMobile);
+            document.querySelectorAll('#appSidebar a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (mobile.matches) closeMobile();
+                });
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && mobile.matches) closeMobile();
+            });
+
+            // Al cambiar entre móvil y escritorio (girar el cel, redimensionar) se reinicia
+            mobile.addEventListener('change', closeMobile);
 
             // Al terminar la animación, las gráficas se ajustan al nuevo ancho
             document.querySelector('.content-main').addEventListener('transitionend', function (e) {

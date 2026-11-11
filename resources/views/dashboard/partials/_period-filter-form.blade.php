@@ -1,5 +1,5 @@
 {{-- Formulario de filtro de periodo --}}
-<form method="GET" action="{{ url()->current() }}" id="periodFilterForm" class="gf-card gf-filter">
+<form method="GET" action="{{ url()->current() }}" id="periodFilterForm" class="gf-card gf-filter gf-filter-inline">
 
     {{-- Selector de tipo de periodo --}}
     <div class="gf-field">
@@ -35,10 +35,12 @@
 
     <div class="gf-filter-actions">
         {{-- Botón de filtrar --}}
-        <button type="submit" class="gf-btn gf-btn-primary">Filtrar</button>
+        <button type="submit" class="gf-btn gf-btn-primary" title="Filtrar" aria-label="Filtrar">
+            <i class="bi bi-funnel"></i><span class="gf-btn-label">Filtrar</span>
+        </button>
 
         {{-- Botón para limpiar filtros --}}
-        <a href="{{ url()->current() }}" class="gf-btn gf-btn-icon" title="Limpiar filtros">
+        <a href="{{ url()->current() }}" class="gf-btn gf-btn-icon" title="Limpiar filtros" aria-label="Limpiar filtros">
             <i class="bi bi-x-circle"></i>
         </a>
     </div>

@@ -178,43 +178,7 @@
     </div>
 
     {{-- Modal: crear transacción --}}
-    <div class="modal fade gf-modal" id="createTransactionModal" tabindex="-1"
-        aria-labelledby="createTransactionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span class="gf-icon gf-tone-primary"><i class="bi bi-currency-dollar"></i></span>
-                    <h5 class="modal-title" id="createTransactionModalLabel">Crear una transacción</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-
-                <form action="{{ route('transactions.store') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="_form" value="create">
-
-                    <div class="modal-body">
-                        @include('transactions.partials._form-fields', [
-                            'prefix' => 'create',
-                            'showErrors' => $reopen === 'create',
-                            'onlyActive' => true,
-                            'values' => [
-                                'date' => now()->toDateString(),
-                                'type' => request('type') === 'expense' ? 'expense' : 'income',
-                                'is_historical' => '0',
-                            ],
-                        ])
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="gf-btn gf-btn-ghost" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="gf-btn gf-btn-primary">
-                            <i class="bi bi-check-lg"></i> Guardar transacción
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    @include('transactions.partials._create-modal')
 
     {{-- Modal: editar transacción (uno solo, se llena con los datos del botón) --}}
     <div class="modal fade gf-modal" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionModalLabel"
@@ -284,6 +248,7 @@
 
 @push('scripts')
     <script src="{{ asset('js/filters.js') }}?v={{ filemtime(public_path('js/filters.js')) }}"></script>
+    <script src="{{ asset('js/transaction-form.js') }}?v={{ filemtime(public_path('js/transaction-form.js')) }}"></script>
     <script>
         (function () {
             // ===== Filtro de categoría: solo las del tipo elegido (todas si el tipo es "Todas") =====
@@ -310,27 +275,7 @@
             syncFilterCategories();
 
             // ===== Modales: la categoría solo muestra las del tipo de transacción =====
-            function filterCategoriesByType(typeSelect, categorySelect) {
-                const selectedType = typeSelect.value;
-
-                categorySelect.querySelectorAll('option').forEach(option => {
-                    option.hidden = option.dataset.type !== selectedType;
-                    if (option.hidden && option.selected) option.selected = false;
-                });
-
-                const current = categorySelect.querySelector('option:checked');
-                if (!current || current.hidden) {
-                    const firstVisible = categorySelect.querySelector('option:not([hidden])');
-                    if (firstVisible) firstVisible.selected = true;
-                }
-            }
-
-            ['create', 'edit'].forEach(function (prefix) {
-                const typeSelect = document.getElementById(prefix + '_type');
-                const categorySelect = document.getElementById(prefix + '_category_id');
-                typeSelect.addEventListener('change', () => filterCategoriesByType(typeSelect, categorySelect));
-                filterCategoriesByType(typeSelect, categorySelect);
-            });
+            ['create', 'edit'].forEach(initTransactionForm);
 
             // ===== Editar: llena el modal con los datos del botón que lo abrió =====
             document.getElementById('editTransactionModal').addEventListener('show.bs.modal', function (event) {

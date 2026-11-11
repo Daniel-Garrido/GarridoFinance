@@ -37,7 +37,16 @@ class DashboardController extends Controller
         // BLOQUE 1: Filtro principal (tarjetas de arriba) — sin cambios
         // ============================================================
         $period = $request->get('period', 'month');
-        [$startDate, $endDate] = $this->getPeriodRange($period, $request);
+
+        // Cada filtro mueve solo sus tarjetas: el de año cambia las anuales y las
+        // del periodo siguen en el mes actual; mes y semana no cambian las anuales.
+        if ($period === 'year') {
+            $summaryYear = (int) ($request->get('year') ?: Carbon::now()->year);
+            [$startDate, $endDate] = [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()];
+        } else {
+            $summaryYear = Carbon::now()->year;
+            [$startDate, $endDate] = $this->getPeriodRange($period, $request);
+        }
 
         $currentWeekValue  = Carbon::now()->format('o-\WW');
         $currentMonthValue = Carbon::now()->format('Y-m');
@@ -49,10 +58,10 @@ class DashboardController extends Controller
         $totalTransactions = Transaction::where('user_id', $userId)->count();
         $totalTransfers = Transfer::where('user_id', $userId)->count();
 
-        $totalIncome = Transaction::where('user_id', $userId)->where('type', 'income')->sum('amount');
-        $totalExpense = Transaction::where('user_id', $userId)->where('type', 'expense')->sum('amount');
-        $balance = $totalIncome - $totalExpense;
-        $balanceTotal = $balance;
+        // Acumulado del año (no el histórico completo)
+        $yearIncome = Transaction::where('user_id', $userId)->where('type', 'income')->whereYear('date', $summaryYear)->sum('amount');
+        $yearExpense = Transaction::where('user_id', $userId)->where('type', 'expense')->whereYear('date', $summaryYear)->sum('amount');
+        $yearBalance = $yearIncome - $yearExpense;
 
         $periodIncome = Transaction::where('user_id', $userId)
             ->where('type', 'income')
@@ -88,13 +97,14 @@ class DashboardController extends Controller
             ->orderBy('name')
             ->get();
 
+        // Catálogos activos para el modal de crear transacción
+        $accounts = Account::where('user_id', $userId)->where('is_active', true)->orderBy('name')->get();
+        $categories = Category::where('user_id', $userId)->where('is_active', true)->orderBy('name')->get();
+        $paymentMethods = PaymentMethod::where('user_id', $userId)->where('is_active', true)->orderBy('name')->get();
+
         // Textos del encabezado y de las tarjetas, en español
         $todayLabel = ucfirst(Carbon::now()->locale('es')->translatedFormat('l, j \d\e F \d\e Y'));
-        $periodSuffix = match ($period) {
-            'week' => 'de la semana',
-            'year' => 'del año',
-            default => 'del mes',
-        };
+        $periodSuffix = $this->getPeriodSuffix($period, $startDate, $endDate);
 
         // ============================================================
         // BLOQUE 2: Selector Año/Mes — independiente, solo para gráficas
@@ -191,16 +201,19 @@ class DashboardController extends Controller
             'totalPaymentMethods',
             'totalTransactions',
             'totalTransfers',
-            'totalIncome',
-            'totalExpense',
-            'balance',
-            'balanceTotal',
+            'summaryYear',
+            'yearIncome',
+            'yearExpense',
+            'yearBalance',
             'periodIncome',
             'periodExpense',
             'netSavings',
             'activeAccounts',
             'latestTransactions',
             'dashboardAccounts',
+            'accounts',
+            'categories',
+            'paymentMethods',
             'todayLabel',
             'periodSuffix',
             'chartRangeLabel',
@@ -251,6 +264,28 @@ class DashboardController extends Controller
         })->toArray();
     }
 
+    /**
+     * Texto del periodo observado para los títulos de las tarjetas:
+     * "de noviembre 2026" o "del 2 al 8 nov 2026".
+     */
+    private function getPeriodSuffix(string $period, Carbon $start, Carbon $end): string
+    {
+        $format = fn(Carbon $date, string $pattern) => str_replace(
+            '.',
+            '',
+            $date->copy()->locale('es')->translatedFormat($pattern)
+        );
+
+        return match ($period) {
+            'week' => match (true) {
+                $start->year !== $end->year => 'del ' . $format($start, 'j M Y') . ' al ' . $format($end, 'j M Y'),
+                $start->month !== $end->month => 'del ' . $format($start, 'j M') . ' al ' . $format($end, 'j M Y'),
+                default => 'del ' . $start->day . ' al ' . $format($end, 'j M Y'),
+            },
+            default => 'de ' . $format($start, 'F Y'),
+        };
+    }
+
     private function getPeriodRange(string $period, Request $request): array
     {
         switch ($period) {
@@ -262,11 +297,6 @@ class DashboardController extends Controller
                     $date = Carbon::now();
                 }
                 return [$date->copy()->startOfWeek(), $date->copy()->endOfWeek()];
-
-            case 'year':
-                $year = $request->get('year') ?: Carbon::now()->year;
-                $date = Carbon::createFromDate((int) $year, 1, 1);
-                return [$date->copy()->startOfYear(), $date->copy()->endOfYear()];
 
             case 'month':
             default:

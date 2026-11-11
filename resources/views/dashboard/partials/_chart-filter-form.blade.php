@@ -1,5 +1,5 @@
 {{-- Selector Año/Mes, independiente del filtro de arriba --}}
-<form method="GET" action="{{ url()->current() }}" id="chartFilterForm" class="gf-filter">
+<form method="GET" action="{{ url()->current() }}" id="chartFilterForm" class="gf-filter gf-filter-inline gf-filter-chart">
 
     {{-- Conservamos el filtro principal si ya viene aplicado --}}
     <input type="hidden" name="period" value="{{ request('period') }}">
@@ -36,6 +36,8 @@
     </div>
 
     <div class="gf-filter-actions">
-        <button type="submit" class="gf-btn gf-btn-soft">Aplicar</button>
+        <button type="submit" class="gf-btn gf-btn-soft" title="Aplicar" aria-label="Aplicar">
+            <i class="bi bi-check2"></i><span class="gf-btn-label">Aplicar</span>
+        </button>
     </div>
 </form>

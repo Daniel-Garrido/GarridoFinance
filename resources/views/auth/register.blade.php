@@ -6,27 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro GarridoFinance</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ asset('CSS/style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}?v={{ filemtime(public_path('css/style.css')) }}" rel="stylesheet">
 </head>
 
-<body class="bg-light">
+<body class="auth-body">
 
-    <div class="w-100 min-vh-100 container-fluid d-flex align-items-center justify-content-center">
-        <div class="row justify-content-center w-100">
-            
+    <div class="auth-wrapper min-vh-100 container-fluid d-flex align-items-center justify-content-center">
+        <div class="row g-0 justify-content-center w-100">
+
             {{-- CONTENEDOR PRINCIPAL --}}
-            
-            <div class="col-lg-5 col-12 bg-white d-flex align-items-center justify-content-center p-4 rounded-3">
+            <div
+                class="auth-card col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4 bg-white d-flex align-items-center justify-content-center rounded-3">
                 <div class="w-100">
                     {{-- LOGO --}}
                     <div class="text-center mb-3">
-                        <img class="register-img" src="{{ asset('images/logo.png') }}" alt="FinanceApp" style="">
+                        <img class="login-img" src="{{ asset('Images/Logo.png') }}" alt="Logo de GarridoFinance">
                     </div>
 
                     {{-- TÍTULOS --}}
                     <div class="text-center">
-                        <h2 class="">Crea tu cuenta</h2>
-                        <p class="">
+                        <h2 class="auth-title fw-medium mb-1">Crea tu cuenta</h2>
+                        <p class="text-secondary mb-4">
                             Completa los datos para comenzar y probar la mejor app web de finanzas personales
                         </p>
                     </div>
@@ -49,7 +50,7 @@
                                 Nombre completo
                             </label>
                             <input type="text" id="name" name="name"
-                                class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}"
+                                class="form-control auth-input @error('name') is-invalid @enderror" value="{{ old('name') }}"
                                 placeholder="Juan García" autocomplete="name" required>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -62,7 +63,7 @@
                                 Correo electrónico
                             </label>
                             <input type="email" id="email" name="email"
-                                class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
+                                class="form-control auth-input @error('email') is-invalid @enderror" value="{{ old('email') }}"
                                 placeholder="tu@correo.com" autocomplete="email" required>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -74,18 +75,14 @@
                             <label for="password" class="form-label small fw-medium text-secondary">
                                 Contraseña
                             </label>
-                            <div class="input-group">
+                            <div class="auth-password">
                                 <input type="password" id="password" name="password"
-                                    class="form-control @error('password') is-invalid @enderror"
+                                    class="form-control auth-input @error('password') is-invalid @enderror"
                                     placeholder="Mínimo 8 caracteres" autocomplete="new-password"
                                     oninput="updateStrength(this.value)" required>
-                                <button class="btn btn-outline-secondary" type="button"
-                                    onclick="togglePassword('password', this)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                        fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z" />
-                                        <path d="M8 5a3 3 0 1 1 0 6A3 3 0 0 1 8 5z" />
-                                    </svg>
+                                <button type="button" class="auth-eye" data-toggle-password="password"
+                                    aria-label="Mostrar contraseña" title="Mostrar contraseña" aria-pressed="false">
+                                    <i class="bi bi-eye"></i>
                                 </button>
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -107,17 +104,13 @@
                             <label for="password_confirmation" class="form-label small fw-medium text-secondary">
                                 Confirmar contraseña
                             </label>
-                            <div class="input-group">
+                            <div class="auth-password">
                                 <input type="password" id="password_confirmation" name="password_confirmation"
-                                    class="form-control" placeholder="Repite tu contraseña" autocomplete="new-password"
-                                    required>
-                                <button class="btn btn-outline-secondary" type="button"
-                                    onclick="togglePassword('password_confirmation', this)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                        fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z" />
-                                        <path d="M8 5a3 3 0 1 1 0 6A3 3 0 0 1 8 5z" />
-                                    </svg>
+                                    class="form-control auth-input" placeholder="Repite tu contraseña"
+                                    autocomplete="new-password" required>
+                                <button type="button" class="auth-eye" data-toggle-password="password_confirmation"
+                                    aria-label="Mostrar contraseña" title="Mostrar contraseña" aria-pressed="false">
+                                    <i class="bi bi-eye"></i>
                                 </button>
                             </div>
                         </div>
@@ -134,8 +127,8 @@
                         </div>
 
                         {{-- Botón submit --}}
-                        <button type="submit" class="btn w-100 text-white fw-medium mb-3"
-                            style="background:#534AB7; height:42px;">
+                        <button type="submit" class="auth-submit btn w-100 text-white fw-medium mb-3"
+                            style="background:#534AB7;">
                             Crear cuenta
                         </button>
 
@@ -156,12 +149,8 @@
     </div>
 
     {{-- codigo para la validación de contraseña --}}
+    <script src="{{ asset('js/password-toggle.js') }}?v={{ filemtime(public_path('js/password-toggle.js')) }}"></script>
     <script>
-        function togglePassword(id, btn) {
-            const input = document.getElementById(id);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-
         function updateStrength(val) {
             const colors = ['#e24b4a', '#ef9f27', '#a855f7', '#1D9E75'];
             const labels = ['', 'Débil', 'Regular', 'Buena', 'Fuerte'];

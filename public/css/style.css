@@ -135,8 +135,184 @@ body {
 /* CONTENIDO PRINCIPAL DE CADA VISTA*/
 .content-main{
     width: 100%;
-    height: 100vh;
+    min-height: calc(100vh - var(--navbar-height)); /* crece con el contenido y conserva el padding inferior */
     display: flex;
+    flex-direction: column;
+}
+
+/* PIE DE PÁGINA: en vistas cortas se mantiene al fondo de la pantalla */
+.gf-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    gap: 0.25rem 1rem;
+    margin-top: auto;
+    padding: 1.5rem 2.5% 0; /* mismo margen lateral que .gf-page */
+    font-size: 0.8rem;
+    color: var(--gf-muted);
+}
+
+.gf-footer::before {
+    content: "";
+    flex: 0 0 100%;
+    margin-bottom: 1rem;
+    border-top: 1px solid var(--gf-border);
+}
+
+/* LOGIN / REGISTRO */
+/* Fondo con un degradado sutil de la paleta para que la tarjeta resalte */
+.auth-body {
+    background:
+        radial-gradient(circle at 0% 0%, rgba(91, 61, 245, 0.14), transparent 45%),
+        radial-gradient(circle at 100% 100%, rgba(83, 74, 183, 0.16), transparent 45%),
+        #F4F3FA;
+}
+
+.auth-wrapper {
+    padding: 2rem 1rem;
+}
+
+.auth-card {
+    padding: 2.5rem 2.25rem;
+    border: 1px solid rgba(83, 74, 183, 0.12);
+    border-radius: 24px !important;
+    /* Sombra para que la tarjeta se distinga del fondo */
+    box-shadow: 0 20px 45px rgba(36, 21, 109, 0.12), 0 2px 8px rgba(36, 21, 109, 0.06);
+}
+
+.auth-card .form-label {
+    font-weight: 600 !important;
+    color: #4B4766 !important;
+    margin-bottom: 0.4rem;
+}
+
+/* Campos de texto */
+.auth-input {
+    height: 48px;
+    padding: 0 1rem;
+    border: 1px solid #E2E0EE;
+    border-radius: 12px;
+    background-color: #F8F7FC;
+    font-size: 0.95rem;
+    color: #1E1B33;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-input::placeholder {
+    color: #A6A3BA;
+}
+
+.auth-input:hover {
+    border-color: #C9C4E8;
+}
+
+.auth-input:focus {
+    background-color: #fff;
+    border-color: #534AB7;
+    box-shadow: 0 0 0 4px rgba(83, 74, 183, 0.14);
+}
+
+.auth-input.is-invalid:focus {
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.14);
+}
+
+/* Contraseña con el ícono de ojo dentro del campo */
+.auth-password {
+    position: relative;
+}
+
+.auth-password .auth-input {
+    padding-right: 3rem;
+}
+
+/* Quita el ícono de error de Bootstrap para que no choque con el ojo */
+.auth-password .auth-input.is-invalid {
+    background-image: none;
+}
+
+.auth-eye {
+    position: absolute;
+    top: 0;
+    right: 0.35rem;
+    height: 48px;
+    width: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: #8C88A6;
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.auth-eye:hover {
+    color: #534AB7;
+}
+
+.auth-eye:focus-visible {
+    outline: 2px solid #534AB7;
+    outline-offset: -6px;
+    border-radius: 10px;
+}
+
+/* Casilla de verificación con el color de la marca */
+.auth-card .form-check-input:checked {
+    background-color: #534AB7;
+    border-color: #534AB7;
+}
+
+.auth-card .form-check-input:focus {
+    border-color: #534AB7;
+    box-shadow: 0 0 0 4px rgba(83, 74, 183, 0.14);
+}
+
+.login-img {
+    width: 150px;
+    height: auto;
+    max-width: 100%;
+}
+
+.auth-submit {
+    height: 46px;
+    border-radius: 20px;
+    box-shadow: 0 8px 18px rgba(83, 74, 183, 0.28);
+    transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.auth-submit:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 10px 22px rgba(83, 74, 183, 0.35);
+    transform: translateY(-1px);
+}
+
+.auth-submit:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 576px) {
+    .auth-wrapper {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .auth-card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .login-img {
+        width: 110px;
+    }
+
+    .auth-title {
+        font-size: 1.5rem;
+    }
+
+    /* Botón más alto para tocarlo con el dedo */
+    .auth-submit {
+        height: 48px;
+    }
 }
 
 

@@ -90,8 +90,9 @@ class TransactionController extends Controller
             'is_historical' => $validated['is_historical'],
         ]);
 
+        // back() regresa a la vista desde la que se creó (dashboard o listado), con sus filtros
         return redirect()
-            ->route('transactions.index')
+            ->back()
             ->with('success', 'Transacción creada correctamente.');
     }
 
