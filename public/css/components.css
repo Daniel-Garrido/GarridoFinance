@@ -712,3 +712,286 @@ a.gf-page-btn:hover {
         width: 100%;
     }
 }
+
+/* ============================================================
+   FILTRO COMPACTO EN MÓVIL (transacciones, transferencias)
+   ┌───────────────────────────────────────┐
+   │ [Tipo: Todas  v] [Categoría: Todas v] │
+   │ [Periodo: Mes v] [2026-11  ] [⚲] [✕]  │
+   └───────────────────────────────────────┘
+   Las etiquetas se ocultan (siguen disponibles para lectores de pantalla)
+   y cada desplegable muestra su nombre dentro: "Tipo: Todas".
+   ============================================================ */
+@media (max-width: 768px) {
+    .gf-filter-compact {
+        gap: 0.5rem;
+    }
+
+    .gf-filter-compact.gf-card {
+        padding: 0.6rem;
+    }
+
+    .gf-filter-compact .gf-field {
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: none;
+    }
+
+    /* Tipo y Categoría ocupan la primera fila, mitad y mitad */
+    .gf-filter-compact .gf-filter-half {
+        flex: 1 1 calc(50% - 0.3rem);
+    }
+
+    .gf-filter-compact .gf-field label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .gf-filter-compact .gf-dropdown-value::before {
+        content: attr(data-prefix) ": ";
+        font-weight: 500;
+        color: var(--gf-muted);
+    }
+
+    .gf-filter-compact .gf-dropdown-toggle,
+    .gf-filter-compact .gf-field .form-control {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.76rem;
+    }
+
+    .gf-filter-compact .gf-dropdown-toggle {
+        gap: 0.35rem;
+    }
+
+    /* Botones solo con ícono */
+    .gf-filter-compact .gf-filter-actions {
+        flex: none;
+        gap: 0.4rem;
+    }
+
+    .gf-filter-compact .gf-filter-actions .gf-btn {
+        padding: 0.5rem 0.65rem;
+    }
+
+    .gf-filter-compact .gf-btn-label {
+        display: none;
+    }
+}
+
+/* ============================================================
+   FILAS DESPLEGABLES EN MÓVIL (.gf-table-collapsible)
+   Transacciones y transferencias. Cerrada, la fila muestra:
+   ┌──────────────────────────────────────┐
+   │  10   Título                       > │
+   │ NOV   Subtítulo         −$250.00 MXN │
+   └──────────────────────────────────────┘
+   Al tocar ">" (public/js/collapsible-rows.js) se despliegan las celdas
+   .gf-row-detail, en el orden del HTML, alineadas con el texto:
+   │       ────────────────────────────── │
+   │       Fecha        10 nov 2026 · Hoy │
+   │       Etiqueta                 Valor │
+   │       Descripción                    │
+   │       Texto de la descripción…       │
+   │                              ✏️  🗑   │
+   Clases: gf-row-day (fecha corta), gf-row-title, gf-row-subtitle, gf-row-amount,
+   gf-row-toggle (">"), gf-row-detail (con data-label) y gf-row-desc.
+   ============================================================ */
+
+/* El botón ">" y la fecha corta solo existen en móvil */
+.gf-row-toggle,
+.gf-row-day {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .gf-table-collapsible {
+        overflow: visible;
+    }
+
+    .gf-table-collapsible .gf-table-head {
+        display: none;
+    }
+
+    /* .gf-table.gf-table-collapsible: gana al min-width de escritorio de cada vista (se carga después) */
+    .gf-table.gf-table-collapsible .gf-table-row {
+        min-width: 0;
+        /* fecha corta | título y subtítulo | ">" y monto */
+        grid-template-columns: 3.3rem minmax(0, 1fr) auto;
+        gap: 0;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        color: var(--gf-ink-soft);
+    }
+
+    .gf-table-collapsible .gf-table-row:hover {
+        background: transparent;
+    }
+
+    /* Fila abierta: fondo violeta muy suave de la paleta */
+    .gf-table-collapsible .gf-table-row.is-open {
+        background: var(--gf-hover);
+    }
+
+    /* Fecha corta: recuadro violeta suave (como los íconos gf-tone-primary)
+       con el día grande y el mes abreviado debajo */
+    .gf-table-collapsible .gf-row-day {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 11px;
+        background: var(--gf-primary-soft);
+        line-height: 1.05;
+    }
+
+    .gf-row-day strong {
+        font-family: var(--gf-font-title);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--gf-primary-hover);
+    }
+
+    .gf-row-day span {
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: var(--gf-primary);
+    }
+
+    /* Resumen siempre visible: título arriba, subtítulo abajo */
+    .gf-table-collapsible .gf-row-title,
+    .gf-table-collapsible .gf-row-subtitle {
+        grid-column: 2;
+    }
+
+    .gf-table-collapsible .gf-row-title {
+        grid-row: 1;
+        font-weight: 700;
+        color: var(--gf-primary-dark);
+    }
+
+    .gf-table-collapsible .gf-row-subtitle {
+        grid-row: 2;
+        margin-top: 0.1rem;
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--gf-muted);
+    }
+
+    .gf-row-day,
+    .gf-row-title,
+    .gf-row-subtitle,
+    .gf-row-amount {
+        cursor: pointer;
+    }
+
+    /* Columna derecha: ">" arriba y el monto debajo */
+    .gf-table-collapsible .gf-row-toggle {
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: end;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 1.4rem;
+        margin-right: -0.4rem;
+        padding: 0;
+        border: none;
+        border-radius: 10px;
+        background: transparent;
+        color: var(--gf-primary);
+        font-size: 0.95rem;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .gf-row-toggle i {
+        transition: transform 0.2s ease;
+    }
+
+    .gf-table-row.is-open .gf-row-toggle i {
+        transform: rotate(90deg);
+    }
+
+    .gf-table-collapsible .gf-row-amount {
+        grid-column: 3;
+        grid-row: 2;
+        justify-self: end;
+        margin-top: 0.1rem;
+        padding-left: 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    /* Detalle: oculto hasta que se despliega la fila */
+    .gf-table-collapsible .gf-row-detail {
+        display: none;
+    }
+
+    /* El detalle empieza en la columna del texto, no debajo de la fecha corta */
+    .gf-table-collapsible .is-open .gf-row-detail {
+        grid-column: 2 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.4rem 0;
+        text-align: right;
+    }
+
+    /* Etiqueta a la izquierda ("Fecha", "Tipo"...), valor a la derecha */
+    .gf-table-collapsible .is-open .gf-row-detail[data-label]::before {
+        content: attr(data-label);
+        flex: none;
+        font-family: var(--gf-font-body);
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--gf-muted);
+        text-align: left;
+    }
+
+    /* La fecha completa es el primer dato: una línea la separa del resumen */
+    .gf-table-collapsible .is-open .gf-date-cell {
+        flex-direction: row;
+        margin-top: 0.65rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--gf-divider);
+    }
+
+    .gf-table-collapsible .gf-date-cell > strong {
+        margin-left: auto;
+    }
+
+    .gf-table-collapsible .gf-date-cell > span::before {
+        content: "· ";
+    }
+
+    /* La descripción puede ser larga: va debajo de su etiqueta y en varias líneas */
+    .gf-table-collapsible .is-open .gf-row-desc {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.2rem;
+        white-space: normal;
+        text-align: left;
+    }
+
+    .gf-table-collapsible .is-open .gf-row-desc.is-empty {
+        display: none;
+    }
+
+    .gf-table-collapsible .is-open .gf-row-actions {
+        justify-content: flex-end;
+        padding-top: 0.5rem;
+    }
+}

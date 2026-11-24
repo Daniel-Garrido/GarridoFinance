@@ -25,7 +25,7 @@
     });
 })();
 
-// Paleta del mockup para las gráficas
+// Paleta del mockup para las gráficas (modo claro)
 const GF_COLORS = {
     income: '#5B3DF5',
     expense: '#F2618A',
@@ -34,22 +34,54 @@ const GF_COLORS = {
     ink: '#1B1633',
 };
 
+// Colores de cuadrícula, texto y tooltip según el tema (claro por defecto; oscuro con data-theme="dark")
+const GF_THEME_COLORS = {
+    light: { grid: GF_COLORS.grid, tick: GF_COLORS.tick, tooltip: GF_COLORS.ink },
+    dark: { grid: '#3A3454', tick: '#9A95B5', tooltip: '#3A3454' },
+};
+
+function gfThemeColors() {
+    return document.documentElement.getAttribute('data-theme') === 'dark'
+        ? GF_THEME_COLORS.dark
+        : GF_THEME_COLORS.light;
+}
+
+// Al cambiar de tema con el botón del header, las gráficas ya dibujadas se repintan
+window.addEventListener('gf-themechange', function () {
+    const theme = gfThemeColors();
+    Chart.defaults.color = theme.tick;
+
+    Object.values(Chart.instances).forEach(function (chart) {
+        const options = chart.options;
+        if (options.plugins && options.plugins.tooltip) options.plugins.tooltip.backgroundColor = theme.tooltip;
+        if (options.scales && options.scales.y && options.scales.y.grid) options.scales.y.grid.color = theme.grid;
+        ['x', 'y'].forEach(function (axis) {
+            if (options.scales && options.scales[axis]) {
+                options.scales[axis].ticks = Object.assign(options.scales[axis].ticks || {}, { color: theme.tick });
+            }
+        });
+        chart.update('none');
+    });
+});
+
 const gfMoney = (value) => '$' + Number(value).toLocaleString('es-MX', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
 }) + ' MXN';
 
 Chart.defaults.font.family = "'Open Sans', system-ui, sans-serif";
-Chart.defaults.color = GF_COLORS.tick;
+Chart.defaults.color = gfThemeColors().tick;
 
 // Opciones comunes de las gráficas de barras
 function gfBarOptions(showLegend) {
+    const theme = gfThemeColors();
+
     return {
         responsive: true,
         plugins: {
             legend: { display: showLegend },
             tooltip: {
-                backgroundColor: GF_COLORS.ink,
+                backgroundColor: theme.tooltip,
                 padding: 10,
                 cornerRadius: 8,
                 callbacks: { label: (ctx) => ' ' + ctx.dataset.label + ': ' + gfMoney(ctx.parsed.y) },
@@ -62,9 +94,9 @@ function gfBarOptions(showLegend) {
             },
             y: {
                 beginAtZero: true,
-                grid: { color: GF_COLORS.grid },
+                grid: { color: theme.grid },
                 border: { display: false },
-                ticks: { callback: (v) => Number(v).toLocaleString('es-MX') },
+                ticks: { color: theme.tick, callback: (v) => Number(v).toLocaleString('es-MX') },
             },
         },
     };
@@ -101,7 +133,7 @@ function gfDoughnut(canvasId, categories) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: GF_COLORS.ink,
+                    backgroundColor: gfThemeColors().tooltip,
                     padding: 10,
                     cornerRadius: 8,
                     callbacks: { label: (ctx) => ' ' + gfMoney(ctx.parsed) },

@@ -6,3 +6,92 @@
 .gf-accounts-table {
     --gf-cols: minmax(0, 2.2fr) minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr) 6.5rem;
 }
+
+/* Saldo total de todas las cuentas: tarjeta compacta, no ocupa todo el ancho en escritorio */
+.gf-accounts-total {
+    max-width: 22rem;
+}
+
+@media (max-width: 768px) {
+    .gf-accounts-total {
+        max-width: none;
+    }
+}
+
+/* La etiqueta "Saldo:" solo hace falta en las tarjetas de móvil */
+.gf-account-balance-label {
+    display: none;
+}
+
+/* Móvil: cada cuenta es una tarjeta con el saldo abajo, separado por una línea
+   ┌─────────────────────────────┐
+   │ (ícono) Nombre       ✏️ 🗑  │
+   │         Subtítulo           │
+   ├─────────────────────────────┤
+   │ Saldo:          $0.00 MXN   │
+   └─────────────────────────────┘ */
+@media (max-width: 768px) {
+    .gf-accounts-table {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        overflow: visible;
+    }
+
+    .gf-accounts-table .gf-table-head {
+        display: none;
+    }
+
+    .gf-accounts-table .gf-table-row {
+        min-width: 0;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "main actions"
+            "balance balance";
+        gap: 0;
+        padding: 0;
+        background: var(--gf-surface);
+        border: 1px solid var(--gf-border);
+        border-radius: 16px;
+    }
+
+    .gf-accounts-table .gf-table-row:hover {
+        background: var(--gf-surface);
+    }
+
+    .gf-accounts-table .gf-cell-main {
+        grid-area: main;
+        padding: 1rem 0.75rem 1rem 1rem;
+    }
+
+    .gf-accounts-table .gf-row-actions {
+        grid-area: actions;
+        padding-right: 1rem;
+    }
+
+    /* Tipo y estado no se muestran en móvil */
+    .gf-accounts-table .gf-table-row > .gf-pill {
+        display: none;
+    }
+
+    .gf-account-balance {
+        grid-area: balance;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin: 0 1rem;
+        padding: 0.85rem 0;
+        border-top: 1px solid var(--gf-divider);
+        font-size: 1rem;
+    }
+
+    .gf-account-balance-label {
+        display: inline;
+        font-family: var(--gf-font-body);
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--gf-muted);
+    }
+}

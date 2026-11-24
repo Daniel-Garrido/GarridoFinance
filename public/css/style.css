@@ -45,14 +45,26 @@ body {
     height: auto;
 }
 
-/* ESTILO AL MENÚ SUPERIOR */
+/* ============================================================
+   HEADER SUPERIOR
+   [☰]  (logo) GarridoFinance                  [(DG) Daniel  v]
+                                                  ┌──────────────────┐
+                                                  │ (DG) Nombre      │
+                                                  │      correo      │
+                                                  │ ◎ Mi perfil      │
+                                                  │ ⚙ Ajustes        │
+                                                  │ ──────────────── │
+                                                  │ ⇥ Cerrar sesión  │
+                                                  └──────────────────┘
+   ============================================================ */
 .content-nav{
     background-color: var(--gf-primary-dark);
-    padding:10px 20px;
+    padding: 10px 1.25rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: nowrap;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .content-nav-container,
@@ -61,75 +73,485 @@ body {
     align-items: center;
 }
 
+.content-nav-container{
+    gap: 0.85rem;
+}
+
+/* Logo + nombre: enlace al dashboard */
+.content-nav-brand{
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-decoration: none;
+}
+
+.content-nav-img{
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14);
+}
+
 .content-nav-title{
     font-family: var(--gf-font-title);
     font-weight: 700;
-    font-size: 1.5rem !important;
+    font-size: 1.3rem !important;
     letter-spacing: -0.02em;
     color: #fff !important;
     padding: 0 !important;
+    margin: 0 !important;
     line-height: 1;
 }
 
-/* Icono de perfil del header */
-.content-nav-profile{
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 50%;
+/* "Finance" en lavanda */
+.content-nav-title span{
+    color: var(--gf-primary-border);
+}
+
+/* Lado derecho del header: botón de tema + menú del usuario */
+.content-nav-actions{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Botón de modo oscuro: solo el ícono (luna / sol), igual que el botón del menú */
+.content-nav-theme{
+    width: 2.5rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
     color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    font-size: 1.3rem;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease, transform 0.3s ease;
+}
+
+.content-nav-theme:hover{
+    color: var(--gf-primary-border);
+}
+
+.content-nav-theme:active{
+    transform: rotate(-20deg);
+}
+
+.content-nav-theme:focus-visible{
+    outline: 2px solid var(--gf-primary-border);
+    outline-offset: 2px;
+}
+
+/* ---------- Menú del usuario ---------- */
+.gf-user-menu{
+    position: relative;
+}
+
+/* Botón: foto + nombre + flecha */
+.gf-user-trigger{
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.25rem 0.7rem 0.25rem 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    font-family: var(--gf-font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.gf-user-trigger-avatar{
+    width: 2.1rem;
+    height: 2.1rem;
+    flex: none;
+    display: flex;
+}
+
+.gf-user-trigger-avatar .gf-avatar{
+    border-radius: 50%;
+}
+
+.gf-user-trigger-name{
+    max-width: 9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gf-user-trigger-caret{
+    font-size: 0.8rem;
+    color: var(--gf-primary-border);
+    transition: transform 0.2s ease;
+}
+
+/* Panel: oculto hasta que se abre. El padding-top es un "puente" invisible
+   para que el menú no se cierre al mover el cursor de la foto al panel */
+.gf-user-panel{
+    position: absolute;
+    top: 100%;
+    right: 0;
+    padding-top: 0.6rem;
+    width: 16rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+}
+
+.gf-user-menu.is-open .gf-user-trigger,
+.gf-user-menu:has(:focus-visible) .gf-user-trigger{
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.24);
+}
+
+.gf-user-menu.is-open .gf-user-trigger-caret{
+    transform: rotate(180deg);
+}
+
+.gf-user-menu.is-open .gf-user-panel,
+.gf-user-menu:has(:focus-visible) .gf-user-panel{
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Solo en dispositivos con cursor: se abre al pasar por encima */
+@media (hover: hover) {
+    .gf-user-trigger:hover,
+    .gf-user-menu:hover .gf-user-trigger{
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.24);
+    }
+
+    .gf-user-menu:hover .gf-user-trigger-caret{
+        transform: rotate(180deg);
+    }
+
+    .gf-user-menu:hover .gf-user-panel{
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}
+
+.gf-user-card{
+    padding: 0.5rem;
+    background: var(--gf-surface);
+    border: 1px solid var(--gf-border);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(36, 21, 109, 0.22);
+}
+
+.gf-user-card-head{
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 0.6rem 0.75rem;
+    margin-bottom: 0.35rem;
+    border-bottom: 1px solid var(--gf-divider);
+}
+
+.gf-user-card-head div{
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.gf-user-card-head strong,
+.gf-user-card-head small{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gf-user-card-head strong{
+    font-family: var(--gf-font-title);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--gf-primary-dark);
+}
+
+.gf-user-card-head small{
+    font-size: 0.72rem;
+    color: var(--gf-subtle);
+}
+
+.gf-user-card form{
+    margin: 0;
+}
+
+.gf-user-item{
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.6rem 0.65rem;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    font-family: var(--gf-font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gf-ink-soft);
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.gf-user-item i{
+    font-size: 1.15rem;
+    color: var(--gf-primary);
+}
+
+.gf-user-item:hover,
+.gf-user-item:focus-visible{
+    background: var(--gf-primary-soft);
+    color: var(--gf-primary-hover);
+}
+
+.gf-user-divider{
+    height: 1px;
+    margin: 0.35rem 0.4rem;
+    background: var(--gf-divider);
+}
+
+.gf-user-item-danger,
+.gf-user-item-danger i{
+    color: var(--gf-expense);
+}
+
+.gf-user-item-danger:hover,
+.gf-user-item-danger:focus-visible{
+    background: var(--gf-expense-soft);
+    color: var(--gf-expense);
+}
+
+/* Móvil: solo la foto; el panel no se sale de la pantalla */
+@media (max-width: 768px) {
+    .gf-user-trigger{
+        padding: 0.2rem;
+    }
+
+    .gf-user-trigger-name,
+    .gf-user-trigger-caret{
+        display: none;
+    }
+
+    .gf-user-panel{
+        width: min(16rem, calc(100vw - 1.5rem));
+    }
+}
+
+/* ============================================================
+   MENÚ LATERAL (.gf-side)
+   Fondo violeta oscuro sólido, el mismo del header.
+   Posición, ancho y animación de abrir/cerrar: dashboard.css (.sidebar).
+   ┌──────────────────────┐
+   │ GENERAL              │
+   │ [◔] Dashboard        │  ← activo: barra lavanda + ícono violeta lleno
+   │ MOVIMIENTOS          │
+   │ [▤] Transacciones    │
+   │ [⇄] Transferencias   │
+   │ ADMINISTRACIÓN       │
+   │ ...                  │
+   ├──────────────────────┤
+   │ [◎] Perfil           │
+   │ [⚙] Ajustes          │
+   │ (DG) Nombre / correo │
+   └──────────────────────┘
+   ============================================================ */
+.gf-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem 0.85rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    /* Color sólido: el mismo violeta oscuro del header */
+    background: var(--gf-primary-dark);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.gf-side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    flex: 1;
+}
+
+/* Título de cada sección: "GENERAL", "MOVIMIENTOS"... */
+.gf-side-label {
+    margin: 0 0 0.45rem 0.7rem;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: rgba(207, 198, 255, 0.55);
+}
+
+.gf-side-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.gf-side-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.gf-side-link:hover,
+.gf-side-link:focus-visible {
+    background: rgba(255, 255, 255, 0.07);
+    color: #fff;
+}
+
+/* Recuadro del ícono */
+.gf-side-icon {
+    width: 2.1rem;
+    height: 2.1rem;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    font-size: 1.2rem;
+    color: #CFC6FF;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gf-side-link:hover .gf-side-icon {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.gf-side-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Vista actual: fondo claro, barra lavanda a la izquierda e ícono violeta lleno */
+.gf-side-link.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-weight: 700;
+}
+
+.gf-side-link.active::before {
+    content: "";
+    position: absolute;
+    left: -0.85rem;
+    top: 22%;
+    bottom: 22%;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background: var(--gf-primary-border);
+}
+
+.gf-side-link.active .gf-side-icon {
+    background: var(--gf-primary);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(91, 61, 245, 0.45);
+}
+
+/* Parte inferior: Perfil, Ajustes y tarjeta del usuario */
+.gf-side-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gf-side-user {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
     text-decoration: none;
     transition: background-color 0.2s ease;
 }
 
-/* El avatar llena el círculo del header */
-.content-nav-profile .gf-avatar{
-    border-radius: 50%;
-}
-
-.content-nav-profile:hover{
-    background-color: rgba(255, 255, 255, 0.12);
+.gf-side-user:hover {
+    background: rgba(255, 255, 255, 0.11);
     color: #fff;
 }
 
-.content-nav-container{
-    gap: 10px;
+.gf-side-user-avatar {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: none;
+    display: flex;
 }
 
-.content-nav-img{
-    border-radius: 50px;
-    width: 50px ;
-    height: 50px;
-    object-fit: cover;
+.gf-side-user-avatar .gf-avatar {
+    border-radius: 50%;
 }
 
-/* MENÚ LATERAL */
-.sidebar {
-    border-right: 1px solid var(--gf-border);
-    box-shadow: none !important;
+.gf-side-user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.25;
 }
 
-.nav-item-main-li {
-    border-radius: 10px;
-    transition: background-color 0.2s ease;
+.gf-side-user-info strong,
+.gf-side-user-info small {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.nav-item-main-li .nav-link {
-    color: var(--gf-muted) !important;
-    font-size: 0.85rem;
-    font-weight: 500;
+.gf-side-user-info strong {
+    font-size: 0.8rem;
+    font-weight: 700;
 }
 
-.nav-item-main-li:hover {
-    background-color: var(--gf-hover) !important;
+.gf-side-user-info small {
+    font-size: 0.7rem;
+    color: rgba(207, 198, 255, 0.75);
 }
 
-.nav-item-main-li a:hover{
-    color: var(--gf-ink) !important;
+/* Móvil: la tarjeta solo informa, no lleva al perfil (en escritorio sigue siendo enlace) */
+@media (max-width: 768px) {
+    .gf-side-user {
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .gf-side-user:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
 }
 
 /* CONTENIDO PRINCIPAL DE CADA VISTA*/

@@ -20,6 +20,8 @@
     left: 0;
     width: var(--sidebar-width);
     height: calc(100vh - var(--navbar-height));
+    /* En el celular 100vh incluye la zona que tapa la barra del navegador; dvh mide solo lo visible */
+    height: calc(100dvh - var(--navbar-height));
     overflow-y: auto;
     z-index: 1020;
 }
@@ -32,13 +34,6 @@
     width: 100%;
 }
 
-/* Opcional: resaltar el link activo */
-.sidebar .nav-link.active {
-    background-color: var(--gf-primary-soft);
-    color: var(--gf-primary-hover) !important;
-    border-radius: 10px;
-    font-weight: 700;
-}
 
 /* Menú lateral plegable: animación de abrir / cerrar */
 .sidebar {
@@ -59,23 +54,33 @@ body.sidebar-collapsed .content-main {
 
 /* Botón para abrir / cerrar el menú (en el header) */
 .content-nav-toggle {
-    width: 2.6rem;
-    height: 2.6rem;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 10px;
+    width: 2.5rem;
+    height: 2.5rem;
+    /* Sin fondo ni borde, igual que en móvil: solo el ícono */
+    border: none;
+    border-radius: 12px;
     background: transparent;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     flex: none;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease;
 }
 
+/* Al pasar el cursor solo cambia el color del ícono a lavanda, sin fondo */
 .content-nav-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.12);
+    background-color: transparent;
+    color: var(--gf-primary-border);
+}
+
+/* Contorno solo al navegar con teclado (Tab), para no perder la accesibilidad */
+.content-nav-toggle:focus-visible {
+    outline: 2px solid var(--gf-primary-border);
+    outline-offset: 2px;
 }
 
 /* Fondo oscuro detrás del menú en móvil (oculto en escritorio) */
@@ -98,16 +103,20 @@ body.sidebar-collapsed .content-main {
         min-width: 0;
     }
 
-    .content-nav-img {
-        width: 36px !important;
-        height: 36px !important;
+    /* En móvil el header solo muestra el botón del menú y el perfil */
+    .content-nav-img,
+    .content-nav-title {
+        display: none !important;
     }
 
-    .content-nav-title {
-        font-size: 1.15rem !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    /* Sin borde ni fondo: en móvil el hover se queda "pegado" después de tocar */
+    .content-nav-toggle,
+    .content-nav-toggle:hover,
+    .content-nav-toggle:focus,
+    .content-nav-toggle:active {
+        border: none;
+        background-color: transparent;
+        -webkit-tap-highlight-color: transparent;
     }
 
     .sidebar {
@@ -388,6 +397,13 @@ body.sidebar-collapsed .content-main {
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--gf-subtle);
+}
+
+/* Títulos "Total de 2026" y "Resumen de ...": más grandes y más marcados */
+.gf-summary-card .gf-stat-label {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--gf-ink);
 }
 
 .gf-icon {

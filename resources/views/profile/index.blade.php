@@ -31,7 +31,8 @@
                 <h1>Mi perfil</h1>
                 <p>Consulta y actualiza los datos de tu cuenta en GarridoFinance</p>
             </div>
-            <button type="submit" form="profileForm" class="gf-btn gf-btn-primary">
+            {{-- En móvil este botón se oculta y se usa el del final de "Datos personales" --}}
+            <button type="submit" form="profileForm" class="gf-btn gf-btn-primary gf-profile-save-top">
                 <i class="bi bi-check-lg"></i> Guardar cambios
             </button>
         </header>
@@ -175,6 +176,13 @@
                                 value="{{ $profileValue('phone') }}">
                             <x-form-error name="phone" bag="updateProfileInformation" />
                         </div>
+                    </div>
+
+                    {{-- Solo en móvil: el botón del encabezado queda lejos del formulario --}}
+                    <div class="gf-profile-section-foot gf-profile-save-bottom">
+                        <button type="submit" class="gf-btn gf-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar cambios
+                        </button>
                     </div>
                 </form>
 

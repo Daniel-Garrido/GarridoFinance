@@ -11,3 +11,80 @@
 .gf-categories-table .gf-table-row {
     min-width: 41.25rem;
 }
+
+/* Texto corto del botón "Crear nueva categoría": solo en móvil */
+.gf-categories-tools .gf-label-short {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    /* Filtro y botón de crear en la misma fila, mitad y mitad */
+    .gf-categories-tools {
+        width: 100%;
+        flex-wrap: nowrap;
+    }
+
+    .gf-categories-tools > .dropdown,
+    .gf-categories-tools > .gf-btn {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .gf-categories-tools .gf-dropdown-toggle {
+        width: 100%;
+        min-width: 0;
+        gap: 0.5rem;
+    }
+
+    .gf-categories-tools .gf-dropdown-toggle span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .gf-categories-tools > .gf-btn {
+        justify-content: center;
+        white-space: nowrap;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .gf-categories-tools .gf-label-full {
+        display: none;
+    }
+
+    .gf-categories-tools .gf-label-short {
+        display: inline;
+    }
+
+    /* Cada categoría es una tarjeta: ícono y nombre a la izquierda, opciones a la derecha */
+    .gf-categories-table {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        overflow: visible;
+    }
+
+    .gf-categories-table .gf-table-head {
+        display: none;
+    }
+
+    .gf-categories-table .gf-table-row {
+        min-width: 0;
+        grid-template-columns: minmax(0, 1fr) auto;
+        padding: 1rem;
+        background: var(--gf-surface);
+        border: 1px solid var(--gf-border);
+        border-radius: 16px;
+    }
+
+    .gf-categories-table .gf-table-row:hover {
+        background: var(--gf-surface);
+    }
+
+    /* Tipo y estado no se muestran en móvil */
+    .gf-categories-table .gf-table-row > .gf-pill {
+        display: none;
+    }
+}

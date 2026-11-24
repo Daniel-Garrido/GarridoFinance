@@ -18,6 +18,12 @@ trait HasMovementDate
         return str_replace('.', '', $this->date->locale('es')->translatedFormat('j M Y'));
     }
 
+    // Mes abreviado en mayúsculas para la fecha de las listas en móvil: "NOV"
+    public function getDateMonthShortAttribute(): string
+    {
+        return mb_strtoupper(str_replace('.', '', $this->date->locale('es')->translatedFormat('M')));
+    }
+
     // Segunda línea de la fecha: "Hoy", "Ayer" o el día de la semana
     public function getDateHintAttribute(): string
     {

@@ -35,6 +35,11 @@
             </div>
         @endif
 
+        {{-- Saldo total: suma del dinero de todas las cuentas --}}
+        <section class="gf-accounts-total">
+            <x-stat-card label="Saldo total de tus cuentas" :value="$totalBalance" tone="income" icon="bi-wallet2" />
+        </section>
+
         {{-- Tabla de cuentas --}}
         <section class="gf-panel">
             <div class="gf-panel-head">
@@ -77,8 +82,12 @@
                         </div>
 
                         {{-- Saldo --}}
-                        <span class="gf-cell-amount {{ $account->balance < 0 ? 'gf-amount-expense' : '' }}">
-                            {{ $account->balance < 0 ? '−' : '' }}${{ number_format(abs($account->balance), 2) }} MXN
+                        {{-- La etiqueta "Saldo:" solo se ve en móvil, donde la fila es una tarjeta --}}
+                        <span class="gf-cell-amount gf-account-balance">
+                            <span class="gf-account-balance-label">Saldo:</span>
+                            <span class="{{ $account->balance < 0 ? 'gf-amount-expense' : '' }}">
+                                {{ $account->balance < 0 ? '−' : '' }}${{ number_format(abs($account->balance), 2) }} MXN
+                            </span>
                         </span>
 
                         {{-- Tipo --}}

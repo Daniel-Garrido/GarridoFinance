@@ -23,7 +23,7 @@
                 <p>Administra tus categorías registradas en GarridoFinance</p>
             </div>
 
-            <div class="gf-header-tools">
+            <div class="gf-header-tools gf-categories-tools">
                 {{-- Filtro por tipo: cada opción es un enlace, la paginación vuelve a la página 1 --}}
                 <div class="dropdown">
                     <button type="button" class="gf-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -49,7 +49,10 @@
 
                 <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
                     data-bs-target="#createCategoryModal">
-                    <i class="bi bi-plus-circle"></i> Crear nueva categoría
+                    <i class="bi bi-plus-circle"></i>
+                    {{-- En móvil el texto corto cabe en la misma fila que el filtro --}}
+                    <span class="gf-label-full">Crear nueva categoría</span>
+                    <span class="gf-label-short">Nueva categoría</span>
                 </button>
             </div>
         </header>

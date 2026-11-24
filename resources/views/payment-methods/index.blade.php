@@ -19,7 +19,7 @@
                 <h1>Lista de métodos de pago</h1>
                 <p>Administra tus métodos de pago registrados en GarridoFinance</p>
             </div>
-            <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+            <button type="button" class="gf-btn gf-btn-primary gf-payment-methods-create" data-bs-toggle="modal"
                 data-bs-target="#createPaymentMethodModal">
                 <i class="bi bi-plus-circle"></i> Crear nuevo método de pago
             </button>

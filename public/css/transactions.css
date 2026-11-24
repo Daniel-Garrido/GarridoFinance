@@ -11,3 +11,14 @@
 .gf-transactions-table .gf-table-row {
     min-width: 66.25rem;
 }
+
+/* En móvil la tabla es una lista de filas desplegables (.gf-table-collapsible, en components.css):
+   │  10   Categoría                    > │
+   │ NOV   Cuenta            −$250.00 MXN │
+   Al desplegar: fecha, tipo, método de pago, histórica, descripción y opciones. */
+@media (max-width: 768px) {
+    /* El botón de crear baja a su propia fila: se alinea a la derecha */
+    .gf-transactions-create {
+        margin-left: auto;
+    }
+}

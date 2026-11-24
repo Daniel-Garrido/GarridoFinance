@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -38,7 +39,15 @@ class AccountController extends Controller
             return redirect($accounts->url($accounts->lastPage()));
         }
 
-        return view('accounts.index', compact('accounts', 'search'));
+        // Saldo total: suma del dinero de todas las cuentas (no depende del buscador ni de la página).
+        // Las transferencias solo mueven dinero entre cuentas del usuario y se cancelan,
+        // así que la suma de los saldos es ingresos − gastos.
+        $totalBalance = (float) Transaction::where('user_id', Auth::id())
+            ->selectRaw("COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END), 0) AS total")
+            ->first()
+            ->total;
+
+        return view('accounts.index', compact('accounts', 'search', 'totalBalance'));
     }
 
     public function create()

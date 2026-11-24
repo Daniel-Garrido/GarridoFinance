@@ -1,0 +1,211 @@
+/* ============================================================
+   MODO OSCURO
+   Solo se aplica con <html data-theme="dark"> (botón de luna/sol del header).
+   El modo claro (paleta original del proyecto) es el predeterminado y no
+   depende de este archivo: aquí solo se redefinen las variables y los
+   pocos colores que estaban fijos en el CSS.
+   Se carga al final, después del CSS de cada vista.
+   ============================================================ */
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    /* Violetas: más claros para que se lean sobre fondo oscuro */
+    --gf-primary: #7B61FF;
+    --gf-primary-hover: #B5A7FF;          /* texto activo / acentos */
+    --gf-primary-dark: #150E33;           /* header y menú lateral */
+    --gf-primary-soft: rgba(123, 97, 255, 0.16);
+    --gf-primary-border: #8F7DF0;
+
+    /* Ingresos y gastos: mismos tonos, un poco más luminosos para que se lean */
+    --gf-income: #2BC48F;
+    --gf-income-soft: rgba(43, 196, 143, 0.14);
+    --gf-expense: #FF5C80;
+    --gf-expense-chart: #FF6F93;
+    --gf-expense-soft: rgba(255, 92, 128, 0.14);
+    --gf-info: #5B95F0;
+    --gf-info-soft: rgba(91, 149, 240, 0.15);
+
+    /* Textos */
+    --gf-ink: #EEEBFA;
+    --gf-ink-soft: #CBC6E2;
+    --gf-muted: #B1ACCB;
+    --gf-subtle: #9A95B5;
+
+    /* Superficies con tinte violeta, suaves (no negras) */
+    --gf-bg: #1E1A2E;                     /* fondo de la app: violeta grisáceo */
+    --gf-surface: #29243D;                /* tarjetas: un paso más claro que el fondo */
+    --gf-border: #3A3454;
+    --gf-input-border: #453E62;
+    --gf-hover: #312B48;
+    --gf-divider: #353050;
+
+    /* Variables extra del modo oscuro */
+    --gf-dark-heading: #DCD4FF;           /* títulos que en claro usan --gf-primary-dark */
+    --gf-dark-field: #221D35;             /* fondo de inputs y selects */
+    --gf-dark-head: #2F2945;              /* encabezado de tablas */
+}
+
+/* ---------- Base ---------- */
+[data-theme="dark"] body {
+    background-color: var(--gf-bg);
+    color: var(--gf-ink);
+}
+
+/* ---------- Botones ---------- */
+/* En claro el hover usa --gf-primary-hover como fondo; en oscuro esa variable es texto lavanda */
+[data-theme="dark"] .gf-btn-primary:hover {
+    background: #6A4FFF;
+}
+
+[data-theme="dark"] .gf-btn-soft:hover {
+    background: rgba(123, 97, 255, 0.26);
+}
+
+[data-theme="dark"] .gf-btn-danger:hover {
+    background: #E04468;
+}
+
+/* ---------- Tablas y paneles ---------- */
+[data-theme="dark"] .gf-panel-head,
+[data-theme="dark"] .gf-modal .modal-header,
+[data-theme="dark"] .gf-divider {
+    border-color: var(--gf-divider);
+}
+
+[data-theme="dark"] .gf-divider {
+    background: var(--gf-divider);
+}
+
+[data-theme="dark"] .gf-table-head {
+    background: var(--gf-dark-head);
+    border-bottom-color: var(--gf-divider);
+}
+
+/* Solo en escritorio: en móvil cada vista define el fondo de sus tarjetas y filas desplegables */
+@media (min-width: 769px) {
+    [data-theme="dark"] .gf-table-row:hover {
+        background: var(--gf-hover);
+    }
+}
+
+/* ---------- Pastillas ---------- */
+[data-theme="dark"] .gf-pill-income { color: var(--gf-income); }
+[data-theme="dark"] .gf-pill-expense { color: var(--gf-expense); }
+[data-theme="dark"] .gf-pill-info { color: var(--gf-info); }
+[data-theme="dark"] .gf-pill-muted { background: var(--gf-hover); }
+[data-theme="dark"] .gf-pill-income .gf-pill-dot { background: var(--gf-income); }
+[data-theme="dark"] .gf-pill-muted .gf-pill-dot { background: var(--gf-subtle); }
+
+/* ---------- Acciones, paginación y alertas ---------- */
+[data-theme="dark"] .gf-action-danger {
+    border-color: rgba(255, 92, 128, 0.3);
+}
+
+[data-theme="dark"] .gf-action-danger:hover {
+    border-color: rgba(255, 92, 128, 0.55);
+}
+
+[data-theme="dark"] .gf-page-btn.is-disabled {
+    color: #5C5578;
+}
+
+[data-theme="dark"] .gf-alert {
+    border-color: rgba(43, 196, 143, 0.3);
+    color: var(--gf-income);
+}
+
+/* ---------- Formularios (Bootstrap) ---------- */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: var(--gf-dark-field);
+    border-color: var(--gf-input-border);
+    color: var(--gf-ink);
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background-color: var(--gf-dark-field);
+    color: var(--gf-ink);
+}
+
+[data-theme="dark"] .form-control::placeholder,
+[data-theme="dark"] .gf-form-group .form-control::placeholder {
+    color: var(--gf-subtle);
+}
+
+[data-theme="dark"] .form-check-input {
+    background-color: var(--gf-dark-field);
+    border-color: var(--gf-input-border);
+}
+
+[data-theme="dark"] .form-check-input:checked {
+    background-color: var(--gf-primary);
+    border-color: var(--gf-primary);
+}
+
+/* ---------- Modales y desplegables (Bootstrap) ---------- */
+[data-theme="dark"] .modal-content {
+    background-color: var(--gf-surface);
+    color: var(--gf-ink);
+}
+
+[data-theme="dark"] .modal-backdrop.show {
+    opacity: 0.7;
+}
+
+[data-theme="dark"] .dropdown-menu {
+    background-color: var(--gf-surface);
+    border-color: var(--gf-input-border);
+}
+
+/* ---------- Dashboard ---------- */
+[data-theme="dark"] .gf-summary-item {
+    box-shadow: none;
+}
+
+/* ---------- Filas desplegables y títulos violeta oscuro ---------- */
+[data-theme="dark"] .gf-table-collapsible .gf-row-title,
+[data-theme="dark"] .gf-transfers-table .gf-row-title .gf-cell-text,
+[data-theme="dark"] .gf-user-card-head strong {
+    color: var(--gf-dark-heading);
+}
+
+/* ---------- Perfil ---------- */
+[data-theme="dark"] .gf-btn-outline-danger {
+    border-color: rgba(255, 92, 128, 0.3);
+}
+
+[data-theme="dark"] .gf-btn-soft-danger {
+    border-color: rgba(255, 92, 128, 0.4);
+    color: var(--gf-expense);
+}
+
+[data-theme="dark"] .gf-btn-soft-danger:hover {
+    background: rgba(255, 92, 128, 0.24);
+    color: var(--gf-expense);
+}
+
+[data-theme="dark"] .gf-danger-title {
+    color: var(--gf-expense);
+}
+
+/* ---------- Header y menú del usuario ---------- */
+/* Borde lavanda para que el header y el menú lateral se distingan del fondo de la app */
+[data-theme="dark"] .content-nav {
+    border-bottom: 1px solid rgba(143, 125, 240, 0.3);
+}
+
+/* El borde de arriba ya lo pone el header; el menú solo lleva el de la derecha */
+[data-theme="dark"] .gf-side {
+    border-top: none;
+    border-right: 1px solid rgba(143, 125, 240, 0.3);
+}
+
+[data-theme="dark"] .gf-user-card {
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Barra de desplazamiento */
+[data-theme="dark"] {
+    scrollbar-color: #352E52 var(--gf-bg);
+}

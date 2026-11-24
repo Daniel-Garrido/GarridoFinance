@@ -26,3 +26,44 @@
     border-radius: 9px;
     font-size: 0.8rem;
 }
+
+/* Monto de transferencia en violeta: no es ingreso (verde) ni gasto (rojo), solo mueve dinero entre cuentas */
+.gf-transfers-table .gf-cell-amount {
+    color: var(--gf-primary);
+}
+
+/* En móvil la tabla es una lista de filas desplegables (.gf-table-collapsible, en components.css):
+   │  10   Cuenta origen                > │
+   │ NOV   → Cuenta destino   $500.00 MXN │
+   Al desplegar: fecha, descripción y opciones. */
+@media (max-width: 768px) {
+    /* El botón de crear baja a su propia fila: se alinea a la derecha */
+    .gf-transfers-create {
+        margin-left: auto;
+    }
+
+    /* Sin los íconos de entrada/salida: el "→" indica hacia dónde va el dinero */
+    .gf-transfers-table .gf-row-title .gf-icon,
+    .gf-transfers-table .gf-row-subtitle .gf-icon {
+        display: none;
+    }
+
+    .gf-transfers-table .gf-row-title .gf-cell-text {
+        font-weight: 700;
+        color: var(--gf-primary-dark);
+    }
+
+    .gf-transfers-table .gf-row-subtitle {
+        gap: 0.3rem;
+    }
+
+    .gf-transfers-table .gf-row-subtitle::before {
+        content: "→";
+        flex: none;
+    }
+
+    .gf-transfers-table .gf-row-subtitle .gf-cell-text {
+        font-weight: 500;
+        color: var(--gf-muted);
+    }
+}

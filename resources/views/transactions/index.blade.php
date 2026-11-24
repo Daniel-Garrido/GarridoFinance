@@ -32,7 +32,7 @@
                 <h1>Lista de transacciones</h1>
                 <p>Administra tus transacciones registradas en GarridoFinance</p>
             </div>
-            <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+            <button type="button" class="gf-btn gf-btn-primary gf-transactions-create" data-bs-toggle="modal"
                 data-bs-target="#createTransactionModal">
                 <i class="bi bi-plus-circle"></i> Crear una transacción
             </button>
@@ -48,15 +48,17 @@
         @endif
 
         {{-- Filtros --}}
-        <form method="GET" action="{{ route('transactions.index') }}" id="filterForm" class="gf-filter gf-card">
-            <x-filter-dropdown name="type" label="Tipo" :options="$typeOptions" :value="request('type', '')" />
+        <form method="GET" action="{{ route('transactions.index') }}" id="filterForm" class="gf-filter gf-filter-compact gf-card">
+            {{-- gf-filter-half: en móvil Tipo y Categoría comparten la primera fila --}}
+            <x-filter-dropdown name="type" label="Tipo" :options="$typeOptions" :value="request('type', '')"
+                class="gf-filter-half" />
             <x-filter-dropdown name="category_id" label="Categoría" :options="$categoryOptions"
-                :value="request('category_id', '')" />
+                :value="request('category_id', '')" class="gf-filter-half" />
             <x-period-filter />
 
             <div class="gf-filter-actions">
                 <button type="submit" class="gf-btn gf-btn-primary">
-                    <i class="bi bi-funnel"></i> Filtrar
+                    <i class="bi bi-funnel"></i><span class="gf-btn-label">Filtrar</span>
                 </button>
                 <a href="{{ route('transactions.index') }}" class="gf-btn gf-btn-icon" title="Limpiar filtros"
                     aria-label="Limpiar filtros">
@@ -84,7 +86,7 @@
                 </label>
             </div>
 
-            <div class="gf-table gf-table-compact gf-transactions-table">
+            <div class="gf-table gf-table-compact gf-table-collapsible gf-transactions-table">
                 <div class="gf-table-head">
                     <span>Fecha</span>
                     <span>Tipo</span>
@@ -102,36 +104,54 @@
                         $isIncome = $transaction->type === 'income';
                         $amountLabel = ($isIncome ? '+' : '−') . '$' . number_format($transaction->amount, 2) . ' MXN';
                     @endphp
-                    <div class="gf-table-row">
+                    {{-- En móvil la fila se contrae: solo categoría y cuenta; el botón ">" despliega el resto.
+                         data-label es la etiqueta que se muestra en el detalle desplegado. --}}
+                    <div class="gf-table-row" id="transaction-{{ $transaction->id }}">
+                        {{-- Fecha corta a la izquierda: solo en móvil ("10" / "NOV") --}}
+                        <div class="gf-row-day" aria-hidden="true">
+                            <strong>{{ $transaction->date->day }}</strong>
+                            <span>{{ $transaction->date_month_short }}</span>
+                        </div>
+
                         {{-- Fecha --}}
-                        <div class="gf-date-cell" title="{{ $transaction->date->format('Y-m-d') }}">
+                        <div class="gf-date-cell gf-row-detail" data-label="Fecha" title="{{ $transaction->date->format('Y-m-d') }}">
                             <strong>{{ $transaction->date_label }}</strong>
                             <span>{{ $transaction->date_hint }}</span>
                         </div>
 
                         {{-- Tipo --}}
-                        <span class="gf-pill gf-pill-sm {{ $isIncome ? 'gf-pill-income' : 'gf-pill-expense' }}">
-                            <span class="gf-pill-dot"></span>{{ $isIncome ? 'Ingreso' : 'Gasto' }}
-                        </span>
+                        <div class="gf-row-detail" data-label="Tipo">
+                            <span class="gf-pill gf-pill-sm {{ $isIncome ? 'gf-pill-income' : 'gf-pill-expense' }}">
+                                <span class="gf-pill-dot"></span>{{ $isIncome ? 'Ingreso' : 'Gasto' }}
+                            </span>
+                        </div>
 
-                        {{-- Monto --}}
-                        <span class="gf-cell-amount {{ $isIncome ? 'gf-amount-income' : 'gf-amount-expense' }}">{{ $amountLabel }}</span>
+                        {{-- Monto (en móvil siempre visible, debajo del ">") --}}
+                        <span class="gf-cell-amount gf-row-amount {{ $isIncome ? 'gf-amount-income' : 'gf-amount-expense' }}">{{ $amountLabel }}</span>
 
                         {{-- Cuenta, categoría y método --}}
-                        <span class="gf-cell-text gf-cell-strong" title="{{ $transaction->account?->name }}">{{ $transaction->account?->name }}</span>
-                        <span class="gf-cell-text" title="{{ $transaction->category?->name }}">{{ $transaction->category?->name }}</span>
-                        <span class="gf-cell-text" title="{{ $transaction->paymentMethod?->name }}">{{ $transaction->paymentMethod?->name }}</span>
+                        <span class="gf-cell-text gf-cell-strong gf-row-subtitle" title="{{ $transaction->account?->name }}">{{ $transaction->account?->name }}</span>
+                        <span class="gf-cell-text gf-row-title" title="{{ $transaction->category?->name }}">{{ $transaction->category?->name }}</span>
+                        <span class="gf-cell-text gf-row-detail" data-label="Método de pago" title="{{ $transaction->paymentMethod?->name }}">{{ $transaction->paymentMethod?->name }}</span>
 
                         {{-- Histórica --}}
-                        <span class="gf-pill gf-pill-sm {{ $transaction->is_historical ? 'gf-pill-primary' : 'gf-pill-muted' }}">
-                            {{ $transaction->is_historical ? 'Sí' : 'No' }}
-                        </span>
+                        <div class="gf-row-detail" data-label="Histórica">
+                            <span class="gf-pill gf-pill-sm {{ $transaction->is_historical ? 'gf-pill-primary' : 'gf-pill-muted' }}">
+                                {{ $transaction->is_historical ? 'Sí' : 'No' }}
+                            </span>
+                        </div>
 
-                        {{-- Descripción --}}
-                        <span class="gf-cell-text gf-cell-muted" title="{{ $transaction->description }}">{{ $transaction->description ?: '—' }}</span>
+                        {{-- Descripción (en móvil se oculta si está vacía) --}}
+                        <span class="gf-cell-text gf-cell-muted gf-row-detail gf-row-desc {{ $transaction->description ? '' : 'is-empty' }}" data-label="Descripción" title="{{ $transaction->description }}">{{ $transaction->description ?: '—' }}</span>
+
+                        {{-- Botón ">" para desplegar el detalle: solo en móvil --}}
+                        <button type="button" class="gf-row-toggle" aria-expanded="false"
+                            aria-controls="transaction-{{ $transaction->id }}" aria-label="Ver detalles de la transacción">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
 
                         {{-- Opciones --}}
-                        <div class="gf-row-actions">
+                        <div class="gf-row-actions gf-row-detail">
                             <button type="button" class="gf-action" title="Editar" aria-label="Editar transacción"
                                 data-bs-toggle="modal" data-bs-target="#editTransactionModal"
                                 data-id="{{ $transaction->id }}"
@@ -249,6 +269,7 @@
 @push('scripts')
     <script src="{{ asset('js/filters.js') }}?v={{ filemtime(public_path('js/filters.js')) }}"></script>
     <script src="{{ asset('js/transaction-form.js') }}?v={{ filemtime(public_path('js/transaction-form.js')) }}"></script>
+    <script src="{{ asset('js/collapsible-rows.js') }}?v={{ filemtime(public_path('js/collapsible-rows.js')) }}"></script>
     <script>
         (function () {
             // ===== Filtro de categoría: solo las del tipo elegido (todas si el tipo es "Todas") =====

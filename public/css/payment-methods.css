@@ -11,3 +11,41 @@
 .gf-payment-methods-table .gf-table-row {
     min-width: 38.75rem;
 }
+
+@media (max-width: 768px) {
+    /* El botón de crear baja a su propia fila: se alinea a la derecha */
+    .gf-payment-methods-create {
+        margin-left: auto;
+    }
+
+    /* Cada método es una tarjeta: ícono y nombre a la izquierda, opciones a la derecha */
+    .gf-payment-methods-table {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        overflow: visible;
+    }
+
+    .gf-payment-methods-table .gf-table-head {
+        display: none;
+    }
+
+    .gf-payment-methods-table .gf-table-row {
+        min-width: 0;
+        grid-template-columns: minmax(0, 1fr) auto;
+        padding: 1rem;
+        background: var(--gf-surface);
+        border: 1px solid var(--gf-border);
+        border-radius: 16px;
+    }
+
+    .gf-payment-methods-table .gf-table-row:hover {
+        background: var(--gf-surface);
+    }
+
+    /* El estado no se muestra en móvil */
+    .gf-payment-methods-table .gf-table-row > .gf-pill {
+        display: none;
+    }
+}

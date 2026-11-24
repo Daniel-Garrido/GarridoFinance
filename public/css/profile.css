@@ -157,8 +157,34 @@
     text-align: left;
 }
 
+/* Botón "Guardar cambios" al final del formulario: solo en móvil */
+.gf-profile-save-bottom {
+    display: none;
+}
+
 @media (max-width: 992px) {
     .gf-profile-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .gf-profile-card {
+        padding: 1.15rem 1rem;
+    }
+
+    /* El encabezado queda solo con el título; se guarda desde el formulario */
+    .gf-profile-save-top {
+        display: none;
+    }
+
+    .gf-profile-save-bottom {
+        display: flex;
+    }
+
+    /* Botones de los formularios a todo el ancho: más fáciles de tocar */
+    .gf-profile-section-foot .gf-btn {
+        width: 100%;
+        justify-content: center;
     }
 }

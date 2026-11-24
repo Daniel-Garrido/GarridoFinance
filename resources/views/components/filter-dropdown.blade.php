@@ -17,7 +17,8 @@
 
     <button type="button" class="gf-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
         aria-labelledby="{{ $name }}_label">
-        <span class="gf-dropdown-value">{{ $current['label'] }}</span>
+        {{-- data-prefix: en el filtro compacto de móvil se muestra "Tipo: Todas" en lugar de la etiqueta --}}
+        <span class="gf-dropdown-value" data-prefix="{{ $label }}">{{ $current['label'] }}</span>
         <i class="bi bi-chevron-down"></i>
     </button>
 

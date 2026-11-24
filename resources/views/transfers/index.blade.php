@@ -21,7 +21,7 @@
                 <h1>Lista de transferencias</h1>
                 <p>Administra tus transferencias registradas en GarridoFinance</p>
             </div>
-            <button type="button" class="gf-btn gf-btn-primary" data-bs-toggle="modal"
+            <button type="button" class="gf-btn gf-btn-primary gf-transfers-create" data-bs-toggle="modal"
                 data-bs-target="#createTransferModal">
                 <i class="bi bi-plus-circle"></i> Crear una transferencia
             </button>
@@ -37,12 +37,12 @@
         @endif
 
         {{-- Filtros --}}
-        <form method="GET" action="{{ route('transfers.index') }}" id="filterForm" class="gf-filter gf-card">
+        <form method="GET" action="{{ route('transfers.index') }}" id="filterForm" class="gf-filter gf-filter-compact gf-card">
             <x-period-filter />
 
             <div class="gf-filter-actions">
                 <button type="submit" class="gf-btn gf-btn-primary">
-                    <i class="bi bi-funnel"></i> Filtrar
+                    <i class="bi bi-funnel"></i><span class="gf-btn-label">Filtrar</span>
                 </button>
                 <a href="{{ route('transfers.index') }}" class="gf-btn gf-btn-icon" title="Limpiar filtros"
                     aria-label="Limpiar filtros">
@@ -70,7 +70,7 @@
                 </label>
             </div>
 
-            <div class="gf-table gf-table-compact gf-transfers-table">
+            <div class="gf-table gf-table-compact gf-table-collapsible gf-transfers-table">
                 <div class="gf-table-head">
                     <span>Fecha</span>
                     <span>Monto</span>
@@ -82,33 +82,47 @@
 
                 @forelse ($transfers as $transfer)
                     @php $amountLabel = '$' . number_format($transfer->amount, 2) . ' MXN'; @endphp
-                    <div class="gf-table-row">
+                    {{-- En móvil la fila se contrae (.gf-table-collapsible): fecha corta, origen, "→ destino" y monto;
+                         el botón ">" despliega el resto. data-label es la etiqueta del detalle desplegado. --}}
+                    <div class="gf-table-row" id="transfer-{{ $transfer->id }}">
+                        {{-- Fecha corta a la izquierda: solo en móvil ("10" / "NOV") --}}
+                        <div class="gf-row-day" aria-hidden="true">
+                            <strong>{{ $transfer->date->day }}</strong>
+                            <span>{{ $transfer->date_month_short }}</span>
+                        </div>
+
                         {{-- Fecha --}}
-                        <div class="gf-date-cell" title="{{ $transfer->date->format('Y-m-d') }}">
+                        <div class="gf-date-cell gf-row-detail" data-label="Fecha" title="{{ $transfer->date->format('Y-m-d') }}">
                             <strong>{{ $transfer->date_label }}</strong>
                             <span>{{ $transfer->date_hint }}</span>
                         </div>
 
-                        {{-- Monto --}}
-                        <span class="gf-cell-amount">{{ $amountLabel }}</span>
+                        {{-- Monto (en móvil siempre visible, debajo del ">") --}}
+                        <span class="gf-cell-amount gf-row-amount">{{ $amountLabel }}</span>
 
                         {{-- Cuenta origen (sale el dinero) --}}
-                        <div class="gf-cell-account">
+                        <div class="gf-cell-account gf-cell-from gf-row-title">
                             <span class="gf-icon gf-tone-expense"><i class="bi bi-arrow-down"></i></span>
                             <span class="gf-cell-text gf-cell-strong" title="{{ $transfer->fromAccount?->name }}">{{ $transfer->fromAccount?->name }}</span>
                         </div>
 
                         {{-- Cuenta destino (entra el dinero) --}}
-                        <div class="gf-cell-account">
+                        <div class="gf-cell-account gf-cell-to gf-row-subtitle">
                             <span class="gf-icon gf-tone-income"><i class="bi bi-arrow-up"></i></span>
                             <span class="gf-cell-text gf-cell-strong" title="{{ $transfer->toAccount?->name }}">{{ $transfer->toAccount?->name }}</span>
                         </div>
 
-                        {{-- Descripción --}}
-                        <span class="gf-cell-text gf-cell-muted" title="{{ $transfer->description }}">{{ $transfer->description ?: '—' }}</span>
+                        {{-- Descripción (en móvil se oculta si está vacía) --}}
+                        <span class="gf-cell-text gf-cell-muted gf-row-detail gf-row-desc {{ $transfer->description ? '' : 'is-empty' }}" data-label="Descripción" title="{{ $transfer->description }}">{{ $transfer->description ?: '—' }}</span>
+
+                        {{-- Botón ">" para desplegar el detalle: solo en móvil --}}
+                        <button type="button" class="gf-row-toggle" aria-expanded="false"
+                            aria-controls="transfer-{{ $transfer->id }}" aria-label="Ver detalles">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
 
                         {{-- Opciones --}}
-                        <div class="gf-row-actions">
+                        <div class="gf-row-actions gf-row-detail">
                             <button type="button" class="gf-action" title="Editar" aria-label="Editar transferencia"
                                 data-bs-toggle="modal" data-bs-target="#editTransferModal"
                                 data-id="{{ $transfer->id }}"
@@ -254,6 +268,7 @@
 
 @push('scripts')
     <script src="{{ asset('js/filters.js') }}?v={{ filemtime(public_path('js/filters.js')) }}"></script>
+    <script src="{{ asset('js/collapsible-rows.js') }}?v={{ filemtime(public_path('js/collapsible-rows.js')) }}"></script>
     <script>
         (function () {
             // Editar: llena el modal con los datos del botón que lo abrió
